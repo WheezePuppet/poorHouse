@@ -14,5 +14,5 @@ private:
 	float savings;
 	int age;
 	human *parent;
-	human *children;
+	vector<human *> children;
 };
