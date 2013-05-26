@@ -30,7 +30,15 @@ void human::consume()
 
 void die()
 {
-	
+	srand(time(0));
+	if(age>30)
+	{
+		int prob=rand()%100;
+		if(prob<4)
+		{
+			
+		}
+	}
 }
 
 void haveChildren()

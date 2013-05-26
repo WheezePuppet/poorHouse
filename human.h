@@ -14,5 +14,5 @@ private:
 	float savings;
 	int age;
 	human *parent;
-	human *children;
+	human *children[10];
 };
