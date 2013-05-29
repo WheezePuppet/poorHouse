@@ -1,0 +1,55 @@
+//This will be the Human class definitions
+#include<iostream>
+#include"Human.h"
+using namespace std;
+
+Human::Human()
+{
+	srand(time(0));
+	salary=(rand()%6)*100;
+	mps=(rand()%100)/100;
+	//Random age for first generation, not for children
+	age=(rand()%20)+20;
+	//Random initial savings?
+}
+
+Human::Human(int gero)
+{
+	
+}
+
+void Human::earnIncome(float rr)
+{
+	savings+=(salary+(savings*rr))*mps;
+}
+
+void Human::consume()
+{
+	cons.push_back(salary+(savings*rr))*(1-mps);
+}
+
+void die()
+{
+	srand(time(0));
+	if(age>30)
+	{
+		int prob=rand()%100;
+		if(prob<4)
+		{
+			
+		}
+	}
+}
+
+void haveChildren()
+{
+	srand(time(0));
+	if(age>20 && age<30)
+	{
+		int prob=rand()%100;
+		if(prob>40)
+		{
+			//Create children by calling child constructor
+		}
+	}
+}
