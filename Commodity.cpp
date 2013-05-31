@@ -1,5 +1,8 @@
 #include"Commodity.h"
 #include<cstdlib>
+
+Commodity Commodity::theCommodities[NUM_COMM];
+
 void Commodity::consume()
 {
 	totalAmountInSystem-=amtCons;
@@ -10,9 +13,9 @@ void Commodity::produce(float quantity)
 	totalAmountInSystem+=quantity;
 }
 
-static Commodity & Commodity::getCommNum(int num)
+Commodity & Commodity::getCommNum(int num)
 {
-	return & theCommodities[num];
+	return theCommodities[num];
 }
 
 Commodity::Commodity()//Determine consumption rate, set 

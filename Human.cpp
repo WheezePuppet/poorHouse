@@ -2,16 +2,26 @@
 #include<cstdlib>
 #include<iostream>
 #include"Human.h"
+#include"Model.h"
 #include"Commodity.h"
 #include<Random.h>
-using namespace repast;
+#include<AgentId.h>
+
+int Human::nextAgentNum = 0;
+
+void Human::step() {
+    std::cout << "my agent number is " << myId << 
+        " and by the way my salary is $" << salary << std::endl;
+}
 
 Human::Human()
 {
-	srand(time(0));
-	salary=(rand()%7);
+    myId = repast::AgentId(nextAgentNum++,0,0); 
+
+	salary=Model::instance()->generateSalary();
 	int temp=rand()%100;
 	mps=(temp/100.0)-.1;
+
 	//Random age for first generation, not for children
 	age=0;//(rand()%20)+20;
 	//Random initial savings?
@@ -22,6 +32,19 @@ Human::Human()
 		commoditiesHeld[i]=0;
 	}
 }
+
+Human::~Human() {
+
+}
+
+repast::AgentId & Human::getId() { 
+    return myId;
+}   
+
+const repast::AgentId & Human::getId() const {
+    return myId;
+}
+
 
 /*Human::Human(int gero)
 {
@@ -34,17 +57,17 @@ void Human::earnIncome()
 	commoditiesHeld[producedCommodity]+=salary;
 }
 
-void Human::consume(float cons)
+void Human::consume()
 {
 	//cons.push_back(salary+(savings*rr))*(1-mps);
-	for(int i=0; i<10; i++)
+	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
-		commoditiesHeld[i]-=getCommNum(i).getAmtCons();
-		getCommNum(i).consume();
+		commoditiesHeld[i]-=Commodity::getCommNum(i).getAmtCons();
+		Commodity::getCommNum(i).consume();
 	}
 }
 
-void considerDeath()
+void Human::considerDeath()
 {
 	srand(time(0));
 	if(age>30)
@@ -57,7 +80,7 @@ void considerDeath()
 	}
 }
 
-void haveChildren()
+void Human::considerHavingAChild()
 {
 	srand(time(0));
 	if(age>20 && age<30)

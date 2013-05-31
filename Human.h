@@ -1,31 +1,37 @@
 #ifndef HUMAN_H
 #define HUMAN_H
-using namespace repast;
 #include<iostream>
+#include<AgentId.h>
 #include<Random.h>
+#include"Commodity.h"
 
-class Human
+class Human : public repast::Agent
 {
 public:
 	void step();
 	Human();
 	//Human(int);
 	void earnIncome();
-	void consume(float *);
+	void consume();
 	void considerHavingAChild();
 	void considerDeath();
 	~Human();
+    virtual repast::AgentId & getId();
+    virtual const repast::AgentId & getId() const;
+
 private:
+    repast::AgentId myId;
+    static int nextAgentNum;
 	float mps;//Float less than one
 	float salary;//Between 3 and 7
 	int producedCommodity;//Between 0 and 10
 	//vector<float> cons;
 	//float savings;
-	float commoditiesHeld [10];
-	float minThreshold [10];//Between 0 and 5
-	float maxThreshold [10];//Between 6 and 10
+	float commoditiesHeld [Commodity::NUM_COMM];
+	float minThreshold [Commodity::NUM_COMM];//Between 0 and 5
+	float maxThreshold [Commodity::NUM_COMM];//Between 6 and 10
 	int age;
 	Human *parent;
-	vector<Human *> children;
+    std::vector<Human *> children;
 };
 #endif

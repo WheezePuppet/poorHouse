@@ -4,14 +4,32 @@
 #include"Human.h"
 #include<Random.h>
 //#include"Commodity.h"
-using namespace repast;
 
 class Model
 {
-private:
 public:
-	SharedContext<Human> actors;
+    static const int NUM_INITIAL_AGENTS = 100;
+    static Model * instance();
+    double generateNeedCommodityThreshold();
+    double generateWantCommodityThreshold();
+    double generateSalary();
 
+private:
+	repast::SharedContext<Human> actors;
+    repast::NumberGenerator *commodityNeedThresholdDistro;
+    repast::NumberGenerator *commodityWantThresholdDistro;
+    repast::NumberGenerator *salaryDistro;
+    static Model * theInstance;
 	Model();
 };
 #endif
+
+
+
+/*
+    ...somewhere, Russell needs to generate a random commodity threshold!
+
+    he writes this code!
+
+    Model::instance()->generateCommodityThreshold();
+*/

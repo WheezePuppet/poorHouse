@@ -2,11 +2,22 @@
 #include"Model.h"
 #include<Random.h>
 #include<time.h>
-using namespace std;
-int main()
+#include<mpi.h>
+#include<RepastProcess.h>
+
+int main(int argc, char *argv[])
 {
-	random.seed=time(0);
-	distribution.com = float_uniform, 0, 5;
-	Model sims;
+    Model *sim;
+    try {
+        MPI_Init(&argc, &argv);
+//        boost::mpi::environment env(argc,argv);
+        repast::RepastProcess::init("bob");
+
+        sim = Model::instance();
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    delete sim;
 	return 0;
 }
