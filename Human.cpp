@@ -1,34 +1,50 @@
 //This will be the Human class definitions
+#include<cstdlib>
 #include<iostream>
 #include"Human.h"
-using namespace std;
+#include"Commodity.h"
+#include<Random.h>
+using namespace repast;
 
 Human::Human()
 {
 	srand(time(0));
-	salary=(rand()%6)*100;
-	mps=(rand()%100)/100;
+	salary=(rand()%7);
+	int temp=rand()%100;
+	mps=(temp/100.0)-.1;
 	//Random age for first generation, not for children
-	age=(rand()%20)+20;
+	age=0;//(rand()%20)+20;
 	//Random initial savings?
+	for(int i=0; i<10; i++)
+	{
+		minThreshold[i]=(rand()%5)+1.0;	
+		maxThreshold[i]=(rand()%5)+5.0;
+		commoditiesHeld[i]=0;
+	}
 }
 
-Human::Human(int gero)
+/*Human::Human(int gero)
 {
 	
-}
+}*/
 
-void Human::earnIncome(float rr)
+void Human::earnIncome()
 {
-	savings+=(salary+(savings*rr))*mps;
+	//savings+=(salary+(savings*rr))*mps;
+	commoditiesHeld[producedCommodity]+=salary;
 }
 
-void Human::consume()
+void Human::consume(float cons)
 {
-	cons.push_back(salary+(savings*rr))*(1-mps);
+	//cons.push_back(salary+(savings*rr))*(1-mps);
+	for(int i=0; i<10; i++)
+	{
+		commoditiesHeld[i]-=getCommNum(i).getAmtCons();
+		getCommNum(i).consume();
+	}
 }
 
-void die()
+void considerDeath()
 {
 	srand(time(0));
 	if(age>30)
