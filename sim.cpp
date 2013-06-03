@@ -1,23 +1,20 @@
-#include<iostream>
-#include"Model.h"
-#include<Random.h>
-#include<time.h>
-#include<mpi.h>
 #include<RepastProcess.h>
+#include"Model.h"
 
 int main(int argc, char *argv[])
 {
     Model *sim;
     try {
-        MPI_Init(&argc, &argv);
-//        boost::mpi::environment env(argc,argv);
-        repast::RepastProcess::init("bob");
+        boost::mpi::environment env(argc,argv);
+        repast::RepastProcess::init("");
 
-        sim = Model::instance();
+        //When you're feeling brave, Russell, comment this in.
+        //sim = Model::instance();
+
+        repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
 
-    delete sim;
 	return 0;
 }
