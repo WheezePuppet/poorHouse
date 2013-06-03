@@ -1,20 +1,34 @@
 # compile the simulation
+
+COMPILER = /usr/bin/mpic++
+INCLUDES = -I/usr/local/include/repast_hpc -I/usr/include/boost -I/usr/include/mpich2
+LIBS = -lnetcdf_c++ -lrepast_hpc-1.0.1 -lboost_mpi -lboost_serialization -lboost_serialization-mt -lboost_filesystem
+LIB_DIRS = -L/shared/repast/repasthpc-1.0.1/src/repast_hpc/.libs -L/shared/repast/netcdf/netcdf-4.3.0/liblib/.libs -L/shared/repast/netcdf-cxx4-4.2/cxx4/.libs -L/shared/repast/hdf5-1.8.11/hdf5/lib/ -L/shared/repast/hdf5-1.8.11/hl/src/.libs
+COMPILE_COMMAND = $(COMPILER) $(INCLUDES) $(LIBS) $(LIB_DIRS)
+RUN_COMMAND = mpirun -np 1 sim
+
+run: sim
+	$(RUN_COMMAND)
+    
 sim: Human.o Model.o sim.o Commodity.o
-	grepo Human.o Model.o sim.o Commodity.o -o sim
+	$(COMPILE_COMMAND) Human.o Model.o sim.o Commodity.o -o sim
 	@echo "All done"
-	rm Human.o Model.o sim.o Human.o Commodity.o
+
 # Make the Human object file
 Human.o: Human.cpp Human.h Model.h Commodity.h
-	grepo -c Human.cpp
+	$(COMPILE_COMMAND) -c Human.cpp
 
 # Make the Model object file
 Model.o: Model.cpp Model.h Human.h
-	grepo -c Model.cpp
+	$(COMPILE_COMMAND) -c Model.cpp
 
 # Make the main object file
 sim.o: sim.cpp Model.h
-	grepo -c sim.cpp
+	$(COMPILE_COMMAND) -c sim.cpp
 
 # Make the commodity object file
 Commodity.o: Commodity.cpp Commodity.h
-	grepo -c Commodity.cpp
+	$(COMPILE_COMMAND) -c Commodity.cpp
+
+clean:
+	rm -f Human.o Model.o sim.o Human.o Commodity.o sim
