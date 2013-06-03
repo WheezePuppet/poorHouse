@@ -1,16 +1,20 @@
 # compile the simulation
-sim: Human.o Model.o sim.o
-	g++ Human.o Model.o sim.o -o sim
+sim: Human.o Model.o sim.o Commodity.o
+	grepo Human.o Model.o sim.o Commodity.o -o sim
 	@echo "All done"
-	rm Human.o Model.o sim.o
+	rm Human.o Model.o sim.o Human.o Commodity.o
 # Make the Human object file
-Human.o: Human.cpp Human.h
-	g++ -c Human.cpp
+Human.o: Human.cpp Human.h Model.h Commodity.h
+	grepo -c Human.cpp
 
 # Make the Model object file
 Model.o: Model.cpp Model.h Human.h
-	g++ -c Model.cpp
+	grepo -c Model.cpp
 
 # Make the main object file
 sim.o: sim.cpp Model.h
-	g++ -c sim.cpp
+	grepo -c sim.cpp
+
+# Make the commodity object file
+Commodity.o: Commodity.cpp Commodity.h
+	grepo -c Commodity.cpp
