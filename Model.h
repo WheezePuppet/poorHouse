@@ -8,11 +8,12 @@
 class Model
 {
 public:
-    static const int NUM_INITIAL_AGENTS = 1;
+    static const int NUM_INITIAL_AGENTS = 100;
     static Model * instance();
     double generateNeedCommodityThreshold();
     double generateWantCommodityThreshold();
     double generateSalary();
+	int generateMake();
     void startSimulation();
 
 private:
@@ -21,6 +22,7 @@ private:
     repast::NumberGenerator *commodityNeedThresholdDistro;
     repast::NumberGenerator *commodityWantThresholdDistro;
     repast::NumberGenerator *salaryDistro;
+	repast::NumberGenerator *makeDistro;
     static Model * theInstance;
 	Model();
 };

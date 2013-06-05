@@ -1,4 +1,5 @@
 random.seed = 1
-distribution.commodityNeedThreshold = double_uniform, 0, 4.99
-distribution.commodityWantThreshold = double_uniform, 5, 10
+distribution.commodityNeedThreshold = double_uniform, 1, 5
+distribution.commodityWantThreshold = double_uniform, 6, 10
 distribution.salary = normal, 6, 3
+distribution.make = int_uniform, 0, 9

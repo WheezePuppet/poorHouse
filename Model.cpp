@@ -20,6 +20,8 @@ Model::Model()
         repast::Random::instance()->getGenerator("commodityWantThreshold");
     salaryDistro =
         repast::Random::instance()->getGenerator("salary");
+	makeDistro =
+		repast::Random::instance()->getGenerator("make");
 }
 
 void Model::createInitialAgents() {
@@ -67,4 +69,8 @@ double Model::generateWantCommodityThreshold() {
 
 double Model::generateSalary() {
     return salaryDistro->next();
+}
+
+int Model::generateMake() {
+	return makeDistro->next();
 }
