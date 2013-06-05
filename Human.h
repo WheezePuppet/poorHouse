@@ -1,12 +1,16 @@
 #ifndef HUMAN_H
 #define HUMAN_H
 #include<iostream>
+#include<ostream>
 #include<AgentId.h>
 #include<Random.h>
 #include"Commodity.h"
 
 class Human : public repast::Agent
 {
+
+friend std::ostream & operator<<(std::ostream & os, const Human & h);
+
 public:
 	void step();
 	Human();
@@ -34,4 +38,7 @@ private:
 	Human *parent;
     std::vector<Human *> children;
 };
+
+
+// std::ostream & operator<<(const Human & h, std::ostream & os) const;
 #endif

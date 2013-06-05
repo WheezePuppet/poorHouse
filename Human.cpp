@@ -1,6 +1,7 @@
 //This will be the Human class definitions
 #include<cstdlib>
 #include<iostream>
+#include<ostream>
 #include"Human.h"
 #include"Model.h"
 #include"Commodity.h"
@@ -11,8 +12,13 @@ using namespace std;
 int Human::nextAgentNum = 0;
 
 void Human::step() {
-    std::cout << "ID " << myId << 
-        " Salary " << salary << " Make " << producedCommodity << std::endl;
+    cout << *this;
+}
+
+ostream & operator<<(ostream & os, const Human &h) {
+    os << "ID " << h.myId << 
+        " Salary " << h.salary << " Make " << h.producedCommodity << std::endl;
+    return os;
 }
 
 Human::Human()
