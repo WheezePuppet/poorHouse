@@ -1,10 +1,31 @@
 GOAL: Make all beneficial transactions between two people
 
-	See if there is something that one wants that two has
+    Terms:
+        great-X->Y commodity: one for which X is below want and Y is
+            above need.
+        good-X->Y commodity: one for which either (a) X is below want and Y
+            is middle ground, or (b) X is middle ground and Y is above need.
+    
+    Big picture:
+    1. See if there are any "super-satisfiable" trades, and resolve them.
+        ("super-satisfiable": one where there's a great X->Y commodity and a
+            great Y->X commodity.)
+
+    2. See if there any "half-super-satisfiable" trades, and resolve them.
+        ("half-super-sat": one where there's a great X->Y commodity and a 
+            good Y->X commodity.
+
+    3. See if there are any "ordinary-satisfiable" trades, and resolve them.
+        ("ordinary-sat": one where there's a good X->Y commodity and a good
+            Y->X commodity.
+
+
+
+	See if there is something that one needs that two has a surplus of
 	If so,
-	See if there is something that two wants that one has
-	If so, trade 1:1
-	Check again till you can't trade anymore
+        See if there is something that two wants that one has
+        If so, trade 1:1
+    Check again till you can't trade anymore
 
 	Look at the first's goods till you find one that is deficient
 	Look to see if the second has a surplus of that good
