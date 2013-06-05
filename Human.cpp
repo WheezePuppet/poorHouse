@@ -7,6 +7,7 @@
 #include<Random.h>
 #include<AgentId.h>
 
+using namespace std; 
 int Human::nextAgentNum = 0;
 
 void Human::step() {
@@ -16,21 +17,31 @@ void Human::step() {
 
 Human::Human()
 {
+cout << "human constructor a" << endl;
     myId = repast::AgentId(nextAgentNum++,0,0); 
+cout << "human constructor b" << endl;
 
 	salary=Model::instance()->generateSalary();
+cout << "human constructor c" << endl;
 	int temp=rand()%100;
+cout << "human constructor d" << endl;
 	mps=(temp/100.0)-.1;
+cout << "human constructor e" << endl;
 
 	//Random age for first generation, not for children
 	age=0;//(rand()%20)+20;
+cout << "human constructor f" << endl;
 	//Random initial savings?
 	for(int i=0; i<10; i++)
 	{
+cout << "human constructor g" << endl;
 		minThreshold[i]=(rand()%5)+1.0;	
+cout << "human constructor h" << endl;
 		maxThreshold[i]=(rand()%5)+5.0;
+cout << "human constructor i" << endl;
 		commoditiesHeld[i]=0;
 	}
+cout << "human constructor j" << endl;
 }
 
 Human::~Human() {

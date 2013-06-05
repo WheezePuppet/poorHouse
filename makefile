@@ -10,8 +10,11 @@ RUN_COMMAND = mpirun -np 1 sim
 run: sim
 	$(RUN_COMMAND)
     
-sim: Human.o Model.o sim.o Commodity.o
-	$(COMPILE_COMMAND) Human.o Model.o sim.o Commodity.o -o sim
+runtolog: sim
+	$(RUN_COMMAND) > /tmp/out
+    
+sim: Human.o Model.o main.o Commodity.o
+	$(COMPILE_COMMAND) Human.o Model.o main.o Commodity.o -o sim
 	@echo "All done"
 
 # Make the Human object file
@@ -23,12 +26,12 @@ Model.o: Model.cpp Model.h Human.h
 	$(COMPILE_COMMAND) -c Model.cpp
 
 # Make the main object file
-sim.o: sim.cpp Model.h
-	$(COMPILE_COMMAND) -c sim.cpp
+main.o: main.cpp Model.h
+	$(COMPILE_COMMAND) -c main.cpp
 
 # Make the commodity object file
 Commodity.o: Commodity.cpp Commodity.h
 	$(COMPILE_COMMAND) -c Commodity.cpp
 
 clean:
-	rm -f Human.o Model.o sim.o Human.o Commodity.o sim
+	rm -f Human.o Model.o main.o Human.o Commodity.o sim
