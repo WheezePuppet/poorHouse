@@ -1,6 +1,6 @@
 # compile the simulation
 
-COMPILER = /usr/bin/mpic++
+COMPILER = /usr/local/bin/mpic++
 INCLUDES = -I/usr/local/include/repast_hpc -I/usr/include/boost -I/usr/include/mpich2
 LIBS = -lnetcdf_c++ -lrepast_hpc-1.0.1 -lboost_mpi -lboost_serialization -lboost_serialization-mt -lboost_filesystem
 LIB_DIRS = -L/shared/repast/repasthpc-1.0.1/src/repast_hpc/.libs -L/shared/repast/netcdf/netcdf-4.3.0/liblib/.libs -L/shared/repast/netcdf-cxx4-4.2/cxx4/.libs -L/shared/repast/hdf5-1.8.11/hdf5/lib/ -L/shared/repast/hdf5-1.8.11/hl/src/.libs

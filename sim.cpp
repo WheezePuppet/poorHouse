@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
         repast::RepastProcess::init("");
 
         //When you're feeling brave, Russell, comment this in.
-        //sim = Model::instance();
+        sim = Model::instance();
 
         repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
