@@ -1,0 +1,18 @@
+GOAL: Make all beneficial transactions between two people
+
+	See if there is something that one wants that two has
+	If so,
+	See if there is something that two wants that one has
+	If so, trade 1:1
+	Check again till you can't trade anymore
+
+	Look at the first's goods till you find one that is deficient
+	Look to see if the second has a surplus of that good
+	If not, find the next deficient good
+	If so, proceed to next step
+	Look at the first's good till you find one that he has a surplus of
+	Look to see if the second has a deficit of that good
+	If not, move on to the next surplus good
+	If so, enact a 1:1 transaction
+		Trade greatest such that neither goes above max or below min
+	If you reach the end, the first can't pay, so go to the next agent
