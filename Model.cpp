@@ -95,5 +95,8 @@ double Model::generateLifeProb() {
 }
 
 double Model::generateConsume() {
-	return consumeDistro->next();
+//	return consumeDistro->next();
+	double bob = consumeDistro->next();
+
+return bob;
 }

@@ -10,11 +10,11 @@ int main(int argc, char *argv[])
         boost::mpi::environment env(argc,argv);
         repast::RepastProcess::init("");
 
+        Commodity::initCommodities();
+
         //When you're feeling brave, Russell, comment this in.
-cout << "start" << endl;
         model = Model::instance();
         model->startSimulation();
-cout << "end" << endl;
 
         repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
