@@ -1,0 +1,56 @@
+int findNextLow(int x)
+{
+	for(int i=x; i<COMM_NUM; i++)
+	{
+		if(commheld[i]<needThresh[i])
+		{
+			return i;
+		}
+	}
+}
+
+int checkStatus(int x)
+{
+	if(commHeld[x]<needThresh[i])
+	{
+		return 1;
+	}
+	if(commHeld[x]>wantThresh[i])
+	{
+		return 3;
+	}
+	if(commHeld[x]<wantThresh[i])
+	{
+		return 2;
+	}
+}
+
+for(int i=0; i<COMM_NUMM; i++)
+{
+	int low=agentA.findNextLow(i);
+	if(agentB.checkStatus(low)==1)
+	{
+		i=low;
+		continue;
+	{
+	if(agentB.checkStatus(low)==3)
+	{
+		for(int j=0; j<COMM_NUM; j++)
+		{
+			int low2=agentB.findNextLow(j);
+			if(agentA.checkStatus(low2)==1)
+			{
+				j=low2;
+				continue;
+			}
+			if(agentA.checkStatus(low2)==3)
+			{
+				
+			}
+		}
+	}
+	else
+	{
+		
+	}
+}
