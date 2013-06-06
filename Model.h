@@ -14,6 +14,8 @@ public:
     double generateWantCommodityThreshold();
     double generateSalary();
 	int generateMake();
+	double generateMps();
+	double generateLifeProb();
     void startSimulation();
 
 private:
@@ -22,7 +24,9 @@ private:
     repast::NumberGenerator *commodityNeedThresholdDistro;
     repast::NumberGenerator *commodityWantThresholdDistro;
     repast::NumberGenerator *salaryDistro;
-	repast::NumberGenerator *makeDistro;
+	repast::NumberGenerator *makeDistro;	
+	repast::NumberGenerator *deathChildDistro;
+	repast::NumberGenerator *mpsDistro;
     static Model * theInstance;
 	Model();
 };

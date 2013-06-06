@@ -22,6 +22,10 @@ Model::Model()
         repast::Random::instance()->getGenerator("salary");
 	makeDistro =
 		repast::Random::instance()->getGenerator("make");
+	mpsDistro =
+		repast::Random::instance()->getGenerator("mps");
+	deathChildDistro =		
+		repast::Random::instance()->getGenerator("deathChild");
 }
 
 void Model::createInitialAgents() {
@@ -68,9 +72,22 @@ double Model::generateWantCommodityThreshold() {
 }
 
 double Model::generateSalary() {
-    return salaryDistro->next();
+    double thing=salaryDistro->next();
+	while(thing<0)
+	{
+		thing=salaryDistro->next();
+	}
+	return thing;
+}
+
+double Model::generateMps() {
+	return mpsDistro->next();
 }
 
 int Model::generateMake() {
 	return makeDistro->next();
+}
+
+double Model::generateLifeProb() {
+	return deathChildDistro->next();
 }
