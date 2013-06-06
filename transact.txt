@@ -20,7 +20,10 @@ GOAL: Make all beneficial transactions between two people
             Y->X commodity.
 
 	Check Great Commodity
-		
+		for(int i=0; i<NUM_COMM; i++)
+		{
+			if(commoditiesHeld[i]<minThreshold[i])
+			
 
 
 	See if there is something that one needs that two has a surplus of
@@ -39,3 +42,5 @@ GOAL: Make all beneficial transactions between two people
 	If so, enact a 1:1 transaction
 		Trade greatest such that neither goes above max or below min
 	If you reach the end, the first can't pay, so go to the next agent
+
+	I will trade if I have any commodities over max or under min, but not if all are above min, but below max
