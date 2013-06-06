@@ -19,6 +19,8 @@ GOAL: Make all beneficial transactions between two people
         ("ordinary-sat": one where there's a good X->Y commodity and a good
             Y->X commodity.
 
+	Check Great Commodity
+		
 
 
 	See if there is something that one needs that two has a surplus of

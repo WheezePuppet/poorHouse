@@ -1,4 +1,5 @@
 #include"Commodity.h"
+#include"Model.h"
 #include<cstdlib>
 
 Commodity Commodity::theCommodities[NUM_COMM];
@@ -21,12 +22,10 @@ Commodity & Commodity::getCommNum(int num)
 Commodity::Commodity()//Determine consumption rate, set 
 {
 	totalAmountInSystem=0;
-	srand(time(0));
-	amtCons=(rand()%5)+1;
-	//Random consumption
+	amtCons=Model::instance()->generateConsume();
 }
 
-float Commodity::getAmtCons()
+double Commodity::getAmtCons()
 {
 	return amtCons;
 }

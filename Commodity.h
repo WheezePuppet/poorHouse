@@ -7,12 +7,12 @@ class Commodity{
 		static Commodity & getCommNum(int num);
 		void consume();
 		void produce(float quantity);
-		float getAmtCons();
+		double getAmtCons();
 
 	private:
 		static Commodity theCommodities[NUM_COMM];
 		Commodity();//Constructor is private, see line 9
-		float totalAmountInSystem;
-		float amtCons;
+		double totalAmountInSystem;
+		double amtCons;
 };
 #endif

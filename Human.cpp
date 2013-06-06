@@ -8,22 +8,33 @@
 #include<Random.h>
 #include<AgentId.h>
 
-using namespace std; 
+//using namespace std; 
 int Human::nextAgentNum = 0;
 
 void Human::step() {
-    cout << *this;
+	earnIncome();
+	consume();
+    std::cout << *this;
 }
 
-ostream & operator<<(ostream & os, const Human &h) {
+std::ostream & operator<<(std::ostream & os, const Human &h) {
     os << h.myId << 
-        " Salary " << h.salary << " Make " << h.producedCommodity << std::endl;
-	os << "[";
-	for(int i=0; i<10; i++)
+        " Salary " << h.salary << " Make " << h.producedCommodity << " mps " << h.mps << std::endl << "[";
+	for(int i=0; i<Commodity::NUM_COMM; i++)
 		{
 			os << h.commoditiesHeld[i] << ", ";
 		}
-		os << "]" << endl;
+		os << "]" << std::endl;
+	for(int i=0; i<Commodity::NUM_COMM; i++)
+		{
+			os << h.minThreshold[i] << ", ";
+		}
+		os << "]" << std::endl;
+	for(int i=0; i<Commodity::NUM_COMM; i++)
+		{
+			os << h.maxThreshold[i] << ", ";
+		}
+		os << "]" << std::endl << std::endl;
     return os;
 }
 

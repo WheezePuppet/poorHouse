@@ -16,6 +16,7 @@ public:
 	int generateMake();
 	double generateMps();
 	double generateLifeProb();
+	double generateConsume();
     void startSimulation();
 
 private:
@@ -27,6 +28,7 @@ private:
 	repast::NumberGenerator *makeDistro;	
 	repast::NumberGenerator *deathChildDistro;
 	repast::NumberGenerator *mpsDistro;
+	repast::NumberGenerator *consumeDistro;
     static Model * theInstance;
 	Model();
 };

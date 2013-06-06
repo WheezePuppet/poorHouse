@@ -26,6 +26,8 @@ Model::Model()
 		repast::Random::instance()->getGenerator("mps");
 	deathChildDistro =		
 		repast::Random::instance()->getGenerator("deathChild");
+	consumeDistro =
+		repast::Random::instance()->getGenerator("consume");
 }
 
 void Model::createInitialAgents() {
@@ -50,7 +52,7 @@ void Model::startSimulation() {
         repast::RepastProcess::instance()->getScheduleRunner();
 
     // Schedule an end point.
-    theScheduleRunner.scheduleStop(2);
+    theScheduleRunner.scheduleStop(3);
 
     // Let's DO THIS THING!!!
     theScheduleRunner.run();
@@ -90,4 +92,8 @@ int Model::generateMake() {
 
 double Model::generateLifeProb() {
 	return deathChildDistro->next();
+}
+
+double Model::generateConsume() {
+	return consumeDistro->next();
 }
