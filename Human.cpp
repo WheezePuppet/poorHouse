@@ -21,9 +21,9 @@ ostream & operator<<(ostream & os, const Human &h) {
 	os << "[";
 	for(int i=0; i<10; i++)
 		{
-			os << commoditiesHeld[i] << ", ";
+			os << h.commoditiesHeld[i] << ", ";
 		}
-		os << "]";
+		os << "]" << endl;
     return os;
 }
 
