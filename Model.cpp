@@ -52,7 +52,7 @@ void Model::startSimulation() {
         repast::RepastProcess::instance()->getScheduleRunner();
 
     // Schedule an end point.
-    theScheduleRunner.scheduleStop(3);
+    theScheduleRunner.scheduleStop(2);
 
     // Let's DO THIS THING!!!
     theScheduleRunner.run();

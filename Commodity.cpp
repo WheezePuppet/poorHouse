@@ -15,6 +15,11 @@ void Commodity::consume()
 	totalAmountInSystem-=amtCons;
 }
 
+void Commodity::consFail(int x)
+{
+	totalAmountInSystem-=x;
+}
+
 void Commodity::produce(float quantity)
 {
 	totalAmountInSystem+=quantity;

@@ -7,6 +7,7 @@ class Commodity{
 		static Commodity & getCommNum(int num);
         static void initCommodities();
 		void consume();
+		void consFail(int x);
 		void produce(float quantity);
 		double getAmtCons();
 

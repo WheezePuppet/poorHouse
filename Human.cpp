@@ -13,6 +13,7 @@ int Human::nextAgentNum = 0;
 
 void Human::step() {
 	earnIncome();
+	//transact
 	consume();
     std::cout << *this;
 }
@@ -85,8 +86,18 @@ void Human::consume()
 	//cons.push_back(salary+(savings*rr))*(1-mps);
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
-		commoditiesHeld[i]-=Commodity::getCommNum(i).getAmtCons();
-		Commodity::getCommNum(i).consume();
+		if(commoditiesHeld[i]-Commodity::getCommNum(i).getAmtCons()>=0)
+		{	
+			commoditiesHeld[i]-=Commodity::getCommNum(i).getAmtCons();	
+			Commodity::getCommNum(i).consume();
+		}
+		else
+		{
+			Commodity::getCommNum(i).consFail(Commodity::getCommNum(i).getAmtCons()-commoditiesHeld[i]);
+			commoditiesHeld[i]=0;
+		}
+		
+		//Commodity::getCommNum(i).consume();
 	}
 }
 
