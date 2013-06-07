@@ -25,7 +25,7 @@ public:
 	~Human();
     virtual repast::AgentId & getId();
     virtual const repast::AgentId & getId() const;
-
+	void tradeWithRandomAgents();
 private:
     void trade(int comm1Num, int comm2Num,
         double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,

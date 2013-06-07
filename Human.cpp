@@ -8,8 +8,20 @@
 #include"Commodity.h"
 #include<Random.h>
 #include<AgentId.h>
+#include<SharedContext.h>
 
 //using namespace std; 
+
+void Human::tradeWithRandomAgents()
+{
+	std::vector<Human*> tradingPartners;
+	repast::SharedContext<Human>::selectAgents(1, 50, tradingPartners, false);
+	for(int i=0; i++; i<50)
+	{
+		
+	}
+}
+
 int Human::nextAgentNum = 0;
 
 void Human::step() {
