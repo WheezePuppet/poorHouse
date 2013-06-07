@@ -25,42 +25,79 @@ int checkStatus(int x)
 	}
 }
 
+void swap(double x, Human& other, int alow, int blow)
+{
+	commoditiesHeld[alow]+=x;
+	other.commoditiesHeld[alow]-=x;
+	commoditiesHeld[blow]-=x;
+	other.commoditiesHeld[blow]+=;
+}
+
+void transaction(Human& other)
+{
 for(int i=0; i<COMM_NUMM; i++)
 {
-	int low=agentA.findNextLow(i);
-	if(agentB.checkStatus(low)==1)
+	int alow= findNextLow(i);
+	if(other.checkStatus(alow)==1)
 	{
 		i=alow;
-		continue;
-	{
-	if(agentB.checkStatus(alow)==3)
+	}
+	if(other.checkStatus(alow)==3)
 	{
 		for(int j=0; j<COMM_NUM; j++)
 		{
-			int blow=agentB.findNextLow(j);
-			if(agentA.checkStatus(blow)==1)
+			int blow=other.findNextLow(j);
+			if( checkStatus(blow)==1)
 			{
 				j=blow;
-				continue;
 			}
-			if(agentA.checkStatus(blow)==3)
+			if( checkStatus(blow)==3)
 			{
 				double coms[4];
-				coms[0]=agentA.needThreshold[alow]-agentA.commoditiesHeld[alow];
-				coms[1]=agentB.commoditiesHeld[alow]-agentB.wantThreshold[alow];
-				coms[2]=agentB.needThreshold[blow]-agentB.commoditiesHeld[blow];
-				coms[3]=agentA.commoditiesHeld[blow]-agentA.wantThreshold[blow];
+				coms[0]= needThreshold[alow]- commoditiesHeld[alow];
+				coms[1]=other.commoditiesHeld[alow]-other.wantThreshold[alow];
+				coms[2]=other.needThreshold[blow]-other.commoditiesHeld[blow];
+				coms[3]= commoditiesHeld[blow]- wantThreshold[blow];
 				double* x = min_element(coms, coms+4);
 				double change=*x;
-				agentA.commoditiesHeld[alow]+=aneed;
-				agentB.commoditiesHeld[alow]-=aneed;
-				agentA.commoditiesHeld[blow]-=aneed;
-				agentB.commoditiesHeld[blow]+=aneed;
+				swap(change, other, alow, blow);
+				j=blow;
 			}
 		}
+		i=alow;
 	}
-	else
+}
+
+for(int i=0; i<COMM_NUM; i++)
+{
+	int alow= findNextLow(i);
+	if(other.checkStatus(alow)==1)
 	{
-		
+		i=alow;
 	}
+	if(other.checkStatus(alow)==2)
+	{
+		for(int j=0; j<COMM_NUM; j++)
+		{
+			int blow=other.findNextLow(j);
+			if(checkStatus(blow)==1)
+			{
+				j=blow;
+			}
+			if(checkStatus(blow)==3)
+			{
+				double coms[4];
+				coms[0]= needThreshold[alow]- commoditiesHeld[alow];
+				coms[1]=other.commoditiesHeld[alow]-other.needThreshold[alow];
+				coms[2]=other.needThreshold[blow]-other.commoditiesHeld[blow];
+				coms[3]= commoditiesHeld[blow]- needThreshold[blow];
+				double* x = min_element(coms, coms+4);
+				double change=*x;
+				swap(change, other, alow, blow);
+				j=blow;
+			}
+		}
+	i=alow;
+	}
+}
 }
