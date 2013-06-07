@@ -2,7 +2,7 @@ int findNextLow(int x)
 {
 	for(int i=x; i<COMM_NUM; i++)
 	{
-		if(commheld[i]<needThresh[i])
+		if(commoditiesHeld[i]<minThreshold[i])
 		{
 			return i;
 		}
@@ -11,15 +11,15 @@ int findNextLow(int x)
 
 int checkStatus(int x)
 {
-	if(commHeld[x]<needThresh[i])
+	if(commoditiesHeld[x]<minThreshold[i])
 	{
 		return 1;
 	}
-	if(commHeld[x]>wantThresh[i])
+	if(commoditiesHeld[x]>maxThreshold[i])
 	{
 		return 3;
 	}
-	if(commHeld[x]<wantThresh[i])
+	if(commoditiesHeld[x]<maxThreshold[i])
 	{
 		return 2;
 	}
@@ -30,22 +30,32 @@ for(int i=0; i<COMM_NUMM; i++)
 	int low=agentA.findNextLow(i);
 	if(agentB.checkStatus(low)==1)
 	{
-		i=low;
+		i=alow;
 		continue;
 	{
-	if(agentB.checkStatus(low)==3)
+	if(agentB.checkStatus(alow)==3)
 	{
 		for(int j=0; j<COMM_NUM; j++)
 		{
-			int low2=agentB.findNextLow(j);
-			if(agentA.checkStatus(low2)==1)
+			int blow=agentB.findNextLow(j);
+			if(agentA.checkStatus(blow)==1)
 			{
-				j=low2;
+				j=blow;
 				continue;
 			}
-			if(agentA.checkStatus(low2)==3)
+			if(agentA.checkStatus(blow)==3)
 			{
-				
+				double coms[4];
+				coms[0]=agentA.needThreshold[alow]-agentA.commoditiesHeld[alow];
+				coms[1]=agentB.commoditiesHeld[alow]-agentB.wantThreshold[alow];
+				coms[2]=agentB.needThreshold[blow]-agentB.commoditiesHeld[blow];
+				coms[3]=agentA.commoditiesHeld[blow]-agentA.wantThreshold[blow];
+				double* x = min_element(coms, coms+4);
+				double change=*x;
+				agentA.commoditiesHeld[alow]+=aneed;
+				agentB.commoditiesHeld[alow]-=aneed;
+				agentA.commoditiesHeld[blow]-=aneed;
+				agentB.commoditiesHeld[blow]+=aneed;
 			}
 		}
 	}
