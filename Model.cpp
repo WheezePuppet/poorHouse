@@ -9,6 +9,11 @@ using namespace std;
 
 Model * Model::theInstance = NULL;
 
+repast::SharedContext<Human>& Model::getActors()
+{
+	return actors;
+}
+
 Model::Model()
 {
     // Initialize random number distributions.

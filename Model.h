@@ -18,6 +18,7 @@ public:
 	double generateLifeProb();
 	double generateConsume();
     void startSimulation();
+	repast::SharedContext<Human>& getActors();
 
 private:
     void createInitialAgents();

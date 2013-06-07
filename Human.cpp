@@ -15,10 +15,11 @@
 void Human::tradeWithRandomAgents()
 {
 	std::vector<Human*> tradingPartners;
-	repast::SharedContext<Human>::selectAgents(1, 50, tradingPartners, false);
-	for(int i=0; i++; i<50)
+	Model::instance()->getActors().selectAgents(repast::SharedContext<Human>::LOCAL, 50, tradingPartners, false, 100);
+	std::cout<<"I have traded.\n";
+	for(int i=0; i<50; i++)
 	{
-		
+		transactWith(*tradingPartners[i]);
 	}
 }
 
@@ -26,7 +27,7 @@ int Human::nextAgentNum = 0;
 
 void Human::step() {
 	earnIncome();
-	//transact
+//	tradeWithRandomAgents();
 	consume();
     std::cout << *this;
 }
