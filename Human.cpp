@@ -126,3 +126,106 @@ void Human::considerHavingAChild()
 		}
 	}
 }
+
+
+int findNextDeficientCommodityStartingAt(int x)
+{
+    for(int i=x; i<COMM_NUM; i++)
+    {
+        if(commoditiesHeld[i]<minThreshold[i])
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+CommodityStatus Human::checkStatus(int commodityNum)
+{
+    if(commoditiesHeld[commodityNum]<minThreshold[commodityNum])
+    {
+        return DEFICIENT;
+    }
+    if(commoditiesHeld[commodityNum]>maxThreshold[commodityNum])
+    {
+        return BLOATED;
+    }
+    return SATISFIED;
+}
+
+void Human::swap(double x, Human& other, int alow, int blow)
+{
+    commoditiesHeld[alow]+=x;
+    other.commoditiesHeld[alow]-=x;
+    commoditiesHeld[blow]-=x;
+    other.commoditiesHeld[blow]+=x;
+}
+
+void Human::transaction(Human& other)
+{
+    // 1. Make great trades where possible.
+    for(int i=0; i<COMM_NUMM; i++)
+    {
+        int alow= findNextDeficientCommodityStartingAt(i);
+        if(other.checkStatus(alow)==BLOATED)
+        {
+            for(int j=0; j<COMM_NUM; j++)
+            {
+                int blow=other.findNextDeficientCommodityStartingAt(j);
+                if( checkStatus(blow)==BLOATED)
+                {
+                    // Do actual trade! A has an excess of blow and B has an
+                    // excess of alow, so trade those.
+                    double coms[4];
+                    // coms[0] - the amount A is willing to buy of alow.
+                    coms[0]= needThreshold[alow]- commoditiesHeld[alow];
+                    // coms[1] - the amount B is willing to sell of alow.
+                    coms[1]=other.commoditiesHeld[alow]-other.wantThreshold[alow];
+                    // coms[2] - the amount B is willing to buy of blow.
+                    coms[2]=other.needThreshold[blow]-other.commoditiesHeld[blow];
+                    // coms[3] - the amount A is willint to sell of blow.
+                    coms[3]= commoditiesHeld[blow]- wantThreshold[blow];
+                    double* x = min_element(coms, coms+4);
+                    double change=*x;
+                    swap(change, other, alow, blow);
+                }
+                j=blow;
+            }
+        }
+        i=alow;
+    }
+
+    for(int i=0; i<COMM_NUM; i++)
+    {
+        int alow= findNextDeficientCommodityStartingAt(i);
+        if(other.checkStatus(alow)==1)
+        {
+            i=alow;
+        }
+        if(other.checkStatus(alow)==2)
+        {
+            for(int j=0; j<COMM_NUM; j++)
+            {
+                int blow=other.findNextDeficientCommodityStartingAt(j);
+                if(checkStatus(blow)==1)
+                {
+                    j=blow;
+                }
+                if(checkStatus(blow)==3)
+                {
+                    double coms[4];
+                    coms[0]= needThreshold[alow]- commoditiesHeld[alow];
+                    coms[1]=other.commoditiesHeld[alow]-other.needThreshold[alow];
+                    coms[2]=other.needThreshold[blow]-other.commoditiesHeld[blow];
+                    coms[3]= commoditiesHeld[blow]- needThreshold[blow];
+                    double* x = min_element(coms, coms+4);
+                    double change=*x;
+                    swap(change, other, alow, blow);
+                    j=blow;
+                }
+            }
+            i=alow;
+        }
+    }
+}
+

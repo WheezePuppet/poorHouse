@@ -39,6 +39,7 @@ private:
     std::vector<Human *> children;
 };
 
+enum CommodityStatus { DEFICIENT, SATISFIED, BLOATED };
 
 // std::ostream & operator<<(const Human & h, std::ostream & os) const;
 #endif
