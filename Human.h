@@ -6,6 +6,9 @@
 #include<Random.h>
 #include"Commodity.h"
 
+
+enum CommodityStatus { DEFICIENT, SATISFIED, BLOATED };
+
 class Human : public repast::Agent
 {
 
@@ -24,6 +27,14 @@ public:
     virtual const repast::AgentId & getId() const;
 
 private:
+    void trade(int comm1Num, int comm2Num,
+        double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
+        double amtAWillingToSellOf2, double amtBwillingToSellOf1,
+        Human & B);
+    void transactWith(Human& other);
+    void swap(double x, Human& other, int alow, int blow);
+    CommodityStatus checkStatus(int commodityNum);
+    int findNextDeficientCommodityStartingAt(int x);
     repast::AgentId myId;
     static int nextAgentNum;
 	float mps;//Float less than one
@@ -39,7 +50,6 @@ private:
     std::vector<Human *> children;
 };
 
-enum CommodityStatus { DEFICIENT, SATISFIED, BLOATED };
 
 // std::ostream & operator<<(const Human & h, std::ostream & os) const;
 #endif

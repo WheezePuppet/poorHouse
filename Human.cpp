@@ -2,6 +2,7 @@
 #include<cstdlib>
 #include<iostream>
 #include<ostream>
+#include<algorithm>
 #include"Human.h"
 #include"Model.h"
 #include"Commodity.h"
@@ -128,9 +129,9 @@ void Human::considerHavingAChild()
 }
 
 
-int findNextDeficientCommodityStartingAt(int x)
+int Human::findNextDeficientCommodityStartingAt(int x)
 {
-    for(int i=x; i<COMM_NUM; i++)
+    for(int i=x; i<Commodity::NUM_COMM; i++)
     {
         if(commoditiesHeld[i]<minThreshold[i])
         {
@@ -161,33 +162,45 @@ void Human::swap(double x, Human& other, int alow, int blow)
     other.commoditiesHeld[blow]+=x;
 }
 
-void Human::transaction(Human& other)
+
+void Human::trade(int comm1Num, int comm2Num,
+    double amtAWillingToBuyOf1, double amtBWillingToBuyOf2,
+    double amtAWillingToSellOf2, double amtBWillingToSellOf1,
+    Human & B) {
+
+    double coms[4];
+    coms[0] = amtAWillingToBuyOf1;
+    coms[1] = amtBWillingToSellOf1;
+    coms[2] = amtBWillingToBuyOf2;
+    coms[3] = amtAWillingToSellOf2;
+
+    double* x = std::min_element(coms, coms+4);
+    double change=*x;
+    swap(change, B, comm1Num, comm2Num);
+}
+
+void Human::transactWith(Human& other)
 {
-    // 1. Make great trades where possible.
-    for(int i=0; i<COMM_NUMM; i++)
+    // 1. Make super-satisfiable trades where possible.
+    for(int i=0; i<Commodity::NUM_COMM; i++)
     {
         int alow= findNextDeficientCommodityStartingAt(i);
         if(other.checkStatus(alow)==BLOATED)
         {
-            for(int j=0; j<COMM_NUM; j++)
+            for(int j=0; j<Commodity::NUM_COMM; j++)
             {
                 int blow=other.findNextDeficientCommodityStartingAt(j);
                 if( checkStatus(blow)==BLOATED)
                 {
                     // Do actual trade! A has an excess of blow and B has an
                     // excess of alow, so trade those.
-                    double coms[4];
-                    // coms[0] - the amount A is willing to buy of alow.
-                    coms[0]= needThreshold[alow]- commoditiesHeld[alow];
-                    // coms[1] - the amount B is willing to sell of alow.
-                    coms[1]=other.commoditiesHeld[alow]-other.wantThreshold[alow];
-                    // coms[2] - the amount B is willing to buy of blow.
-                    coms[2]=other.needThreshold[blow]-other.commoditiesHeld[blow];
-                    // coms[3] - the amount A is willint to sell of blow.
-                    coms[3]= commoditiesHeld[blow]- wantThreshold[blow];
-                    double* x = min_element(coms, coms+4);
-                    double change=*x;
-                    swap(change, other, alow, blow);
+                    trade(alow,
+                          blow,
+                          minThreshold[alow]- commoditiesHeld[alow],
+                          other.commoditiesHeld[alow]-other.maxThreshold[alow],
+                          other.minThreshold[blow]-other.commoditiesHeld[blow],
+                          commoditiesHeld[blow]- maxThreshold[blow],
+                          other);
                 }
                 j=blow;
             }
@@ -195,37 +208,35 @@ void Human::transaction(Human& other)
         i=alow;
     }
 
-    for(int i=0; i<COMM_NUM; i++)
+    // 2. Make half-super-satisfiable trades where possible.
+    for(int i=0; i<Commodity::NUM_COMM; i++)
     {
         int alow= findNextDeficientCommodityStartingAt(i);
-        if(other.checkStatus(alow)==1)
+        
+        if(other.checkStatus(alow)==SATISFIED)
         {
-            i=alow;
-        }
-        if(other.checkStatus(alow)==2)
-        {
-            for(int j=0; j<COMM_NUM; j++)
+            for(int j=0; j<Commodity::NUM_COMM; j++)
             {
                 int blow=other.findNextDeficientCommodityStartingAt(j);
-                if(checkStatus(blow)==1)
+                
+                if(checkStatus(blow)==SATISFIED)
                 {
-                    j=blow;
+                    trade(alow,
+                          blow,
+                          minThreshold[alow]- commoditiesHeld[alow],
+                          other.commoditiesHeld[alow]-other.minThreshold[alow],
+                          other.minThreshold[blow]-other.commoditiesHeld[blow],
+                          commoditiesHeld[blow]- minThreshold[blow],
+                          other);
                 }
-                if(checkStatus(blow)==3)
-                {
-                    double coms[4];
-                    coms[0]= needThreshold[alow]- commoditiesHeld[alow];
-                    coms[1]=other.commoditiesHeld[alow]-other.needThreshold[alow];
-                    coms[2]=other.needThreshold[blow]-other.commoditiesHeld[blow];
-                    coms[3]= commoditiesHeld[blow]- needThreshold[blow];
-                    double* x = min_element(coms, coms+4);
-                    double change=*x;
-                    swap(change, other, alow, blow);
-                    j=blow;
-                }
+                j=blow;
             }
-            i=alow;
         }
+        i=alow;
     }
+
+    // 3. Future: make other kinds of half-super-satisfiable trades where
+    // possible.
+    // Future: make ordinary-satisfiable trades happen.
 }
 
