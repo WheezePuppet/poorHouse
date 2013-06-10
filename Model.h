@@ -3,6 +3,7 @@
 #include<SharedContext.h>
 #include"Human.h"
 #include<Random.h>
+#include<ostream>
 //#include"Commodity.h"
 
 class Model
@@ -19,6 +20,7 @@ public:
 	double generateConsume();
     void startSimulation();
 	repast::SharedContext<Human>& getActors();
+    void printCommodityStats(std::ostream & os) const;
 
 private:
     void createInitialAgents();

@@ -26,7 +26,11 @@ public:
     virtual repast::AgentId & getId();
     virtual const repast::AgentId & getId() const;
 	void tradeWithRandomAgents();
+    int getNumDeficientCommodities() const;
+    int getNumSatisfiedCommodities() const;
+    int getNumBloatedCommodities() const;
 private:
+    int getNumCommoditiesWithStatus(CommodityStatus status) const;
     void trade(int comm1Num, int comm2Num,
         double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
         double amtAWillingToSellOf2, double amtBwillingToSellOf1,

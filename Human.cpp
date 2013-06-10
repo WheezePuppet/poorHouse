@@ -352,3 +352,25 @@ void Human::makeHalfSuperSatisfiableTradesWith(Human& other)
 void Human::makeOrdinarySatisfiableTradesWith(Human& other) {
 
 }
+
+int Human::getNumCommoditiesWithStatus(CommodityStatus status) const {
+    int i=0;
+    for (int j=0; j<Commodity::NUM_COMM; j++) {
+        if (checkStatus(j) == status) {
+            i++;
+        }
+    }
+    return i;
+}
+
+int Human::getNumDeficientCommodities() const { 
+    return getNumCommoditiesWithStatus(DEFICIENT);
+}
+
+int Human::getNumSatisfiedCommodities() const {
+    return getNumCommoditiesWithStatus(SATISFIED);
+}
+
+int Human::getNumBloatedCommodities() const {
+    return getNumCommoditiesWithStatus(BLOATED);
+}
