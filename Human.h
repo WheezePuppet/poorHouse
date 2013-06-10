@@ -37,14 +37,14 @@ private:
     int findNextDeficientCommodityStartingAt(int x);
     repast::AgentId myId;
     static int nextAgentNum;
-	float mps;//Float less than one
-	float salary;//Between 3 and 7
+	double mps;//Float less than one
+	double salary;//Between 3 and 7
 	int producedCommodity;//Between 0 and 10
-	//vector<float> cons;
-	//float savings;
-	float commoditiesHeld [Commodity::NUM_COMM];
-	float minThreshold [Commodity::NUM_COMM];//Between 0 and 5
-	float maxThreshold [Commodity::NUM_COMM];//Between 6 and 10
+	//vector<double> cons;
+	//double savings;
+	double commoditiesHeld [Commodity::NUM_COMM];
+	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5
+	double maxThreshold [Commodity::NUM_COMM];//Between 6 and 10
 	int age;
 	Human *parent;
     std::vector<Human *> children;

@@ -44,7 +44,7 @@ void Model::createInitialAgents() {
     for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
         Human *newHuman = new Human();
         actors.addAgent(newHuman);
-        theScheduleRunner.scheduleEvent(1, repast::Schedule::FunctorPtr(
+        theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman, &Human::step)));
     }
 }
@@ -57,7 +57,7 @@ void Model::startSimulation() {
         repast::RepastProcess::instance()->getScheduleRunner();
 
     // Schedule an end point.
-    theScheduleRunner.scheduleStop(2);
+    theScheduleRunner.scheduleStop(3);
 
     // Let's DO THIS THING!!!
     theScheduleRunner.run();

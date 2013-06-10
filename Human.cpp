@@ -16,10 +16,10 @@ void Human::tradeWithRandomAgents()
 {
 	std::vector<Human*> tradingPartners;
 	Model::instance()->getActors().selectAgents(repast::SharedContext<Human>::LOCAL, 50, tradingPartners, false, 100);
-	std::cout<<"I have traded.\n";
 	for(int i=0; i<50; i++)
 	{
 		transactWith(*tradingPartners[i]);
+	//	std::cout<<"I have traded with "<<i<<" people\n";
 	}
 }
 
@@ -27,9 +27,10 @@ int Human::nextAgentNum = 0;
 
 void Human::step() {
 	earnIncome();
-//	tradeWithRandomAgents();
+	tradeWithRandomAgents();
 	consume();
     std::cout << *this;
+	
 }
 
 std::ostream & operator<<(std::ostream & os, const Human &h) {
@@ -66,9 +67,14 @@ Human::Human()
 	for(int i=0; i<10; i++)
 	{
 		minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
+		while(minThreshold[i]<Commodity::getCommNum(i).getAmtCons())
+		{
+			minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
+		}
 		maxThreshold[i]=Model::instance()->generateWantCommodityThreshold();
 		commoditiesHeld[i]=0;
 	}
+	commoditiesHeld[producedCommodity]=salary;
 }
 
 Human::~Human() {
@@ -156,7 +162,7 @@ int Human::findNextDeficientCommodityStartingAt(int x)
 
 CommodityStatus Human::checkStatus(int commodityNum)
 {
-    if(commoditiesHeld[commodityNum]<minThreshold[commodityNum])
+    if(commoditiesHeld[commodityNum]<=minThreshold[commodityNum])
     {
         return DEFICIENT;
     }
@@ -189,24 +195,44 @@ void Human::trade(int comm1Num, int comm2Num,
 
     double* x = std::min_element(coms, coms+4);
     double change=*x;
+	std::cout<<"Traded "<<change<<" "<<std::endl;
     swap(change, B, comm1Num, comm2Num);
+}
+
+bool Human::middle()
+{
+	for(int i=0; i<NUM_COMM; i++)
+	{
+		if(commoditiesHeld[i]<minThreshold[i])
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 void Human::transactWith(Human& other)
 {
     // 1. Make super-satisfiable trades where possible.
+	int check=0;
     for(int i=0; i<Commodity::NUM_COMM; i++)
     {
         int alow= findNextDeficientCommodityStartingAt(i);
-        if(other.checkStatus(alow)==BLOATED)
+        if(alow!=-1 && other.checkStatus(alow)==BLOATED)
         {
+			//std::cout<<"Found compatible low\n";
             for(int j=0; j<Commodity::NUM_COMM; j++)
             {
                 int blow=other.findNextDeficientCommodityStartingAt(j);
+				if(blow==-1)
+				{
+					continue;
+				}
                 if( checkStatus(blow)==BLOATED)
                 {
                     // Do actual trade! A has an excess of blow and B has an
                     // excess of alow, so trade those.
+					std::cout<<"Perfect: Sold good "<< blow <<" and bought good "<<alow<<" ";
                     trade(alow,
                           blow,
                           minThreshold[alow]- commoditiesHeld[alow],
@@ -215,25 +241,49 @@ void Human::transactWith(Human& other)
                           commoditiesHeld[blow]- maxThreshold[blow],
                           other);
                 }
-                j=blow;
+				/*std::cout<<"j is "<<j<<std::endl;
+				if(blow<9)
+				{
+					j=blow;
+				}
+				std::cout<<check<<std::endl;
+				check++;
+				if(check>12)
+				{
+					exit(1);
+				}*/
             }
         }
-        i=alow;
+		/*std::cout<<i<<std::endl;
+		if(alow<9)
+		{
+			i=alow;
+		}*/
+		/*check++;
+		std::cout<<check<<std::endl;
+		if(check>12)
+		{
+			exit(1);
+		}*/
     }
 
     // 2. Make half-super-satisfiable trades where possible.
-    for(int i=0; i<Commodity::NUM_COMM; i++)
+    for(int y=0; y<Commodity::NUM_COMM; y++)
     {
-        int alow= findNextDeficientCommodityStartingAt(i);
-        
-        if(other.checkStatus(alow)==SATISFIED)
+        int alow= findNextDeficientCommodityStartingAt(y);
+        if(alow!=-1 && other.checkStatus(alow)==SATISFIED)
         {
-            for(int j=0; j<Commodity::NUM_COMM; j++)
+			//std::cout<<"Found half compatible low\n";
+            for(int g=0; g<Commodity::NUM_COMM; g++)
             {
-                int blow=other.findNextDeficientCommodityStartingAt(j);
-                
+                int blow=other.findNextDeficientCommodityStartingAt(g);
+                if(blow==-1)
+				{
+					continue;
+				}
                 if(checkStatus(blow)==SATISFIED)
                 {
+					std::cout<<"Satisfiable: Sold good "<< blow <<" and bought good "<<alow<<" ";
                     trade(alow,
                           blow,
                           minThreshold[alow]- commoditiesHeld[alow],
@@ -242,12 +292,15 @@ void Human::transactWith(Human& other)
                           commoditiesHeld[blow]- minThreshold[blow],
                           other);
                 }
-                j=blow;
+                //g=blow;
             }
         }
-        i=alow;
+        //y=alow;
     }
-
+	if(middle() && other.middle())
+	{
+		
+	}
     // 3. Future: make other kinds of half-super-satisfiable trades where
     // possible.
     // Future: make ordinary-satisfiable trades happen.
