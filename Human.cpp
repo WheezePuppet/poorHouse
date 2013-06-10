@@ -199,7 +199,7 @@ void Human::trade(int comm1Num, int comm2Num,
     swap(change, B, comm1Num, comm2Num);
 }
 
-bool Human::middle()
+/*bool Human::middle()
 {
 	for(int i=0; i<NUM_COMM; i++)
 	{
@@ -209,7 +209,7 @@ bool Human::middle()
 		}
 	}
 	return true;
-}
+}*/
 
 void Human::transactWith(Human& other)
 {
@@ -297,10 +297,10 @@ void Human::transactWith(Human& other)
         }
         //y=alow;
     }
-	if(middle() && other.middle())
+/*	if(middle() && other.middle())
 	{
 		
-	}
+	}*/
     // 3. Future: make other kinds of half-super-satisfiable trades where
     // possible.
     // Future: make ordinary-satisfiable trades happen.
