@@ -31,9 +31,12 @@ private:
         double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
         double amtAWillingToSellOf2, double amtBwillingToSellOf1,
         Human & B);
+    void makeSuperSatisfiableTradesWith(Human& other);
+    void makeHalfSuperSatisfiableTradesWith(Human& other);
+    void makeOrdinarySatisfiableTradesWith(Human& other);
     void transactWith(Human& other);
     void swap(double x, Human& other, int alow, int blow);
-    CommodityStatus checkStatus(int commodityNum);
+    CommodityStatus checkStatus(int commodityNum) const;
     int findNextDeficientCommodityStartingAt(int x);
     repast::AgentId myId;
     static int nextAgentNum;
