@@ -3,6 +3,7 @@
 #include<Random.h>
 #include<Schedule.h>
 #include<RepastProcess.h>
+#include<iterator>
 #include<initialize_random.h>
 
 using namespace std;
@@ -105,3 +106,17 @@ double Model::generateConsume() {
 
 return bob;
 }
+
+void Model::printCommodityStats(std::ostream & os) const {
+
+    repast::SharedContext<Human>::const_local_iterator actorIter = 
+        actors.localBegin();
+
+    while (actorIter != actors.localEnd()) {
+        os << (*actorIter)->getNumDeficientCommodities() << "," <<
+              (*actorIter)->getNumSatisfiedCommodities() << "," <<
+              (*actorIter)->getNumBloatedCommodities() << endl;
+        actorIter++;
+    }
+}
+

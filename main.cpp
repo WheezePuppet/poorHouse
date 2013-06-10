@@ -1,3 +1,4 @@
+#include<fstream>
 #include<RepastProcess.h>
 #include"Model.h"
 
@@ -17,6 +18,10 @@ int main(int argc, char *argv[])
         model->startSimulation();
 
         repast::RepastProcess::instance()->done();
+
+        ofstream commodityStatsFile;
+        commodityStatsFile.open("commodityStats.txt");
+        model->printCommodityStats(commodityStatsFile);
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
