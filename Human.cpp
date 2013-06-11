@@ -240,7 +240,7 @@ void Human::transactWith(Human& other)
 cout << "transacting from " << getId() << " to " << other.getId() << "!!" <<
 endl;
     // 1. Make super-satisfiable trades where possible.
-    makeSuperSatisfiableTradesWith(other, BLOATED, other.maxThreshold);
+    makeSuperSatisfiableTradesWith(other, BLOATED, maxThreshold);
 
     // 2. Make half-super-satisfiable trades where possible.
 //    makeSuperSatisfiableTradesWith(other, SATISFIED, other.minThreshold);
@@ -251,43 +251,40 @@ endl;
     makeOrdinarySatisfiableTradesWith(other);
 }
 
-void Human::makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherState, double thresh[Commodity::NUM_COMM] )
+void Human::makeSuperSatisfiableTradesWith(Human& other, 
+    CommodityStatus otherHighBound, 
+    double thresh[Commodity::NUM_COMM] )
 {
-//cout << "Looking for super trades between " << getId() << " and " <<other.getId() << "..." << endl;
+// PARAM: need to account for people to try and become bloated
 
     // Go through all my commodities, searching for ones I'm deficient in.
     for(int i=0; i<Commodity::NUM_COMM; i++)
     {
+        // PARAM: not necessarily 'deficient' but 'my low bound'
         i= findNextDeficientCommodityStartingAt(i);
-//cout << "My next deficient commodity is " << i << "..." << endl;
-        if(i!=Commodity::NUM_COMM && other.checkStatus(i)==otherState)
+        if(i!=Commodity::NUM_COMM && other.checkStatus(i)==otherHighBound)
         {
             // Okay, this is now true: I am deficient in commodity i, and 
             // the RHS is bloated in that commodity. So we've "halfway" found 
             // a possible super-satisfiable trade.
-//cout << "Verify: I am deficient in commodity " << i << ", and RHS is bloated in commodity " <<  i << ":" << endl;
-//cout << "Me: " << *this << endl;
-//cout << "RHS: " << other << endl;
         
 			//std::cout<<"Found compatible low\n";
             for(int j=0; j<Commodity::NUM_COMM; j++)
             {
+                // PARAM: not necessarily 'deficient' but 'his low bound'
                 j=other.findNextDeficientCommodityStartingAt(j);
 				if(j==Commodity::NUM_COMM)
 				{
                     // Well, bummer. The RHS is not deficient in anything,
                     // so there are no super-satisfiable trades possible.
-//cout << "Verify: the RHS is not deficient in anything:" << endl;
-//cout << "RHS: " << other << endl;
-        
-//cout << "done!" << endl;
 					return;
 				}
-                if(checkStatus(j)==otherState && checkStatus(i)==DEFICIENT)
+                // PARAM: not necessarily 'DEFICIENT' but 'my low bound'
+                if(checkStatus(j)==otherHighBound && checkStatus(i)==DEFICIENT)
                 {
                     // Do actual trade! A has an excess of j and B has an
                     // excess of i, so trade those.
-//					std::cout<<"Perfect: Sold good "<< j <<" and bought good "<<i<<" ";
+                    // PARAM: trade the right things :D
                     trade(i,
                           j,
                           minThreshold[i]- commoditiesHeld[i],
@@ -299,8 +296,6 @@ void Human::makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherSt
                     // We have now traded. However, I may still be deficient
                     // in commodity i. If so, I need to continue to look 
                     // for other j's to continue to super satisfy my i.
-//cout << "Verify: I may still be deficient in commodity " << i << ":" << endl;
-//cout << "Me: " << *this << endl;
                 }
             }
 
@@ -309,14 +304,8 @@ void Human::makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherSt
             // (b) I am still deficient in commodity i, but I've exhausted
             // all possibilities of trading with RHS for it.
             // So now, continue looking for other i's I may be deficient in.
-if (checkStatus(i) == DEFICIENT) {
-//cout << "This is the case Stephen wanted to check: I'm still deficient in commodity " << i << " but have run out of trading options with this guy." << endl;
-//cout << "Me: " << *this << endl;
-//cout << "RHS: " << other << endl;
-}
         }
     }
-//cout << "done 2!" << endl;
 }
 
 
