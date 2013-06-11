@@ -1,0 +1,81 @@
+B,B,B,B  - no trade
+B,B,B,D  - no trade
+B,B,B,S  - no trade
+B,B,D,B  - no trade
+B,B,D,D  - no trade
+B,B,D,S  - no trade
+B,B,S,B  - no trade
+B,B,S,D  - no trade
+B,B,S,S  - no trade
+B,D,B,B  - no trade
+B,D,B,D  - no trade
+B,D,B,S  - no trade
+B,D,D,B  - SUPER
+B,D,D,D  - no trade
+B,D,D,S  - HALF-SUPER
+B,D,S,B  - HALF-SUPER
+B,D,S,D  - no trade
+B,D,S,S  - ??
+B,S,B,B  - no trade
+B,S,B,D  - no trade
+B,S,B,S  - no trade
+B,S,D,B  - HALF-SUPER
+B,S,D,D  - no trade
+B,S,D,S  - ??
+B,S,S,B  - ORDINARY
+B,S,S,D  - ORDINARY
+B,S,S,S  - ??
+D,B,B,B  - no trade
+D,B,B,D  - SUPER
+D,B,B,S  - HALF-SUPER
+D,B,D,B  - no trade
+D,B,D,D  - no trade
+D,B,D,S  - no trade
+D,B,S,B  - no trade
+D,B,S,D  - HALF-SUPER
+D,B,S,S  - ??
+D,D,B,B  - no trade
+D,D,B,D  - no trade
+D,D,B,S  - no trade
+D,D,D,B  - no trade
+D,D,D,D  - no trade
+D,D,D,S  - no trade
+D,D,S,B  - no trade
+D,D,S,D  - no trade
+D,D,S,S  - no trade
+D,S,B,B  - no trade
+D,S,B,D  - HALF-SUPER
+D,S,B,S  - ??
+D,S,D,B  - no trade
+D,S,D,D  - no trade
+D,S,D,S  - no trade
+D,S,S,B  - no trade
+D,S,S,D  - ORDINARY
+D,S,S,S  - no trade
+S,B,B,B  - no trade
+S,B,B,D  - HALF-SUPER
+S,B,B,S  - ORDINARY
+S,B,D,B  - no trade
+S,B,D,D  - no trade
+S,B,D,S  - no trade
+S,B,S,B  - no trade
+S,B,S,D  - ??
+S,B,S,S  - ??
+S,D,B,B  - no trade
+S,D,B,D  - no trade
+S,D,B,S  - no trade
+S,D,D,B  - HALF-SUPER
+S,D,D,D  - no trade
+S,D,D,S  - ORDINARY
+S,D,S,B  - ??
+S,D,S,D  - no trade
+S,D,S,S  - ??
+S,S,B,B  - no trade
+S,S,B,D  - ??
+S,S,B,S  - ??
+S,S,D,B  - ??
+S,S,D,D  - no trade
+S,S,D,S  - ??
+S,S,S,B  - ??
+S,S,S,D  - ??
+S,S,S,S  - no trade
