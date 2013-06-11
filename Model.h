@@ -9,7 +9,9 @@
 class Model
 {
 public:
-    static const int NUM_INITIAL_AGENTS = 100;
+    static const int NUM_INITIAL_AGENTS = 10;
+    static const int NUM_YEARS = 20;
+    static const int TRADING_PARTNERS_PER_YEAR = 5;
     static Model * instance();
     double generateNeedCommodityThreshold();
     double generateWantCommodityThreshold();
@@ -36,13 +38,3 @@ private:
 	Model();
 };
 #endif
-
-
-
-/*
-    ...somewhere, Russell needs to generate a random commodity threshold!
-
-    he writes this code!
-
-    Model::instance()->generateCommodityThreshold();
-*/

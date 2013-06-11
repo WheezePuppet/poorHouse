@@ -49,7 +49,7 @@ private:
 	int producedCommodity;//Between 0 and 10
 	//vector<double> cons;
 	//double savings;
-	double commoditiesHeld [Commodity::NUM_COMM];
+    double commoditiesHeld [Commodity::NUM_COMM];
 	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5
 	double maxThreshold [Commodity::NUM_COMM];//Between 6 and 10
 	int age;

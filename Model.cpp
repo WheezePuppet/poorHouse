@@ -39,14 +39,24 @@ Model::Model()
 void Model::createInitialAgents() {
 
     // Create the initial generation of agents, and add them to the Context.
-    // While we're at it, schedule all agents to run in 1 year's time.
+    // While we're at it, schedule all agents to run on the following
+    //   schedule:
+    // - On integer clock ticks (start of year, say), earn income.
+    // - At integer + .3, trade with other random agents.
+    // - At integer + .6, consume commodities for the year.
     repast::ScheduleRunner &theScheduleRunner = 
         repast::RepastProcess::instance()->getScheduleRunner();
     for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
         Human *newHuman = new Human();
         actors.addAgent(newHuman);
         theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman, &Human::step)));
+            new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
+        theScheduleRunner.scheduleEvent(1.3, 1, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman,
+                &Human::tradeWithRandomAgents)));
+        theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman,
+                &Human::consume)));
     }
 }
 
@@ -58,7 +68,7 @@ void Model::startSimulation() {
         repast::RepastProcess::instance()->getScheduleRunner();
 
     // Schedule an end point.
-    theScheduleRunner.scheduleStop(100);
+    theScheduleRunner.scheduleStop(NUM_YEARS);
 
     // Let's DO THIS THING!!!
     theScheduleRunner.run();
@@ -109,6 +119,7 @@ return bob;
 
 void Model::printCommodityStats(std::ostream & os) const {
 
+cout << "printing all stats!" << endl;
     repast::SharedContext<Human>::const_local_iterator actorIter = 
         actors.localBegin();
 
@@ -116,10 +127,11 @@ void Model::printCommodityStats(std::ostream & os) const {
         os << (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << endl;
-		std::cout<<(*actorIter)->getId() << "," <<
+		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << endl;
+cout << *(*actorIter) << endl;
         actorIter++;
     }
 }

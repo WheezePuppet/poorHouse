@@ -9,14 +9,19 @@
 #include<Random.h>
 #include<AgentId.h>
 #include<SharedContext.h>
+#include<RepastProcess.h>
 
 using namespace std; 
 
 void Human::tradeWithRandomAgents()
 {
 	std::vector<Human*> tradingPartners;
-	Model::instance()->getActors().selectAgents(repast::SharedContext<Human>::LOCAL, 50, tradingPartners, false, 100);
-	for(int i=0; i<50; i++)
+	Model::instance()->getActors().selectAgents(
+        repast::SharedContext<Human>::LOCAL,
+        Model::TRADING_PARTNERS_PER_YEAR, 
+        tradingPartners, 
+        false);
+	for(int i=0; i<Model::TRADING_PARTNERS_PER_YEAR; i++)
 	{
 		transactWith(*tradingPartners[i]);
 	//	std::cout<<"I have traded with "<<i<<" people\n";
@@ -25,15 +30,6 @@ void Human::tradeWithRandomAgents()
 }
 
 int Human::nextAgentNum = 0;
-
-void Human::step() {
-	earnIncome();
-	tradeWithRandomAgents();
-	consume();
-    std::cout << *this;
-	std::cout << getNumDeficientCommodities() <<", "<< getNumSatisfiedCommodities() <<", "<< getNumBloatedCommodities() << std::endl;
-	
-}
 
 std::ostream & operator<<(std::ostream & os, const Human &h) {
     os << h.myId << 
@@ -48,6 +44,9 @@ std::ostream & operator<<(std::ostream & os, const Human &h) {
             case DEFICIENT:
                 os << "?";
                 break;
+            case SATISFIED:
+                os << "=";
+                break;
             }
 			os << h.commoditiesHeld[i];
             if (i<Commodity::NUM_COMM-1) {
@@ -56,6 +55,7 @@ std::ostream & operator<<(std::ostream & os, const Human &h) {
 		}
 		os << "]" << std::endl;
 
+/*
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 		{
 			os << h.minThreshold[i] << ", ";
@@ -66,6 +66,7 @@ std::ostream & operator<<(std::ostream & os, const Human &h) {
 			os << h.maxThreshold[i] << ", ";
 		}
 		os << "]" << std::endl << std::endl;
+*/
 
     return os;
 }
@@ -113,12 +114,14 @@ const repast::AgentId & Human::getId() const {
 
 void Human::earnIncome()
 {
+cout << "earning!!" << endl;
 	//savings+=(salary+(savings*rr))*mps;
 	commoditiesHeld[producedCommodity]+=salary;
 }
 
 void Human::consume()
 {
+cout << "consuming!!" << endl;
 	//cons.push_back(salary+(savings*rr))*(1-mps);
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
@@ -206,6 +209,7 @@ void Human::trade(int comm1Num, int comm2Num,
     double amtAWillingToSellOf2, double amtBWillingToSellOf1,
     Human & B) {
 
+cout << "ACTUALLY trading between " << getId() << " and " << B.getId() << "!!" << endl;
     double coms[4];
     coms[0] = amtAWillingToBuyOf1;
     coms[1] = amtBWillingToSellOf1;
@@ -214,7 +218,8 @@ void Human::trade(int comm1Num, int comm2Num,
 
     double* x = std::min_element(coms, coms+4);
     double change=*x;
-	//std::cout<<"Traded "<<change<<" "<<std::endl;
+	std::cout<<"Exchanging "<<change<<" units of commodities "
+        <<comm1Num<< " and " <<comm2Num <<std::endl;
     swap(change, B, comm1Num, comm2Num);
 }
 
@@ -232,11 +237,13 @@ void Human::trade(int comm1Num, int comm2Num,
 
 void Human::transactWith(Human& other)
 {
+cout << "transacting from " << getId() << " to " << other.getId() << "!!" <<
+endl;
     // 1. Make super-satisfiable trades where possible.
     makeSuperSatisfiableTradesWith(other, BLOATED, other.maxThreshold);
 
     // 2. Make half-super-satisfiable trades where possible.
-    makeSuperSatisfiableTradesWith(other, SATISFIED, other.minThreshold);
+//    makeSuperSatisfiableTradesWith(other, SATISFIED, other.minThreshold);
 
     // 3. Future: make other kinds of half-super-satisfiable trades where
     // possible.

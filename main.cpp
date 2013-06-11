@@ -17,11 +17,11 @@ int main(int argc, char *argv[])
         model = Model::instance();
         model->startSimulation();
 
-        repast::RepastProcess::instance()->done();
 
         ofstream commodityStatsFile;
         commodityStatsFile.open("commodityStats.txt");
         model->printCommodityStats(commodityStatsFile);
+        repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
