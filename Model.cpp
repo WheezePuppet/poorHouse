@@ -58,7 +58,7 @@ void Model::startSimulation() {
         repast::RepastProcess::instance()->getScheduleRunner();
 
     // Schedule an end point.
-    theScheduleRunner.scheduleStop(3);
+    theScheduleRunner.scheduleStop(100);
 
     // Let's DO THIS THING!!!
     theScheduleRunner.run();
@@ -114,6 +114,10 @@ void Model::printCommodityStats(std::ostream & os) const {
 
     while (actorIter != actors.localEnd()) {
         os << (*actorIter)->getNumDeficientCommodities() << "," <<
+              (*actorIter)->getNumSatisfiedCommodities() << "," <<
+              (*actorIter)->getNumBloatedCommodities() << endl;
+		std::cout<<(*actorIter)->getId() << "," <<
+			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << endl;
         actorIter++;

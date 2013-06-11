@@ -35,7 +35,7 @@ private:
         double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
         double amtAWillingToSellOf2, double amtBwillingToSellOf1,
         Human & B);
-    void makeSuperSatisfiableTradesWith(Human& other);
+    void makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherState, double thresh[Commodity::NUM_COMM]);
     void makeHalfSuperSatisfiableTradesWith(Human& other);
     void makeOrdinarySatisfiableTradesWith(Human& other);
     void transactWith(Human& other);

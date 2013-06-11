@@ -21,6 +21,7 @@ void Human::tradeWithRandomAgents()
 		transactWith(*tradingPartners[i]);
 	//	std::cout<<"I have traded with "<<i<<" people\n";
 	}
+	std::cout<<std::endl;
 }
 
 int Human::nextAgentNum = 0;
@@ -30,6 +31,7 @@ void Human::step() {
 	tradeWithRandomAgents();
 	consume();
     std::cout << *this;
+	std::cout << getNumDeficientCommodities() <<", "<< getNumSatisfiedCommodities() <<", "<< getNumBloatedCommodities() << std::endl;
 	
 }
 
@@ -53,7 +55,7 @@ std::ostream & operator<<(std::ostream & os, const Human &h) {
             }
 		}
 		os << "]" << std::endl;
-/*
+
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 		{
 			os << h.minThreshold[i] << ", ";
@@ -64,7 +66,7 @@ std::ostream & operator<<(std::ostream & os, const Human &h) {
 			os << h.maxThreshold[i] << ", ";
 		}
 		os << "]" << std::endl << std::endl;
-*/
+
     return os;
 }
 
@@ -212,7 +214,7 @@ void Human::trade(int comm1Num, int comm2Num,
 
     double* x = std::min_element(coms, coms+4);
     double change=*x;
-	std::cout<<"Traded "<<change<<" "<<std::endl;
+	//std::cout<<"Traded "<<change<<" "<<std::endl;
     swap(change, B, comm1Num, comm2Num);
 }
 
@@ -231,10 +233,10 @@ void Human::trade(int comm1Num, int comm2Num,
 void Human::transactWith(Human& other)
 {
     // 1. Make super-satisfiable trades where possible.
-    makeSuperSatisfiableTradesWith(other);
+    makeSuperSatisfiableTradesWith(other, BLOATED, other.maxThreshold);
 
     // 2. Make half-super-satisfiable trades where possible.
-    makeHalfSuperSatisfiableTradesWith(other);
+    makeSuperSatisfiableTradesWith(other, SATISFIED, other.minThreshold);
 
     // 3. Future: make other kinds of half-super-satisfiable trades where
     // possible.
@@ -242,26 +244,23 @@ void Human::transactWith(Human& other)
     makeOrdinarySatisfiableTradesWith(other);
 }
 
-
-void Human::makeSuperSatisfiableTradesWith(Human& other)
+void Human::makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherState, double thresh[Commodity::NUM_COMM] )
 {
-cout << "Looking for super trades between " << getId() << " and " <<
-other.getId() << "..." << endl;
-	int check=0;
+//cout << "Looking for super trades between " << getId() << " and " <<other.getId() << "..." << endl;
 
     // Go through all my commodities, searching for ones I'm deficient in.
     for(int i=0; i<Commodity::NUM_COMM; i++)
     {
         i= findNextDeficientCommodityStartingAt(i);
-cout << "My next deficient commodity is " << i << "..." << endl;
-        if(i!=Commodity::NUM_COMM && other.checkStatus(i)==BLOATED)
+//cout << "My next deficient commodity is " << i << "..." << endl;
+        if(i!=Commodity::NUM_COMM && other.checkStatus(i)==otherState)
         {
             // Okay, this is now true: I am deficient in commodity i, and 
             // the RHS is bloated in that commodity. So we've "halfway" found 
             // a possible super-satisfiable trade.
-cout << "Verify: I am deficient in commodity " << i << ", and RHS is bloated in commodity " <<  i << ":" << endl;
-cout << "Me: " << *this << endl;
-cout << "RHS: " << other << endl;
+//cout << "Verify: I am deficient in commodity " << i << ", and RHS is bloated in commodity " <<  i << ":" << endl;
+//cout << "Me: " << *this << endl;
+//cout << "RHS: " << other << endl;
         
 			//std::cout<<"Found compatible low\n";
             for(int j=0; j<Commodity::NUM_COMM; j++)
@@ -271,30 +270,30 @@ cout << "RHS: " << other << endl;
 				{
                     // Well, bummer. The RHS is not deficient in anything,
                     // so there are no super-satisfiable trades possible.
-cout << "Verify: the RHS is not deficient in anything:" << endl;
-cout << "RHS: " << other << endl;
+//cout << "Verify: the RHS is not deficient in anything:" << endl;
+//cout << "RHS: " << other << endl;
         
-cout << "done!" << endl;
+//cout << "done!" << endl;
 					return;
 				}
-                if(checkStatus(j)==BLOATED && checkStatus(i)==DEFICIENT)
+                if(checkStatus(j)==otherState && checkStatus(i)==DEFICIENT)
                 {
                     // Do actual trade! A has an excess of j and B has an
                     // excess of i, so trade those.
-					std::cout<<"Perfect: Sold good "<< j <<" and bought good "<<i<<" ";
+//					std::cout<<"Perfect: Sold good "<< j <<" and bought good "<<i<<" ";
                     trade(i,
                           j,
                           minThreshold[i]- commoditiesHeld[i],
-                          other.commoditiesHeld[i]-other.maxThreshold[i],
+                          other.commoditiesHeld[i]-thresh[i],
                           other.minThreshold[j]-other.commoditiesHeld[j],
-                          commoditiesHeld[j]- maxThreshold[j],
+                          commoditiesHeld[j]- thresh[j],
                           other);
 
                     // We have now traded. However, I may still be deficient
                     // in commodity i. If so, I need to continue to look 
                     // for other j's to continue to super satisfy my i.
-cout << "Verify: I may still be deficient in commodity " << i << ":" << endl;
-cout << "Me: " << *this << endl;
+//cout << "Verify: I may still be deficient in commodity " << i << ":" << endl;
+//cout << "Me: " << *this << endl;
                 }
             }
 
@@ -304,19 +303,19 @@ cout << "Me: " << *this << endl;
             // all possibilities of trading with RHS for it.
             // So now, continue looking for other i's I may be deficient in.
 if (checkStatus(i) == DEFICIENT) {
-cout << "This is the case Stephen wanted to check: I'm still deficient in commodity " << i << " but have run out of trading options with this guy." << endl;
-cout << "Me: " << *this << endl;
-cout << "RHS: " << other << endl;
+//cout << "This is the case Stephen wanted to check: I'm still deficient in commodity " << i << " but have run out of trading options with this guy." << endl;
+//cout << "Me: " << *this << endl;
+//cout << "RHS: " << other << endl;
 }
         }
     }
-cout << "done 2!" << endl;
+//cout << "done 2!" << endl;
 }
 
 
 void Human::makeHalfSuperSatisfiableTradesWith(Human& other)
 {
-/*
+
     for(int y=0; y<Commodity::NUM_COMM; y++)
     {
         int alow= findNextDeficientCommodityStartingAt(y);
@@ -332,7 +331,7 @@ void Human::makeHalfSuperSatisfiableTradesWith(Human& other)
 				}
                 if(checkStatus(blow)==SATISFIED)
                 {
-					std::cout<<"Satisfiable: Sold good "<< blow <<" and bought good "<<alow<<" ";
+					//std::cout<<"Satisfiable: Sold good "<< blow <<" and bought good "<<alow<<" ";
                     trade(alow,
                           blow,
                           minThreshold[alow]- commoditiesHeld[alow],
@@ -346,7 +345,7 @@ void Human::makeHalfSuperSatisfiableTradesWith(Human& other)
         }
         //y=alow;
     }
-*/
+
 }
 
 void Human::makeOrdinarySatisfiableTradesWith(Human& other) {
@@ -373,4 +372,5 @@ int Human::getNumSatisfiedCommodities() const {
 
 int Human::getNumBloatedCommodities() const {
     return getNumCommoditiesWithStatus(BLOATED);
+
 }
