@@ -39,25 +39,37 @@ Model::Model()
 void Model::createInitialAgents() {
 
     // Create the initial generation of agents, and add them to the Context.
+    // Schedule the startYear method to run at integer clock ticks (start
+    //   of year, say.
     // While we're at it, schedule all agents to run on the following
     //   schedule:
-    // - On integer clock ticks (start of year, say), earn income.
-    // - At integer + .3, trade with other random agents.
-    // - At integer + .6, consume commodities for the year.
+    // - On integer + .1, earn income.
+    // - At integer + .2, trade with other random agents.
+    // - At integer + .3, consume commodities for the year.
     repast::ScheduleRunner &theScheduleRunner = 
         repast::RepastProcess::instance()->getScheduleRunner();
+    theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
+        new repast::MethodFunctor<Model>(this, &Model::startYear)));
     for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
         Human *newHuman = new Human();
         actors.addAgent(newHuman);
-        theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
+        theScheduleRunner.scheduleEvent(1.1, 1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
-        theScheduleRunner.scheduleEvent(1.3, 1, repast::Schedule::FunctorPtr(
+        theScheduleRunner.scheduleEvent(1.2, 1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::tradeWithRandomAgents)));
-        theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
+        theScheduleRunner.scheduleEvent(1.3, 1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::consume)));
     }
+}
+
+void Model::startYear() {
+    repast::ScheduleRunner &theScheduleRunner = 
+        repast::RepastProcess::instance()->getScheduleRunner();
+    cout << "======================================================" << endl;
+    cout << "Now starting year " <<  theScheduleRunner.currentTick() << "!"
+        << endl;
 }
 
 void Model::startSimulation() {
@@ -136,3 +148,11 @@ cout << *(*actorIter) << endl;
     }
 }
 
+
+repast::AgentId & Model::getId() { 
+    return myId;
+}   
+
+const repast::AgentId & Model::getId() const {
+    return myId;
+}
