@@ -308,42 +308,6 @@ void Human::makeSuperSatisfiableTradesWith(Human& other,
     }
 }
 
-
-void Human::makeHalfSuperSatisfiableTradesWith(Human& other)
-{
-
-    for(int y=0; y<Commodity::NUM_COMM; y++)
-    {
-        int alow= findNextDeficientCommodityStartingAt(y);
-        if(alow!=-1 && other.checkStatus(alow)==SATISFIED)
-        {
-			//std::cout<<"Found half compatible low\n";
-            for(int g=0; g<Commodity::NUM_COMM; g++)
-            {
-                int blow=other.findNextDeficientCommodityStartingAt(g);
-                if(blow==-1)
-				{
-					continue;
-				}
-                if(checkStatus(blow)==SATISFIED)
-                {
-					//std::cout<<"Satisfiable: Sold good "<< blow <<" and bought good "<<alow<<" ";
-                    trade(alow,
-                          blow,
-                          minThreshold[alow]- commoditiesHeld[alow],
-                          other.commoditiesHeld[alow]-other.minThreshold[alow],
-                          other.minThreshold[blow]-other.commoditiesHeld[blow],
-                          commoditiesHeld[blow]- minThreshold[blow],
-                          other);
-                }
-                //g=blow;
-            }
-        }
-        //y=alow;
-    }
-
-}
-
 void Human::makeOrdinarySatisfiableTradesWith(Human& other) {
 
 }
