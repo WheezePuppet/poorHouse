@@ -10,7 +10,7 @@ class Model : public repast::Agent
 {
 public:
     static const int NUM_INITIAL_AGENTS = 100;
-    static const int NUM_YEARS = 50;
+    static const int NUM_YEARS = 10;
     static const int TRADING_PARTNERS_PER_YEAR = 50;
     static Model * instance();
     double generateNeedCommodityThreshold();

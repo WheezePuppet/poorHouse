@@ -138,7 +138,9 @@ cout << "printing all stats!" << endl;
     while (actorIter != actors.localEnd()) {
         os << (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
-              (*actorIter)->getNumBloatedCommodities() << endl;
+              (*actorIter)->getNumBloatedCommodities() << ","<<
+			  (*actorIter)->getSalary()<<","<< 
+			  (*actorIter)->amtCommodity((*actorIter)->getMake())<< endl;
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<

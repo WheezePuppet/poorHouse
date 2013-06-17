@@ -13,6 +13,11 @@
 
 using namespace std; 
 
+double Human::getSalary()
+{
+	return salary;
+}
+
 void Human::tradeWithRandomAgents()
 {
 	std::vector<Human*> tradingPartners;
@@ -26,7 +31,7 @@ void Human::tradeWithRandomAgents()
 		transactWith(*tradingPartners[i]);
 	//	std::cout<<"I have traded with "<<i<<" people\n";
 	}
-	std::cout<<std::endl;
+	//std::cout<<std::endl;
 }
 
 int Human::nextAgentNum = 0;
@@ -91,7 +96,7 @@ Human::Human()
 		maxThreshold[i]=Model::instance()->generateWantCommodityThreshold();
 		commoditiesHeld[i]=0;
 	}
-	commoditiesHeld[producedCommodity]=salary;
+	//commoditiesHeld[producedCommodity]=salary;
 }
 
 Human::~Human() {
@@ -114,14 +119,14 @@ const repast::AgentId & Human::getId() const {
 
 void Human::earnIncome()
 {
-cout << "earning!!" << endl;
+//cout << "earning!!" << endl;
 	//savings+=(salary+(savings*rr))*mps;
 	commoditiesHeld[producedCommodity]+=salary;
 }
 
 void Human::consume()
 {
-cout << "consuming!!" << endl;
+//cout << "consuming!!" << endl;
 	//cons.push_back(salary+(savings*rr))*(1-mps);
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
@@ -135,7 +140,7 @@ cout << "consuming!!" << endl;
 			Commodity::getCommNum(i).consFail(Commodity::getCommNum(i).getAmtCons()-commoditiesHeld[i]);
 			commoditiesHeld[i]=0;
 		}
-		
+		cout<<this;
 		//Commodity::getCommNum(i).consume();
 	}
 }
@@ -170,11 +175,11 @@ void Human::considerHavingAChild()
 // Return the number of the commodity greater than or equal to x that we are
 // deficient in. If we are not deficient in any, return NUM_COMM (which is an
 // illegal commodity number.)
-int Human::findNextDeficientCommodityStartingAt(int x)
+int Human::findStatusCommodityStartingAt(int x, CommodityStatus specifiedCommStatus)
 {
     for(int i=x; i<Commodity::NUM_COMM; i++)
     {
-        if(commoditiesHeld[i]<minThreshold[i])
+        if(checkStatus(i)==specifiedCommStatus)
         {
             return i;
         }
@@ -209,59 +214,93 @@ void Human::trade(int comm1Num, int comm2Num,
     double amtAWillingToSellOf2, double amtBWillingToSellOf1,
     Human & B) {
 
-cout << "ACTUALLY trading between " << getId() << " and " << B.getId() << "!!" << endl;
+//cout << "ACTUALLY trading between " << getId() << " and " << B.getId() << "!!" << endl;
     double coms[4];
     coms[0] = amtAWillingToBuyOf1;
     coms[1] = amtBWillingToSellOf1;
     coms[2] = amtBWillingToBuyOf2;
     coms[3] = amtAWillingToSellOf2;
 
-    double* x = std::min_element(coms, coms+4);
-    double change=*x;
-	std::cout<<"Exchanging "<<change<<" units of commodities "
-        <<comm1Num<< " and " <<comm2Num <<std::endl;
-    swap(change, B, comm1Num, comm2Num);
-}
-
-/*bool Human::middle()
-{
-	for(int i=0; i<NUM_COMM; i++)
+	bool good=false;
+	for(int i=0; i<4; i++)
 	{
-		if(commoditiesHeld[i]<minThreshold[i])
+		if(coms[i]<0)
 		{
-			return false;
+			coms[i]=10000;//Make all negative lows really high to prevent their being chosen to be traded
+		}
+		else if(coms[i]!=0)
+		{
+			good=true;//If at least one is not negative or zero, make it possible to trade 
 		}
 	}
-	return true;
-}*/
+
+	if(good)
+	{
+		double* x = std::min_element(coms, coms+4);//Choose the lowest of the options for trades so that you don't overstep any of the bounds
+		double change=*x;
+		std::cout<<*this;
+		std::cout<<B;
+		std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
+		swap(change, B, comm1Num, comm2Num);
+		std::cout<<*this;
+	}
+}
 
 void Human::transactWith(Human& other)
 {
-cout << "transacting from " << getId() << " to " << other.getId() << "!!" <<
-endl;
+//cout << "transacting from " << getId() << " to " << other.getId() << endl;
+
+	/*
+	* D,B,B,D super
+	* D,B,S,D half
+	* D,S,B,D half
+	* D,S,S,D ordinary
+	* S,B,B,D half
+	* S,B,B,S ordinary
+	* S,B,D,S ordinary
+	*/
+
     // 1. Make super-satisfiable trades where possible.
-    makeSuperSatisfiableTradesWith(other, BLOATED, maxThreshold);
-
+    /*makeSuperSatisfiableTradesWith(other, DEFICIENT, BLOATED, BLOATED, DEFICIENT);
+    makeSuperSatisfiableTradesWith(other, BLOATED, BLOATED, BLOATED, SATISFIED);
+	*/
     // 2. Make half-super-satisfiable trades where possible.
-//    makeSuperSatisfiableTradesWith(other, SATISFIED, other.minThreshold);
 
+	
+    //makeSuperSatisfiableTradesWith(other, BLOATED, DEFICIENT, DEFICIENT, BLOATED);//super
+    makeSuperSatisfiableTradesWith(other, DEFICIENT, BLOATED, BLOATED, DEFICIENT);//super
+    //makeSuperSatisfiableTradesWith(other, DEFICIENT, BLOATED, BLOATED, SATISFIED);//half
+    //makeSuperSatisfiableTradesWith(other, DEFICIENT, BLOATED, SATISFIED, DEFICIENT);//half
+    //makeSuperSatisfiableTradesWith(other, DEFICIENT, SATISFIED, BLOATED, DEFICIENT);//half
+    //makeSuperSatisfiableTradesWith(other, DEFICIENT, SATISFIED, SATISFIED, DEFICIENT);//ordinary
+    //makeSuperSatisfiableTradesWith(other, SATISFIED, BLOATED, BLOATED, DEFICIENT);//half
+    //makeSuperSatisfiableTradesWith(other, SATISFIED, BLOATED, BLOATED, SATISFIED);//ordinary
+    //makeSuperSatisfiableTradesWith(other, SATISFIED, DEFICIENT, DEFICIENT, BLOATED);//half
+    //makeSuperSatisfiableTradesWith(other, SATISFIED, DEFICIENT, DEFICIENT, SATISFIED);//ordinary
+    //makeSuperSatisfiableTradesWith(other, BLOATED, DEFICIENT, DEFICIENT, SATISFIED);//half
+    //makeSuperSatisfiableTradesWith(other, BLOATED, DEFICIENT, SATISFIED, BLOATED);//half
+    //makeSuperSatisfiableTradesWith(other, BLOATED, SATISFIED, DEFICIENT, BLOATED);//half
+    //makeSuperSatisfiableTradesWith(other, BLOATED, SATISFIED, SATISFIED, BLOATED);//ordinary
+    //makeSuperSatisfiableTradesWith(other, BLOATED, SATISFIED, SATISFIED, DEFICIENT);//ordinary
     // 3. Future: make other kinds of half-super-satisfiable trades where
     // possible.
     // Future: make ordinary-satisfiable trades happen.
-    makeOrdinarySatisfiableTradesWith(other);
+//    makeOrdinarySatisfiableTradesWith(other);
 }
 
 void Human::makeSuperSatisfiableTradesWith(Human& other, 
-    CommodityStatus otherHighBound, 
-    double thresh[Commodity::NUM_COMM] )
+	CommodityStatus aLowBound,//The level A wants to get above in good 1
+    CommodityStatus aHighBound,//The level A doesn't want to fall below in good 2
+    CommodityStatus otherHighBound,//The level B doesn't want to fall below in good 1
+    CommodityStatus otherLowBound)//The level B wants to get above in good 2
 {
 // PARAM: need to account for people to try and become bloated
 
-    // Go through all my commodities, searching for ones I'm deficient in.
+    // Go through all my commodities, searching for ones I'm at my lower bound in.
     for(int i=0; i<Commodity::NUM_COMM; i++)
     {
         // PARAM: not necessarily 'deficient' but 'my low bound'
-        i= findNextDeficientCommodityStartingAt(i);
+        i= findStatusCommodityStartingAt(i, aLowBound);
         if(i!=Commodity::NUM_COMM && other.checkStatus(i)==otherHighBound)
         {
             // Okay, this is now true: I am deficient in commodity i, and 
@@ -272,25 +311,57 @@ void Human::makeSuperSatisfiableTradesWith(Human& other,
             for(int j=0; j<Commodity::NUM_COMM; j++)
             {
                 // PARAM: not necessarily 'deficient' but 'his low bound'
-                j=other.findNextDeficientCommodityStartingAt(j);
+                j=other.findStatusCommodityStartingAt(j, otherLowBound);
 				if(j==Commodity::NUM_COMM)
 				{
                     // Well, bummer. The RHS is not deficient in anything,
                     // so there are no super-satisfiable trades possible.
 					return;
 				}
-                // PARAM: not necessarily 'DEFICIENT' but 'my low bound'
-                if(checkStatus(j)==otherHighBound && checkStatus(i)==DEFICIENT)
                 {
                     // Do actual trade! A has an excess of j and B has an
                     // excess of i, so trade those.
                     // PARAM: trade the right things :D
+					double buy1,buy2,sell1,sell2;
+					if(aLowBound==DEFICIENT)
+					{
+						buy1=minThreshold[i]-commoditiesHeld[i];
+					}
+					if(aLowBound==SATISFIED)
+					{
+						buy1=maxThreshold[i]-commoditiesHeld[i];
+					}
+					if(aHighBound==SATISFIED)
+					{
+						sell2=commoditiesHeld[j]-minThreshold[j];
+					}
+					if(aHighBound==BLOATED)
+					{
+						sell2=commoditiesHeld[j]-maxThreshold[j];
+					}
+					if(otherLowBound==DEFICIENT)
+					{
+						buy2=other.minThreshold[j]-other.commoditiesHeld[j];
+					}
+					if(otherLowBound==SATISFIED)
+					{
+						buy2=other.maxThreshold[j]-other.commoditiesHeld[j];
+					}
+					if(otherHighBound==BLOATED)
+					{
+						sell1=other.commoditiesHeld[i]-other.maxThreshold[i];
+					}
+					if(otherHighBound==SATISFIED)
+					{
+						sell1=other.commoditiesHeld[i]-other.minThreshold[i];
+					}
+
                     trade(i,
                           j,
-                          minThreshold[i]- commoditiesHeld[i],
-                          other.commoditiesHeld[i]-thresh[i],
-                          other.minThreshold[j]-other.commoditiesHeld[j],
-                          commoditiesHeld[j]- thresh[j],
+                          buy1,
+                          sell1,
+                          buy2,
+                          sell2,
                           other);
 
                     // We have now traded. However, I may still be deficient
@@ -332,5 +403,14 @@ int Human::getNumSatisfiedCommodities() const {
 
 int Human::getNumBloatedCommodities() const {
     return getNumCommoditiesWithStatus(BLOATED);
+}
 
+double Human::amtCommodity(int x)
+{
+	return commoditiesHeld [x];
+}
+
+int Human::getMake()
+{
+	return producedCommodity;
 }

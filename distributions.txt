@@ -1,7 +1,7 @@
 random.seed = 1
 distribution.commodityNeedThreshold = double_uniform, 1, 5
 distribution.commodityWantThreshold = double_uniform, 6, 10
-distribution.salary = normal, 65, 15
+distribution.salary = normal, 35, 15
 distribution.make = int_uniform, 0, 9
 distribution.mps = double_uniform, 0.1, 0.7
 distribution.deathChild = double_uniform, 0, 1

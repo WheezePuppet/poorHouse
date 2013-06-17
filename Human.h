@@ -29,19 +29,28 @@ public:
     int getNumDeficientCommodities() const;
     int getNumSatisfiedCommodities() const;
     int getNumBloatedCommodities() const;
+	double getSalary();
+	double amtCommodity(int x);
+	int getMake();
 private:
     int getNumCommoditiesWithStatus(CommodityStatus status) const;
     void trade(int comm1Num, int comm2Num,
         double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
         double amtAWillingToSellOf2, double amtBwillingToSellOf1,
         Human & B);
-    void makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherState, double thresh[Commodity::NUM_COMM]);
+//    void makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherState, double thresh[Commodity::NUM_COMM]);
+	void makeSuperSatisfiableTradesWith(Human& other, 
+		CommodityStatus aLowBound,
+		CommodityStatus aHighBound,
+		CommodityStatus otherHighBound,
+		CommodityStatus otherLowBound);
     void makeHalfSuperSatisfiableTradesWith(Human& other);
     void makeOrdinarySatisfiableTradesWith(Human& other);
     void transactWith(Human& other);
     void swap(double x, Human& other, int alow, int blow);
     CommodityStatus checkStatus(int commodityNum) const;
-    int findNextDeficientCommodityStartingAt(int x);
+    //int findNextDeficientCommodityStartingAt(int x);
+	int findStatusCommodityStartingAt(int x, CommodityStatus sepcifiedCommStatus);
     repast::AgentId myId;
     static int nextAgentNum;
 	double mps;//Float less than one
