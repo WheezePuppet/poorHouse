@@ -2,12 +2,15 @@
 #define HUMAN_H
 #include<iostream>
 #include<ostream>
+#include<string>
 #include<AgentId.h>
 #include<Random.h>
 #include"Commodity.h"
 
 
 enum CommodityStatus { DEFICIENT, SATISFIED, BLOATED };
+
+std::string commodityStatusString(CommodityStatus cs);
 
 class Human : public repast::Agent
 {
@@ -38,14 +41,11 @@ private:
         double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
         double amtAWillingToSellOf2, double amtBwillingToSellOf1,
         Human & B);
-//    void makeSuperSatisfiableTradesWith(Human& other, CommodityStatus otherState, double thresh[Commodity::NUM_COMM]);
-	void makeSuperSatisfiableTradesWith(Human& other, 
-		CommodityStatus aLowBound,
-		CommodityStatus aHighBound,
-		CommodityStatus otherHighBound,
-		CommodityStatus otherLowBound);
-    void makeHalfSuperSatisfiableTradesWith(Human& other);
-    void makeOrdinarySatisfiableTradesWith(Human& other);
+    void makeTradesSuchThat(Human& other, 
+        CommodityStatus aTooLowStatus_C1,
+        CommodityStatus aWantToPreserveStatus_C2,
+        CommodityStatus otherWantToPreserveStatus_C1,
+        CommodityStatus otherTooLowStatus_C2);
     void transactWith(Human& other);
     void swap(double x, Human& other, int alow, int blow);
     CommodityStatus checkStatus(int commodityNum) const;
