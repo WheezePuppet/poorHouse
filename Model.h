@@ -11,7 +11,7 @@ class Model : public repast::Agent
 public:
     static const int NUM_INITIAL_AGENTS = 100;
     static const int NUM_YEARS = 100;
-    static const int TRADING_PARTNERS_PER_YEAR = 50;
+    static const int TRADING_PARTNERS_PER_YEAR = 110;
     static Model * instance();
     double generateNeedCommodityThreshold();
     double generateWantCommodityThreshold();
@@ -20,7 +20,7 @@ public:
 	double generateMps();
 	double generateLifeProb();
 	double generateConsume();	
-	int generateTraders();
+	int generateNumTraders();
 	int generateOutsideTrade();
     void startSimulation();
 	repast::SharedContext<Human>& getActors();

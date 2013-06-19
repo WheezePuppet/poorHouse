@@ -35,12 +35,12 @@ public:
 	double getSalary();
 	double amtCommodity(int x);
 	int getMake();
-	int getTraders();
+	int getNumTraders();
 private:
 	double mps;//Float less than one
 	double salary;//Between 3 and 7
 	int producedCommodity;//Between 0 and 10
-	int traders;//Between 5 and 100
+	int numTraders;//Between 5 and 100
 	Human *parent;
     repast::AgentId myId;
 	int age;

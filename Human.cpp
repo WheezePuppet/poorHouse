@@ -14,9 +14,9 @@
 
 using namespace std; 
 
-int Human::getTraders()
+int Human::getNumTraders()
 {
-	return traders;
+	return numTraders;
 }
 
 double Human::getSalary()
@@ -29,10 +29,10 @@ void Human::tradeWithRandomAgents()
 	std::vector<Human*> tradingPartners;
 	Model::instance()->getActors().selectAgents(
         repast::SharedContext<Human>::LOCAL,
-		traders,//Model::TRADING_PARTNERS_PER_YEAR, 
+		numTraders,//Model::TRADING_PARTNERS_PER_YEAR, 
         tradingPartners, 
         false);
-	for(int i=0; i<traders/*Model::TRADING_PARTNERS_PER_YEAR*/; i++)
+	for(int i=0; i<numTraders/*Model::TRADING_PARTNERS_PER_YEAR*/; i++)
 	{
 		transactWith(*tradingPartners[i]);
 	//	std::cout<<"I have traded with "<<i<<" people\n";
@@ -49,7 +49,7 @@ totalNeeds += h.minThreshold[i];
 }
     os << h.myId << 
         " Salary " << h.salary << " Make " << h.producedCommodity << " mps "
-<< h.mps << " total needs " << totalNeeds << " Trades with " << h.traders << std::endl << "[";
+<< h.mps << " total needs " << totalNeeds << " Trades with " << h.numTraders << std::endl << "[";
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 		{
             CommodityStatus cs = h.checkStatus(i);
@@ -93,7 +93,7 @@ Human::Human()
 	producedCommodity=Model::instance()->generateMake();
 	salary=Model::instance()->generateSalary();
 	mps=Model::instance()->generateMps();
-	traders=Model::instance()->generateTraders();
+	numTraders=Model::instance()->generateNumTraders();
 	//probOutTrade=Model::instance()->generateOutsideTrade();
 
 	//Random age for first generation, not for children

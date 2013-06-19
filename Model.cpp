@@ -138,7 +138,7 @@ double Model::generateConsume() {
 return bob;
 }
 
-int Model::generateTraders() {
+int Model::generateNumTraders() {
 	return tradeDistro->next();
 }
 
@@ -159,7 +159,7 @@ cout << "printing all stats!" << endl;
               (*actorIter)->getNumBloatedCommodities() << ","<<
 			  (*actorIter)->getSalary()<<","<< 
 			  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
-			  (*actorIter)->getTraders()<< endl;
+			  (*actorIter)->getNumTraders()<< endl;
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
