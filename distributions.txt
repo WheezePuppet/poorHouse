@@ -8,3 +8,4 @@ distribution.deathChild = double_uniform, 0, 1
 distribution.consume = double_uniform, 1, 4
 distribution.trade = int_uniform, 0, 100
 distribution.outside = int_uniform, 0, 100
+distribution.community = int_uniform, 1, 100

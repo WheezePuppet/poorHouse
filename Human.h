@@ -44,6 +44,7 @@ private:
 	Human *parent;
     repast::AgentId myId;
 	int age;
+	int residentCommunity;
 
     double commoditiesHeld [Commodity::NUM_COMM];
 	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5

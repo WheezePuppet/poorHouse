@@ -37,6 +37,8 @@ Model::Model()
 		repast::Random::instance()->getGenerator("consume");
 	tradeDistro =
 		repast::Random::instance()->getGenerator("trade");
+	communityDistro=
+		repast::Random::instance()->getGenerator("community");
 }
 
 void Model::createInitialAgents() {
@@ -142,6 +144,21 @@ int Model::generateNumTraders() {
 	return tradeDistro->next();
 }
 
+int Model::generateCommunity(Human * toAdd) {
+	int randomCommunity = communityDistro->next();
+	randomCommunity = randomCommunity%Model::COMMUNITIES;
+	communities[randomCommunity].push_back(toAdd);
+	return randomCommunity;
+}
+
+void Model::fillCommunities()
+{
+	for(int i=0; i<COMMUNITIES; i++)
+	{
+		communities.push_back(new std::vector<Human *>);
+	}
+} 
+
 /*int Model::generateOutsideTrade()
 {
 	return outsideTrade->next();
@@ -194,3 +211,28 @@ void Model::setTRADING_PARTNERS_PER_YEAR(int partners)
 	TRADING_PARTNERS_PER_YEAR=partners;
 }
 */
+
+vector<Human *> Model::getCommunityMembers(int communityNum) const
+{
+	return communities[communityNum];
+}
+
+int Model::getCommunitySize(int communityNum) const
+{
+	return communities[communityNum].size();
+}
+
+Human * Model::getRandomCommunityMember(int communityNum) const
+{
+	int indexOfRandomMember = tradeDistro->next();
+	indexOfRandomMember = indexOfRandomMember%(communities[communityNum].size());
+	return communities[communityNum][indexOfRandomMember];
+}
+
+Human * Model::getRandomGlobalMember()
+{
+	std::vector<Human *> oneAgent;
+	actors.getRandomAgents(1,oneAgent);
+	return oneAgent[0];
+}
+

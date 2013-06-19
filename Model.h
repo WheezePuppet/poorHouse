@@ -12,7 +12,10 @@ public:
     static const int NUM_INITIAL_AGENTS = 100;
     static const int NUM_YEARS = 100;
     static const int TRADING_PARTNERS_PER_YEAR = 110;
+	static const int EXTROVERT_DIAL = 50;
+	static const int COMMUNITIES = 10;
     static Model * instance();
+	static void fillCommunities();
     double generateNeedCommodityThreshold();
     double generateWantCommodityThreshold();
     double generateSalary();
@@ -22,6 +25,7 @@ public:
 	double generateConsume();	
 	int generateNumTraders();
 	int generateOutsideTrade();
+	int generateCommunity(Human *);
     void startSimulation();
 	repast::SharedContext<Human>& getActors();
     void printCommodityStats(std::ostream & os) const;
@@ -29,10 +33,10 @@ public:
 	void setNUM_YEARS(int);
 //	void setTRADING_PARTNERS_PER_YEAR(int); 
 
-    vector<Human *> getCommunityMembers(int communityNum) const;
+    std::vector<Human *> getCommunityMembers(int communityNum) const;
     int getCommunitySize(int communityNum) const;
     Human * getRandomCommunityMember(int communityNum) const;
-    Human * getRandomGlobalMember() const;
+    Human * getRandomGlobalMember();
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
@@ -51,7 +55,9 @@ private:
 	repast::NumberGenerator *consumeDistro;
 	repast::NumberGenerator *tradeDistro;
 	repast::NumberGenerator *outsideTrade;
+	repast::NumberGenerator *communityDistro;
     static Model * theInstance;
 	Model();
+	std::vector<std::vector<Human *> > communities;
 };
 #endif

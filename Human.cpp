@@ -26,18 +26,35 @@ double Human::getSalary()
 
 void Human::tradeWithRandomAgents()
 {
+/*
+	Ok, new plan. Trading with communities in play.
+	Generate a number every time, if you are below, trade in community.
+	If you're above, you may trade with the world at large.
+*/
+/*
 	std::vector<Human*> tradingPartners;
 	Model::instance()->getActors().selectAgents(
         repast::SharedContext<Human>::LOCAL,
 		numTraders,//Model::TRADING_PARTNERS_PER_YEAR, 
         tradingPartners, 
         false);
-	for(int i=0; i<numTraders/*Model::TRADING_PARTNERS_PER_YEAR*/; i++)
+	for(int i=0; i<numTraders; i++)//Model::TRADING_PARTNERS_PER_YEAR; i++)
 	{
 		transactWith(*tradingPartners[i]);
-	//	std::cout<<"I have traded with "<<i<<" people\n";
 	}
-	//std::cout<<std::endl;
+*/
+	for(int i=0; i<numTraders; i++)
+	{
+		int roll=(Model::instance()->generateNumTraders());
+		if(roll>Model::EXTROVERT_DIAL)
+		{
+			transactWith(*(Model::instance()->getRandomGlobalMember()));
+		}
+		else
+		{
+			transactWith(*(Model::instance()->getRandomCommunityMember(residentCommunity)));
+		}
+	}
 }
 
 int Human::nextAgentNum = 0;
@@ -94,6 +111,9 @@ Human::Human()
 	salary=Model::instance()->generateSalary();
 	mps=Model::instance()->generateMps();
 	numTraders=Model::instance()->generateNumTraders();
+	std::cout<<"The problem's right here, isn't it?\n";
+	residentCommunity=Model::instance()->generateCommunity(this);
+	std::cout<<"The problem's right here, isn't it?\n";
 	//probOutTrade=Model::instance()->generateOutsideTrade();
 
 	//Random age for first generation, not for children
