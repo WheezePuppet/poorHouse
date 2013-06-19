@@ -29,6 +29,11 @@ public:
 	void setNUM_YEARS(int);
 //	void setTRADING_PARTNERS_PER_YEAR(int); 
 
+    vector<Human *> getCommunityMembers(int communityNum) const;
+    int getCommunitySize(int communityNum) const;
+    Human * getRandomCommunityMember(int communityNum) const;
+    Human * getRandomGlobalMember() const;
+
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
 
