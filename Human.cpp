@@ -19,6 +19,11 @@ int Human::getNumTraders()
 	return numTraders;
 }
 
+int Human::getTimesTraded()
+{
+	return timesTraded;
+}
+
 double Human::getSalary()
 {
 	return salary;

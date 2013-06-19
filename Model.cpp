@@ -88,7 +88,12 @@ void Model::startSimulation() {
 
 
     createInitialAgents();
-
+/*
+	for(int i=0; i<COMMUNITIES; i++)
+	{
+		std::cout<<"Community "<< i <<" has "<< communities[i].size() <<" members\n";
+	}
+*/
     repast::ScheduleRunner &theScheduleRunner = 
         repast::RepastProcess::instance()->getScheduleRunner();
 
@@ -178,8 +183,8 @@ cout << "printing all stats!" << endl;
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << ","<<
 			  (*actorIter)->getSalary()<<","<< 
-			  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
-			  (*actorIter)->getNumTraders()<< endl;
+	//		  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
+			  (*actorIter)->getTimesTraded()<< endl;
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
