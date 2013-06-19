@@ -5,6 +5,7 @@
 #include<RepastProcess.h>
 #include<iterator>
 #include<initialize_random.h>
+#include<fstream>
 
 using namespace std;
 
@@ -34,6 +35,8 @@ Model::Model()
 		repast::Random::instance()->getGenerator("deathChild");
 	consumeDistro =
 		repast::Random::instance()->getGenerator("consume");
+	tradeDistro =
+		repast::Random::instance()->getGenerator("trade");
 }
 
 void Model::createInitialAgents() {
@@ -58,6 +61,12 @@ void Model::createInitialAgents() {
         theScheduleRunner.scheduleEvent(1.2, 1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::tradeWithRandomAgents)));
+		//Print the stats before consuming
+	/*	ofstream statsBeforeConsume;
+		statsBeforeConsume.open("statsBeforeConsume.txt");
+        theScheduleRunner.scheduleEvent(1.25, 1, repast::Schedule::FunctorPtr(
+			new repast::MethodFunctor<Model>(this, &Model::printCommodityStats(statsBeforeConsume))));
+*/
         theScheduleRunner.scheduleEvent(1.3, 1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::consume)));
@@ -129,6 +138,15 @@ double Model::generateConsume() {
 return bob;
 }
 
+int Model::generateTraders() {
+	return tradeDistro->next();
+}
+
+/*int Model::generateOutsideTrade()
+{
+	return outsideTrade->next();
+}
+*/
 void Model::printCommodityStats(std::ostream & os) const {
 
 cout << "printing all stats!" << endl;
@@ -140,7 +158,8 @@ cout << "printing all stats!" << endl;
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << ","<<
 			  (*actorIter)->getSalary()<<","<< 
-			  (*actorIter)->amtCommodity((*actorIter)->getMake())<< endl;
+			  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
+			  (*actorIter)->getTraders()<< endl;
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
@@ -158,3 +177,20 @@ repast::AgentId & Model::getId() {
 const repast::AgentId & Model::getId() const {
     return myId;
 }
+
+/*
+void Model::setNUM_INITIAL_AGENTS(int num)
+{
+	NUM_INITIAL_AGENTS=num;
+}
+
+void Model::setNUM_YEARS(int years)
+{
+	NUM_YEARS=years;
+}
+
+void Model::setTRADING_PARTNERS_PER_YEAR(int partners)
+{
+	TRADING_PARTNERS_PER_YEAR=partners;
+}
+*/

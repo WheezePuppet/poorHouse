@@ -10,8 +10,14 @@
 #include<AgentId.h>
 #include<SharedContext.h>
 #include<RepastProcess.h>
+#include<fstream>
 
 using namespace std; 
+
+int Human::getTraders()
+{
+	return traders;
+}
 
 double Human::getSalary()
 {
@@ -23,10 +29,10 @@ void Human::tradeWithRandomAgents()
 	std::vector<Human*> tradingPartners;
 	Model::instance()->getActors().selectAgents(
         repast::SharedContext<Human>::LOCAL,
-        Model::TRADING_PARTNERS_PER_YEAR, 
+		traders,//Model::TRADING_PARTNERS_PER_YEAR, 
         tradingPartners, 
         false);
-	for(int i=0; i<Model::TRADING_PARTNERS_PER_YEAR; i++)
+	for(int i=0; i<traders/*Model::TRADING_PARTNERS_PER_YEAR*/; i++)
 	{
 		transactWith(*tradingPartners[i]);
 	//	std::cout<<"I have traded with "<<i<<" people\n";
@@ -43,7 +49,7 @@ totalNeeds += h.minThreshold[i];
 }
     os << h.myId << 
         " Salary " << h.salary << " Make " << h.producedCommodity << " mps "
-<< h.mps << " total needs " << totalNeeds << std::endl << "[";
+<< h.mps << " total needs " << totalNeeds << " Trades with " << h.traders << std::endl << "[";
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 		{
             CommodityStatus cs = h.checkStatus(i);
@@ -87,6 +93,8 @@ Human::Human()
 	producedCommodity=Model::instance()->generateMake();
 	salary=Model::instance()->generateSalary();
 	mps=Model::instance()->generateMps();
+	traders=Model::instance()->generateTraders();
+	//probOutTrade=Model::instance()->generateOutsideTrade();
 
 	//Random age for first generation, not for children
 	age=0;//(rand()%20)+20;
@@ -133,6 +141,8 @@ void Human::consume()
 {
 //cout << "consuming!!" << endl;
 	//cons.push_back(salary+(savings*rr))*(1-mps);
+	//cout<<*this<<endl;
+	//ofstream statsBeforeConsume;
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
 		if(commoditiesHeld[i]-Commodity::getCommNum(i).getAmtCons()>=0)
@@ -145,7 +155,7 @@ void Human::consume()
 			Commodity::getCommNum(i).consFail(Commodity::getCommNum(i).getAmtCons()-commoditiesHeld[i]);
 			commoditiesHeld[i]=0;
 		}
-		cout<<this;
+		//cout<<this;
 		//Commodity::getCommNum(i).consume();
 	}
 }
@@ -243,11 +253,11 @@ void Human::trade(int comm1Num, int comm2Num,
 	{
 		double* x = std::min_element(coms, coms+4);//Choose the lowest of the options for trades so that you don't overstep any of the bounds
 		double change=*x;
-		std::cout<<*this;
-		std::cout<<B;
-		std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
+		//std::cout<<*this;
+		//std::cout<<B;
+		//std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
 		swap(change, B, comm1Num, comm2Num);
-		std::cout<<*this;
+		//std::cout<<*this;
 	}
 }
 
@@ -274,12 +284,19 @@ S,D,B,S  - ORDINARY
     makeTradesSuchThat(other, DEFICIENT, BLOATED, BLOATED, DEFICIENT);
 
     // 2. Make half-super-satisfiable trades where possible.
+
     makeTradesSuchThat(other, DEFICIENT, BLOATED, BLOATED, SATISFIED);
     makeTradesSuchThat(other, DEFICIENT, BLOATED, SATISFIED, DEFICIENT);
     makeTradesSuchThat(other, SATISFIED, BLOATED, BLOATED, DEFICIENT);
     makeTradesSuchThat(other, DEFICIENT, SATISFIED, BLOATED, DEFICIENT);
 
     // 3. make ordinary-satisfiable trades happen.
+
+    makeTradesSuchThat(other, DEFICIENT, SATISFIED, SATISFIED, DEFICIENT);
+    makeTradesSuchThat(other, SATISFIED, BLOATED, BLOATED, SATISFIED);
+    makeTradesSuchThat(other, SATISFIED, BLOATED, DEFICIENT, SATISFIED);
+    makeTradesSuchThat(other, SATISFIED, DEFICIENT, BLOATED, SATISFIED);
+
 }
 
 void Human::makeTradesSuchThat(Human& other, 
@@ -288,8 +305,7 @@ void Human::makeTradesSuchThat(Human& other,
     CommodityStatus otherWantToPreserveStatus_C1,//The level B doesn't want to fall below in good 1
     CommodityStatus otherTooLowStatus_C2)//The level B wants to get above in good 2
 {
-cout << "trades between " << getId() << " and " << other.getId() <<
-"..." << endl;
+//cout << "trades between " << getId() << " and " << other.getId() << "..." << endl;
 int numTrades = 0;
 
     // Go through all my commodities, searching for ones I'm below my lower bound in.
@@ -311,7 +327,7 @@ int numTrades = 0;
 				{
                     // Well, bummer. The RHS doesn't want anything,
                     // so there are no trades of this kind possible.
-cout << "Made " << numTrades << " trades." << endl;
+//cout << "Made " << numTrades << " trades." << endl;
 					return;
 				}
                 if(checkStatus(j) == aWantToPreserveStatus_C2) 
@@ -384,7 +400,7 @@ numTrades++;
             // So now, continue looking for other i's I may be lacking in.
         }
     }
-cout << "Made " << numTrades << " trades." << endl;
+//cout << "Made " << numTrades << " trades." << endl;
 }
 
 int Human::getNumCommoditiesWithStatus(CommodityStatus status) const {

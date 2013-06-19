@@ -35,12 +35,23 @@ public:
 	double getSalary();
 	double amtCommodity(int x);
 	int getMake();
+	int getTraders();
 private:
-    int getNumCommoditiesWithStatus(CommodityStatus status) const;
-    void trade(int comm1Num, int comm2Num,
-        double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
-        double amtAWillingToSellOf2, double amtBwillingToSellOf1,
-        Human & B);
+	double mps;//Float less than one
+	double salary;//Between 3 and 7
+	int producedCommodity;//Between 0 and 10
+	int traders;//Between 5 and 100
+	Human *parent;
+    repast::AgentId myId;
+	int age;
+
+    double commoditiesHeld [Commodity::NUM_COMM];
+	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5
+	double maxThreshold [Commodity::NUM_COMM];//Between 6 and 10
+
+    std::vector<Human *> children;
+    static int nextAgentNum;
+
     void makeTradesSuchThat(Human& other, 
         CommodityStatus aTooLowStatus_C1,
         CommodityStatus aWantToPreserveStatus_C2,
@@ -49,21 +60,17 @@ private:
     void transactWith(Human& other);
     void swap(double x, Human& other, int alow, int blow);
     CommodityStatus checkStatus(int commodityNum) const;
-    //int findNextDeficientCommodityStartingAt(int x);
 	int findStatusCommodityStartingAt(int x, CommodityStatus sepcifiedCommStatus);
-    repast::AgentId myId;
-    static int nextAgentNum;
-	double mps;//Float less than one
-	double salary;//Between 3 and 7
-	int producedCommodity;//Between 0 and 10
+    int getNumCommoditiesWithStatus(CommodityStatus status) const;
+    void trade(int comm1Num, int comm2Num,
+        double amtAWillingToBuyOf1, double amtBwillingToBuyOf2,
+        double amtAWillingToSellOf2, double amtBwillingToSellOf1,
+        Human & B);
+
+    //int findNextDeficientCommodityStartingAt(int x);
 	//vector<double> cons;
 	//double savings;
-    double commoditiesHeld [Commodity::NUM_COMM];
-	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5
-	double maxThreshold [Commodity::NUM_COMM];//Between 6 and 10
-	int age;
-	Human *parent;
-    std::vector<Human *> children;
+	//int probOutTrade;
 };
 
 

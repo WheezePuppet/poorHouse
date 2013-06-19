@@ -10,7 +10,7 @@ class Model : public repast::Agent
 {
 public:
     static const int NUM_INITIAL_AGENTS = 100;
-    static const int NUM_YEARS = 10;
+    static const int NUM_YEARS = 100;
     static const int TRADING_PARTNERS_PER_YEAR = 50;
     static Model * instance();
     double generateNeedCommodityThreshold();
@@ -19,10 +19,15 @@ public:
 	int generateMake();
 	double generateMps();
 	double generateLifeProb();
-	double generateConsume();
+	double generateConsume();	
+	int generateTraders();
+	int generateOutsideTrade();
     void startSimulation();
 	repast::SharedContext<Human>& getActors();
     void printCommodityStats(std::ostream & os) const;
+	void setNUM_INITIAL_AGENTS(int);
+	void setNUM_YEARS(int);
+//	void setTRADING_PARTNERS_PER_YEAR(int); 
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
@@ -39,6 +44,8 @@ private:
 	repast::NumberGenerator *deathChildDistro;
 	repast::NumberGenerator *mpsDistro;
 	repast::NumberGenerator *consumeDistro;
+	repast::NumberGenerator *tradeDistro;
+	repast::NumberGenerator *outsideTrade;
     static Model * theInstance;
 	Model();
 };
