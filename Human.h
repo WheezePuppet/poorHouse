@@ -36,6 +36,7 @@ public:
 	double amtCommodity(int x);
 	int getMake();
 	int getNumTraders();
+	void incrementTrades();
 private:
 	double mps;//Float less than one
 	double salary;//Between 3 and 7
@@ -45,6 +46,7 @@ private:
     repast::AgentId myId;
 	int age;
 	int residentCommunity;
+	int timesTraded;
 
     double commoditiesHeld [Commodity::NUM_COMM];
 	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5

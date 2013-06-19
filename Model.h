@@ -12,10 +12,10 @@ public:
     static const int NUM_INITIAL_AGENTS = 100;
     static const int NUM_YEARS = 100;
     static const int TRADING_PARTNERS_PER_YEAR = 110;
-	static const int EXTROVERT_DIAL = 50;
+	static const int EXTROVERT_DIAL = 90;
 	static const int COMMUNITIES = 10;
     static Model * instance();
-	static void fillCommunities();
+	void fillCommunities();
     double generateNeedCommodityThreshold();
     double generateWantCommodityThreshold();
     double generateSalary();

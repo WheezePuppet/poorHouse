@@ -39,6 +39,7 @@ Model::Model()
 		repast::Random::instance()->getGenerator("trade");
 	communityDistro=
 		repast::Random::instance()->getGenerator("community");
+	fillCommunities();
 }
 
 void Model::createInitialAgents() {
@@ -84,6 +85,7 @@ void Model::startYear() {
 }
 
 void Model::startSimulation() {
+
 
     createInitialAgents();
 
@@ -155,7 +157,8 @@ void Model::fillCommunities()
 {
 	for(int i=0; i<COMMUNITIES; i++)
 	{
-		communities.push_back(new std::vector<Human *>);
+		communities.push_back(*(new std::vector<Human *>));
+		std::cout<<"Added "<<i<<" communities\n";
 	}
 } 
 

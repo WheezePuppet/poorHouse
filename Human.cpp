@@ -48,10 +48,12 @@ void Human::tradeWithRandomAgents()
 		int roll=(Model::instance()->generateNumTraders());
 		if(roll>Model::EXTROVERT_DIAL)
 		{
+			//std::cout<<"Traded outside\n";
 			transactWith(*(Model::instance()->getRandomGlobalMember()));
 		}
 		else
 		{
+			//std::cout<<"Traded inside\n";
 			transactWith(*(Model::instance()->getRandomCommunityMember(residentCommunity)));
 		}
 	}
@@ -66,7 +68,8 @@ totalNeeds += h.minThreshold[i];
 }
     os << h.myId << 
         " Salary " << h.salary << " Make " << h.producedCommodity << " mps "
-<< h.mps << " total needs " << totalNeeds << " Trades with " << h.numTraders << std::endl << "[";
+<< h.mps << " total needs " << totalNeeds << " Trades with " 
+<< h.numTraders << " Traded " << h.timesTraded << " times " << std::endl << "[";
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 		{
             CommodityStatus cs = h.checkStatus(i);
@@ -111,13 +114,12 @@ Human::Human()
 	salary=Model::instance()->generateSalary();
 	mps=Model::instance()->generateMps();
 	numTraders=Model::instance()->generateNumTraders();
-	std::cout<<"The problem's right here, isn't it?\n";
 	residentCommunity=Model::instance()->generateCommunity(this);
-	std::cout<<"The problem's right here, isn't it?\n";
 	//probOutTrade=Model::instance()->generateOutsideTrade();
 
 	//Random age for first generation, not for children
 	age=0;//(rand()%20)+20;
+	timesTraded=0;
 	//Random initial savings?
 	for(int i=0; i<10; i++)
 	{
@@ -281,8 +283,16 @@ void Human::trade(int comm1Num, int comm2Num,
 	}
 }
 
+
+void Human::incrementTrades()
+{
+	timesTraded++;
+}
+
 void Human::transactWith(Human& other)
 {
+	incrementTrades();
+	other.incrementTrades();
 //cout << "transacting from " << getId() << " to " << other.getId() << endl;
 
 	/*
