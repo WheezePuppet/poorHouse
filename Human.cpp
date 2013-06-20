@@ -51,7 +51,7 @@ void Human::tradeWithRandomAgents()
 	for(int i=0; i<numTraders; i++)
 	{
 		int roll=(Model::instance()->generateNumTraders());
-		if(roll>Model::EXTROVERT_DIAL)
+		if(roll>Model::INTROVERT_DIAL)
 		{
 			//std::cout<<"Traded outside\n";
 			transactWith(*(Model::instance()->getRandomGlobalMember()));
