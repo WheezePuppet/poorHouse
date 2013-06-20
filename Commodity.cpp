@@ -32,11 +32,11 @@ Commodity & Commodity::getCommNum(int num)
 
 Commodity::Commodity()//Determine consumption rate, set 
 {
-std::cout << "entering constructor" << std::endl;
+//std::cout << "entering constructor" << std::endl;
 	totalAmountInSystem=0;
 	amtCons=Model::instance()->generateConsume();
-	std::cout<<"Consumption rate is "<<amtCons<<std::endl;
-std::cout << "leaving constructor" << std::endl;
+	//std::cout<<"Consumption rate is "<<amtCons<<std::endl;
+//std::cout << "leaving constructor" << std::endl;
 }
 
 double Commodity::getAmtCons()

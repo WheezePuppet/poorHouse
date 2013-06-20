@@ -14,6 +14,11 @@
 
 using namespace std; 
 
+int Human::getCommunity()
+{
+	return residentCommunity;
+}
+
 int Human::getNumTraders()
 {
 	return numTraders;

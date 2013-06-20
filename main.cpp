@@ -7,11 +7,11 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
-        cout << "Usage: " << argv[0] << " numYrs." << endl;
+        cout << "Usage: " << argv[0] << " dial." << endl;
         exit(1);
     }
 
-    Model::NUM_YEARS = atoi(argv[1]);
+    Model::INTROVERT_DIAL = atoi(argv[1]);
 
     Model *model;
     
@@ -27,9 +27,11 @@ int main(int argc, char *argv[])
 
 
         ofstream commodityStatsFile;
+//		ofstream communityStatsFile;
+//		communityStatsFile.open("communityStats.txt");
         commodityStatsFile.open("commodityStats.txt");
-        model->printCommodityStats(commodityStatsFile);
-		model->printCommunityStats(std::cout);
+        model->printCommodityStats(std::cout);//commodityStatsFile);
+	//	model->printCommunityStats(std::cout);//communityStatsFile);
         repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;

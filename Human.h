@@ -38,6 +38,7 @@ public:
 	int getNumTraders();
 	void incrementTrades();
 	int getTimesTraded();
+	int getCommunity();
 private:
 	double mps;//Float less than one
 	double salary;//Between 3 and 7

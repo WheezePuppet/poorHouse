@@ -10,9 +10,9 @@ class Model : public repast::Agent
 {
 public:
     static const int NUM_INITIAL_AGENTS = 100;
-    static int NUM_YEARS; // = 100;
+    static const int NUM_YEARS = 100;
     static const int TRADING_PARTNERS_PER_YEAR = 110;
-	static const int INTROVERT_DIAL = 50;
+	static int INTROVERT_DIAL;// = 50;
 	static const int COMMUNITIES = 10;
     static Model * instance();
 	void fillCommunities();

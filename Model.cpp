@@ -11,7 +11,7 @@ using namespace std;
 
 // For weird C++ reasons, "define" the static variables. (??)
 Model * Model::theInstance = NULL;
-int Model::NUM_YEARS;
+int Model::INTROVERT_DIAL;
 
 
 repast::SharedContext<Human>& Model::getActors()
@@ -82,9 +82,8 @@ void Model::createInitialAgents() {
 void Model::startYear() {
     repast::ScheduleRunner &theScheduleRunner = 
         repast::RepastProcess::instance()->getScheduleRunner();
-    cout << "======================================================" << endl;
-    cout << "Now starting year " <<  theScheduleRunner.currentTick() << "!"
-        << endl;
+    //cout << "======================================================" << endl;
+    //cout << "Now starting year " <<  theScheduleRunner.currentTick() << "!" << endl;
 }
 
 void Model::startSimulation() {
@@ -166,7 +165,7 @@ void Model::fillCommunities()
 	for(int i=0; i<COMMUNITIES; i++)
 	{
 		communities.push_back(*(new std::vector<Human *>));
-		std::cout<<"Added "<<i<<" communities\n";
+		//std::cout<<"Added "<<i<<" communities\n";
 	}
 } 
 
@@ -177,22 +176,26 @@ void Model::fillCommunities()
 */
 void Model::printCommodityStats(std::ostream & os) const {
 
-cout << "printing all stats!" << endl;
+//cout << "printing all stats!" << endl;
     repast::SharedContext<Human>::const_local_iterator actorIter = 
         actors.localBegin();
-
+		//os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
     while (actorIter != actors.localEnd()) {
-        os << (*actorIter)->getNumDeficientCommodities() << "," <<
+		os << (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << ","<<
-			  (*actorIter)->getSalary()<<","<< 
+			  (*actorIter)->getCommunity() << "," <<
+			  (*actorIter)->getSalary()<< "," << 
 	//		  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
-			  (*actorIter)->getTimesTraded()<< endl;
+			  (*actorIter)->getTimesTraded()<< "," <<
+			  Model::INTROVERT_DIAL<< std::endl;
+/*
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
               (*actorIter)->getNumSatisfiedCommodities() << "," <<
               (*actorIter)->getNumBloatedCommodities() << endl;
 cout << *(*actorIter) << endl;
+*/
         actorIter++;
     }
 }
