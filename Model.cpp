@@ -9,7 +9,10 @@
 
 using namespace std;
 
+// For weird C++ reasons, "define" the static variables. (??)
 Model * Model::theInstance = NULL;
+int Model::NUM_YEARS;
+
 
 repast::SharedContext<Human>& Model::getActors()
 {

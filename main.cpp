@@ -6,7 +6,15 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    if (argc != 2) {
+        cout << "Usage: " << argv[0] << " numYrs." << endl;
+        exit(1);
+    }
+
+    Model::NUM_YEARS = atoi(argv[1]);
+
     Model *model;
+    
     try {
         boost::mpi::environment env(argc,argv);
         repast::RepastProcess::init("");
