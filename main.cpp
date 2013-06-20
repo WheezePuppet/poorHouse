@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
         ofstream commodityStatsFile;
         commodityStatsFile.open("commodityStats.txt");
         model->printCommodityStats(commodityStatsFile);
+		model->printCommunityStats(std::cout);
         repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;

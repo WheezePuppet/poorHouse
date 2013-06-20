@@ -220,7 +220,7 @@ void Model::setTRADING_PARTNERS_PER_YEAR(int partners)
 }
 */
 
-vector<Human *> Model::getCommunityMembers(int communityNum) const
+std::vector<Human *> Model::getCommunityMembers(int communityNum) const
 {
 	return communities[communityNum];
 }
@@ -244,3 +244,22 @@ Human * Model::getRandomGlobalMember()
 	return oneAgent[0];
 }
 
+double Model::getAvgDeficientCommComm(int commuNum) const
+{
+	int i=getCommunitySize(commuNum);
+	double total=0;
+	for(int j=0; j<i; j++)
+	{
+		total+=((getCommunityMembers(commuNum))[j])->getNumDeficientCommodities();
+	}
+	total/=i;
+	return total;
+}
+
+void Model::printCommunityStats(std::ostream & os) const
+{
+	for(int i=0; i<Commodity::NUM_COMM; i++)
+	{
+		os << "Community " << i << " has " << getCommunitySize(i) << " members and an average of " << getAvgDeficientCommComm(i) << " deficient commodities\n";
+	}
+}

@@ -12,7 +12,7 @@ public:
     static const int NUM_INITIAL_AGENTS = 100;
     static const int NUM_YEARS = 100;
     static const int TRADING_PARTNERS_PER_YEAR = 110;
-	static const int INTROVERT_DIAL = 0;
+	static const int INTROVERT_DIAL = 50;
 	static const int COMMUNITIES = 10;
     static Model * instance();
 	void fillCommunities();
@@ -31,12 +31,12 @@ public:
     void printCommodityStats(std::ostream & os) const;
 	void setNUM_INITIAL_AGENTS(int);
 	void setNUM_YEARS(int);
-//	void setTRADING_PARTNERS_PER_YEAR(int); 
-
     std::vector<Human *> getCommunityMembers(int communityNum) const;
     int getCommunitySize(int communityNum) const;
     Human * getRandomCommunityMember(int communityNum) const;
     Human * getRandomGlobalMember();
+	double getAvgDeficientCommComm(int) const;
+    void printCommunityStats(std::ostream & os) const;
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
