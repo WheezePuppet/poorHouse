@@ -6,12 +6,13 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
+    if (argc != 3) {
         cout << "Usage: " << argv[0] << " dial." << endl;
         exit(1);
     }
 
     Model::INTROVERT_DIAL = atoi(argv[1]);
+	Model::SEED = atoi(argv[2]);
 
     Model *model;
     

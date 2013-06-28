@@ -13,6 +13,7 @@ public:
     static const int NUM_YEARS = 100;
     static const int TRADING_PARTNERS_PER_YEAR = 110;
 	static int INTROVERT_DIAL;// = 50;
+	static int SEED;
 	static const int COMMUNITIES = 10;
     static Model * instance();
 	void fillCommunities();

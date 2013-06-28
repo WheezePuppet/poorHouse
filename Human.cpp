@@ -16,7 +16,8 @@ using namespace std;
 
 int Human::getCommunity()
 {
-	return residentCommunity;
+	int i=(Model::instance()->getCommunitySize(residentCommunity));
+	return i;
 }
 
 int Human::getNumTraders()
@@ -155,12 +156,6 @@ repast::AgentId & Human::getId() {
 const repast::AgentId & Human::getId() const {
     return myId;
 }
-
-
-/*Human::Human(int gero)
-{
-	
-}*/
 
 void Human::earnIncome()
 {

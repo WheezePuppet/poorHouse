@@ -12,7 +12,7 @@ using namespace std;
 // For weird C++ reasons, "define" the static variables. (??)
 Model * Model::theInstance = NULL;
 int Model::INTROVERT_DIAL;
-
+int Model::SEED;
 
 repast::SharedContext<Human>& Model::getActors()
 {
@@ -22,6 +22,7 @@ repast::SharedContext<Human>& Model::getActors()
 Model::Model()
 {
     // Initialize random number distributions.
+	repast::Random::instance()->initialize(SEED);
     repast::Properties theProperties("./distributions.txt");
     repast::initializeRandom(theProperties);
     commodityNeedThresholdDistro =
@@ -181,9 +182,9 @@ void Model::printCommodityStats(std::ostream & os) const {
         actors.localBegin();
 		//os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
     while (actorIter != actors.localEnd()) {
-		os << (*actorIter)->getNumDeficientCommodities() << "," <<
-              (*actorIter)->getNumSatisfiedCommodities() << "," <<
-              (*actorIter)->getNumBloatedCommodities() << ","<<
+		os <</* (*actorIter)->getNumDeficientCommodities() << "," <<*/
+              ((*actorIter)->getNumSatisfiedCommodities() +
+              (*actorIter)->getNumBloatedCommodities()) << ","<<
 			  (*actorIter)->getCommunity() << "," <<
 			  (*actorIter)->getSalary()<< "," << 
 	//		  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
