@@ -35,6 +35,20 @@ double Human::getSalary()
 	return salary;
 }
 
+double Human::getWealth()
+{
+    double wealth = 0;
+    for (int i=0; i<Commodity::NUM_COMM; i++) {
+        wealth += commoditiesHeld[i];
+    }
+    return wealth;
+}
+
+double Human::getSatisfaction()
+{
+    return getNumSatisfiedCommodities() + getNumBloatedCommodities(); 
+}
+
 void Human::tradeWithRandomAgents()
 {
 /*

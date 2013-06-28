@@ -38,6 +38,8 @@ public:
     Human * getRandomGlobalMember();
 	double getAvgDeficientCommComm(int) const;
     void printCommunityStats(std::ostream & os) const;
+    double wealthGiniCoefficient() const;
+    double satisfactionGiniCoefficient() const;
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
@@ -46,6 +48,7 @@ private:
     repast::AgentId myId;
     void createInitialAgents();
     void startYear();
+    double computeGini(std::vector<double> values) const;
 	repast::SharedContext<Human> actors;
     repast::NumberGenerator *commodityNeedThresholdDistro;
     repast::NumberGenerator *commodityWantThresholdDistro;
