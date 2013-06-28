@@ -33,6 +33,8 @@ public:
     int getNumSatisfiedCommodities() const;
     int getNumBloatedCommodities() const;
 	double getSalary();
+	double getWealth();
+	double getSatisfaction();
 	double amtCommodity(int x);
 	int getMake();
 	int getNumTraders();

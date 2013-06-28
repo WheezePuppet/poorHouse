@@ -269,3 +269,81 @@ void Model::printCommunityStats(std::ostream & os) const
 		os << "Community " << i << " has " << getCommunitySize(i) << " members and an average of " << getAvgDeficientCommComm(i) << " deficient commodities\n";
 	}
 }
+
+/*
+ * wealthGiniCoefficient -- compute "Gini coefficient".
+ */
+double Model::wealthGiniCoefficient() const {
+
+    vector<double> wealths;
+
+    for (repast::SharedContext<Human>::const_local_iterator actorIter = 
+        actors.localBegin();
+        actorIter != actors.localEnd(); actorIter++) {
+        
+		wealths.push_back((*actorIter)->getWealth());
+    }
+
+    return computeGini(wealths);
+}
+
+/*
+ * satisfactionGiniCoefficient -- compute "Russell coefficient".
+ */
+double Model::satisfactionGiniCoefficient() const {
+
+    vector<double> satisfactions;
+
+    for (repast::SharedContext<Human>::const_local_iterator actorIter = 
+        actors.localBegin();
+        actorIter != actors.localEnd(); actorIter++) {
+        
+		satisfactions.push_back((*actorIter)->getSatisfaction());
+    }
+
+    return computeGini(satisfactions);
+}
+
+/*
+ * Dumbly and mechanically translated to C++ from R function in reldist 
+ *   library; see http://rss.acs.unt.edu/Rdoc/library/reldist/html/gini.html.
+ *   - SD
+ */
+double Model::computeGini(vector<double> values) const {
+
+    int n = values.size();
+    vector<double> p(n);
+    vector<double> nu(n);
+    vector<double> wx(n);
+    vector<double> first(n-1);
+    vector<double> second(n-1);
+
+    sort(values.begin(), values.end());
+    
+    for (int i=0; i<n; i++) {
+        p[i] = ((double)i+1)/n;
+    }
+    for (int i=0; i<n; i++) {
+        wx[i] = values[i]/n;
+    }
+    nu[0] = wx[0];
+    for (int i=1; i<n; i++) {
+        nu[i] = nu[i-1] + wx[i];
+    }
+    for (int i=0; i<n; i++) {
+        nu[i] /= nu[n-1];
+    }
+    double sum_first = 0.0;
+    for (int i=0; i<n-1; i++) {
+        first[i] = nu[i+1] * p[i];
+        sum_first += first[i];
+    }
+    double sum_second = 0.0;
+    for (int i=0; i<n-1; i++) {
+        second[i] = nu[i] * p[i+1];
+        sum_second += second[i];
+    }
+
+    return sum_first - sum_second;
+}
+
