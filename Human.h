@@ -20,7 +20,7 @@ friend std::ostream & operator<<(std::ostream & os, const Human & h);
 public:
 	void step();
 	Human();
-	//Human(int);
+	Human(Human *);
 	void earnIncome();
 	void consume();
 	void considerHavingAChild();
@@ -46,7 +46,7 @@ private:
 	double salary;//Between 3 and 7
 	int producedCommodity;//Between 0 and 10
 	int numTraders;//Between 5 and 100
-	Human *parent;
+	Human * parent;
     repast::AgentId myId;
 	int age;
 	int residentCommunity;

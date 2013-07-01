@@ -140,10 +140,7 @@ Human::Human()
 	mps=Model::instance()->generateMps();
 	numTraders=Model::instance()->generateNumTraders();
 	residentCommunity=Model::instance()->generateCommunity(this);
-	//probOutTrade=Model::instance()->generateOutsideTrade();
-
-	//Random age for first generation, not for children
-	age=0;//(rand()%20)+20;
+	age=0;
 	timesTraded=0;
 	//Random initial savings?
 	for(int i=0; i<10; i++)
@@ -157,6 +154,35 @@ Human::Human()
 		commoditiesHeld[i]=0;
 	}
 	//commoditiesHeld[producedCommodity]=salary;
+}
+
+Human::Human(Human * progenitor)
+{
+	parent=progenitor;
+    myId = repast::AgentId(nextAgentNum++,0,0); 
+	producedCommodity=Model::instance()->generateMake();
+	salary=Model::instance()->generateSalary();
+	/*while((((salary-progenitor.salary)^2)/progenitor.salary)>Model::LEMMINGNESS)
+	{
+		salary=Model::instance()->generateSalary();
+	}*/
+	mps=Model::instance()->generateMps();
+	numTraders=Model::instance()->generateNumTraders();
+	residentCommunity=parent->residentCommunity;//Model::instance()->generateCommunity(this);
+	age=0;
+	timesTraded=0;
+	//Random initial savings?
+	for(int i=0; i<10; i++)
+	{
+		minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
+		while(minThreshold[i]<Commodity::getCommNum(i).getAmtCons())
+		{
+			minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
+		}
+		maxThreshold[i]=Model::instance()->generateWantCommodityThreshold();
+		commoditiesHeld[i]=0;
+	}
+	parent->children.push_back(this);
 }
 
 Human::~Human() {
@@ -216,13 +242,12 @@ void Human::considerDeath()
 
 void Human::considerHavingAChild()
 {
-	srand(time(0));
+	int prob=Model::instance()->generateChild();
 	if(age>20 && age<30)
 	{
-		int prob=rand()%100;
-		if(prob>40)
+		if(prob>25)
 		{
-			//Create children by calling child constructor
+			Human(this);
 		}
 	}
 }

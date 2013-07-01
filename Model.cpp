@@ -13,6 +13,7 @@ using namespace std;
 Model * Model::theInstance = NULL;
 int Model::INTROVERT_DIAL;
 int Model::SEED;
+int Model::LEMMINGNESS;
 
 repast::SharedContext<Human>& Model::getActors()
 {
@@ -43,6 +44,8 @@ Model::Model()
 		repast::Random::instance()->getGenerator("trade");
 	communityDistro=
 		repast::Random::instance()->getGenerator("community");
+	childDistro=
+		repast::Random::instance()->getGenerator("children");
 	fillCommunities();
 }
 
@@ -78,6 +81,13 @@ void Model::createInitialAgents() {
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::consume)));
     }
+    theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::printGini)));
+}
+
+void Model::printGini() {
+	std::cout << wealthGiniCoefficient() << ',' <<
+		satisfactionGiniCoefficient() << std::endl;
 }
 
 void Model::startYear() {
@@ -88,7 +98,6 @@ void Model::startYear() {
 }
 
 void Model::startSimulation() {
-
 
     createInitialAgents();
 /*
@@ -159,6 +168,10 @@ int Model::generateCommunity(Human * toAdd) {
 	randomCommunity = randomCommunity%Model::COMMUNITIES;
 	communities[randomCommunity].push_back(toAdd);
 	return randomCommunity;
+}
+
+int Model::generateChild() {
+	return childDistro->next();
 }
 
 void Model::fillCommunities()

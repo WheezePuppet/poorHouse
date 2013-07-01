@@ -14,6 +14,7 @@ public:
     static const int TRADING_PARTNERS_PER_YEAR = 110;
 	static int INTROVERT_DIAL;// = 50;
 	static int SEED;
+	static int LEMMINGNESS;
 	static const int COMMUNITIES = 10;
     static Model * instance();
 	void fillCommunities();
@@ -27,6 +28,7 @@ public:
 	int generateNumTraders();
 	int generateOutsideTrade();
 	int generateCommunity(Human *);
+	int generateChild();
     void startSimulation();
 	repast::SharedContext<Human>& getActors();
     void printCommodityStats(std::ostream & os) const;
@@ -40,6 +42,7 @@ public:
     void printCommunityStats(std::ostream & os) const;
     double wealthGiniCoefficient() const;
     double satisfactionGiniCoefficient() const;
+	void printGini();
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
@@ -60,6 +63,7 @@ private:
 	repast::NumberGenerator *tradeDistro;
 	repast::NumberGenerator *outsideTrade;
 	repast::NumberGenerator *communityDistro;
+	repast::NumberGenerator *childDistro;
     static Model * theInstance;
 	Model();
 	std::vector<std::vector<Human *> > communities;
