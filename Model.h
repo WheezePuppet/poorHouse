@@ -14,8 +14,8 @@ public:
     static const int TRADING_PARTNERS_PER_YEAR = 110;
 	static int INTROVERT_DIAL;// = 50;
 	static int SEED;
-	static int LEMMINGNESS;
-	static const int COMMUNITIES = 10;
+	static const int LEMMINGNESS = 100;
+	static const int COMMUNITIES = 20;
     static Model * instance();
 	void fillCommunities();
     double generateNeedCommodityThreshold();
@@ -43,6 +43,8 @@ public:
     double wealthGiniCoefficient() const;
     double satisfactionGiniCoefficient() const;
 	void printGini();
+	void incrementTrades();
+	void resetTrades();
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
@@ -52,6 +54,7 @@ private:
     void createInitialAgents();
     void startYear();
     double computeGini(std::vector<double> values) const;
+	int yearlyTrades;
 	repast::SharedContext<Human> actors;
     repast::NumberGenerator *commodityNeedThresholdDistro;
     repast::NumberGenerator *commodityWantThresholdDistro;

@@ -1,10 +1,18 @@
 QUESTIONS
 	How does the number successful trades change over time?
+		begins very high, then drops off
 	Is non-zero Russell coefficient explained by non-supportable people?
+		gini and Russell coefficeint drop drastically when salary is
+		increased, but not to zero.
 	Why does Russell coefficient wobble?
 	How does introversion tipping point change by salary and community size?
 		Also, change number of commodities
+		Salary size: does not change tipping point, though it does
+		change number of agents at low satisfaction
+		Community size:
 	Lop off the trades-satisfaction normalized curve
+		done, looks like a reverse tipping point of the introversion
+		people need to trade about a 3rd of max to get past tip
 
 WE KNOW
 	Tipping point at about 80 introversion level

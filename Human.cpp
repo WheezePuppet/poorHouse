@@ -322,6 +322,7 @@ void Human::trade(int comm1Num, int comm2Num,
 		//std::cout<<*this;
 		//std::cout<<B;
 		//std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
+		Model::instance()->incrementTrades();
 		swap(change, B, comm1Num, comm2Num);
 		//std::cout<<*this;
 	}

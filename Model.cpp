@@ -13,11 +13,21 @@ using namespace std;
 Model * Model::theInstance = NULL;
 int Model::INTROVERT_DIAL;
 int Model::SEED;
-int Model::LEMMINGNESS;
+//int Model::LEMMINGNESS;
 
 repast::SharedContext<Human>& Model::getActors()
 {
 	return actors;
+}
+
+void Model::incrementTrades()
+{
+	yearlyTrades++;
+}
+
+void Model::resetTrades()
+{
+	yearlyTrades=0;
 }
 
 Model::Model()
@@ -47,6 +57,7 @@ Model::Model()
 	childDistro=
 		repast::Random::instance()->getGenerator("children");
 	fillCommunities();
+	yearlyTrades=0;
 }
 
 void Model::createInitialAgents() {
@@ -81,13 +92,16 @@ void Model::createInitialAgents() {
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::consume)));
     }
-    theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Model>(this, &Model::printGini)));
+    /*theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::printGini)));*/
+    theScheduleRunner.scheduleEvent(1.5, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
 }
 
 void Model::printGini() {
 	std::cout << wealthGiniCoefficient() << ',' <<
-		satisfactionGiniCoefficient() << std::endl;
+		satisfactionGiniCoefficient() << ',' <<
+		yearlyTrades << std::endl;
 }
 
 void Model::startYear() {
