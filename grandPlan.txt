@@ -1,11 +1,6 @@
-QUESTIONS
-    How does the *amount* traded vary over time?
-    (** in progress)
-	Is non-zero Russell coefficient explained by non-supportable people?
-		gini and Russell coefficeint drop drastically when salary is
-		increased, but not to zero.
-    (** Double-check: if you seriously REMOVE any possibility of a 
-        non-supportable person, does this in fact confirm the above)
+
+    As of 7/3/13, when we segued from "market stuff" to "children stuff," here
+was the state of affairs:
 
 WE KNOW
 	Tipping point at about 80 introversion level
@@ -20,6 +15,18 @@ WE KNOW
 
 	Above a certain salary, salary is not very important to satisfaction
     Number of successful trades reaches a wobbly equilibrium over time.
+    Total traded volume reaches a wobbly equilibrium over time.
+
+    * There are a significant number of "unsatisfied people" (meaning, # of
+        satisfied goods is < 8) even if:
+        - we only look at people in the bottom half of total neediness
+        - we eliminate all non-supportable people
+        - we jack up the # of agents to 500 and the # of trades initiated
+            per person to a constant 500
+        - we're trading for 100 years (but which we know is not significant
+            anyway)
 	
 UNKNOWNS
+    *Why* do we continue to have non-satisfied people, even considering all
+        the attempts to create a satisfiable environment??
     Why the Russell coefficient wobbles over time. (not important)
