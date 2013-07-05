@@ -11,7 +11,6 @@ WE KNOW
             (Introversion35Salary, IntroversionImage20)
 
     Tipping point at about 90/year trading rate
-        ** Double-check that this moves like we think it will
 
 	Above a certain salary, salary is not very important to satisfaction
     Number of successful trades reaches a wobbly equilibrium over time.
@@ -30,3 +29,16 @@ UNKNOWNS
     *Why* do we continue to have non-satisfied people, even considering all
         the attempts to create a satisfiable environment??
     Why the Russell coefficient wobbles over time. (not important)
+    How much does the tipping poitn at 90/year trading depend on what 
+        happened in the very last year of sim?
+
+
+-----------------------------------------
+Price equilibrium study:
+
+- If prices change based on individual negotiations, do relative price levels
+  emerge that confirm Walrasian predictions? (some goods have higher total
+  demand than others (demand vectors are random), and some have higher total 
+  supply (salaries and good-that-i-get-my-salary-for are random.))
+- What if information is shared, globally or locally, to influence prices at
+  the individual trade level?
