@@ -1,11 +1,6 @@
-QUESTIONS
-    How does the *amount* traded vary over time?
-    (** in progress)
-	Is non-zero Russell coefficient explained by non-supportable people?
-		gini and Russell coefficeint drop drastically when salary is
-		increased, but not to zero.
-    (** Double-check: if you seriously REMOVE any possibility of a 
-        non-supportable person, does this in fact confirm the above)
+
+    As of 7/5/13, when we segued from "market stuff" to "children stuff," here
+was the state of affairs:
 
 WE KNOW
 	Tipping point at about 80 introversion level
@@ -16,10 +11,41 @@ WE KNOW
             (Introversion35Salary, IntroversionImage20)
 
     Tipping point at about 90/year trading rate
-        ** Double-check that this moves like we think it will
 
 	Above a certain salary, salary is not very important to satisfaction
     Number of successful trades reaches a wobbly equilibrium over time.
+    Total traded volume reaches a wobbly equilibrium over time.
+
+    * There are a significant number of "unsatisfied people" (meaning, # of
+        satisfied goods is < 8) even if:
+        - we only look at people in the bottom half of total neediness
+        - we eliminate all non-supportable people
+        - we jack up the # of agents to 500 and the # of trades initiated
+            per person to a constant 500
+        - we're trading for 100 years (but which we know is not significant
+            anyway)
+        - we jack up salaries way high
+    + Explanations for this, even when all parameters are set for max
+        satisfaction:
+        * "surplus good producers" go needy because they just can't find
+            anyone who wants what they produce. Even if there's plenty of
+            what they need in the system, and they continually encounter
+            people who have it, they just have no ammo.
 	
 UNKNOWNS
+    *Why* do we continue to have non-satisfied people, even considering all
+        the attempts to create a satisfiable environment??
     Why the Russell coefficient wobbles over time. (not important)
+    How much does the tipping poitn at 90/year trading depend on what 
+        happened in the very last year of sim?
+
+
+-----------------------------------------
+Price equilibrium study:
+
+- If prices change based on individual negotiations, do relative price levels
+  emerge that confirm Walrasian predictions? (some goods have higher total
+  demand than others (demand vectors are random), and some have higher total 
+  supply (salaries and good-that-i-get-my-salary-for are random.))
+- What if information is shared, globally or locally, to influence prices at
+  the individual trade level?
