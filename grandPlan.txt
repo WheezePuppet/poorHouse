@@ -1,5 +1,5 @@
 
-    As of 7/3/13, when we segued from "market stuff" to "children stuff," here
+    As of 7/5/13, when we segued from "market stuff" to "children stuff," here
 was the state of affairs:
 
 WE KNOW
@@ -24,6 +24,13 @@ WE KNOW
             per person to a constant 500
         - we're trading for 100 years (but which we know is not significant
             anyway)
+        - we jack up salaries way high
+    + Explanations for this, even when all parameters are set for max
+        satisfaction:
+        * "surplus good producers" go needy because they just can't find
+            anyone who wants what they produce. Even if there's plenty of
+            what they need in the system, and they continually encounter
+            people who have it, they just have no ammo.
 	
 UNKNOWNS
     *Why* do we continue to have non-satisfied people, even considering all
