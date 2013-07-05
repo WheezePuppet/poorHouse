@@ -9,13 +9,13 @@
 class Model : public repast::Agent
 {
 public:
-    static const int NUM_INITIAL_AGENTS = 100;
-    static const int NUM_YEARS = 100;
-    static const int TRADING_PARTNERS_PER_YEAR = 110;
+	double getTick();
+    static const int NUM_INITIAL_AGENTS = 500;
+    static const int NUM_YEARS = 10;
 	static int INTROVERT_DIAL;// = 50;
 	static int SEED;
 	static const int LEMMINGNESS = 100;
-	static const int COMMUNITIES = 20;
+	static const int COMMUNITIES = 10;
     static Model * instance();
 	void fillCommunities();
     double generateNeedCommodityThreshold();
@@ -45,6 +45,9 @@ public:
 	void printGini();
 	void incrementTrades();
 	void resetTrades();
+	void addToTradedAmount(double);
+	void resetTradedAmount();
+	void inter(Human *);
 
 virtual repast::AgentId & getId();
 virtual const repast::AgentId & getId() const;
@@ -55,6 +58,7 @@ private:
     void startYear();
     double computeGini(std::vector<double> values) const;
 	int yearlyTrades;
+	double yearlyAmountTraded;
 	repast::SharedContext<Human> actors;
     repast::NumberGenerator *commodityNeedThresholdDistro;
     repast::NumberGenerator *commodityWantThresholdDistro;
@@ -70,5 +74,6 @@ private:
     static Model * theInstance;
 	Model();
 	std::vector<std::vector<Human *> > communities;
+	std::vector<Human *> graveyard;
 };
 #endif

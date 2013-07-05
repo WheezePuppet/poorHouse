@@ -10,6 +10,7 @@ class Commodity{
 		void consFail(int x);
 		void produce(float quantity);
 		double getAmtCons();
+		double getTotalAmt();
 
 	private:
 		static Commodity *theCommodities[NUM_COMM];

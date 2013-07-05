@@ -14,6 +14,11 @@
 
 using namespace std; 
 
+double Human::getNeeds()
+{
+	return allNeeds;
+}
+
 int Human::getCommunity()
 {
 	int i=(Model::instance()->getCommunitySize(residentCommunity));
@@ -136,13 +141,11 @@ Human::Human()
 {
     myId = repast::AgentId(nextAgentNum++,0,0); 
 	producedCommodity=Model::instance()->generateMake();
-	salary=Model::instance()->generateSalary();
 	mps=Model::instance()->generateMps();
 	numTraders=Model::instance()->generateNumTraders();
 	residentCommunity=Model::instance()->generateCommunity(this);
 	age=0;
 	timesTraded=0;
-	//Random initial savings?
 	for(int i=0; i<10; i++)
 	{
 		minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
@@ -153,7 +156,16 @@ Human::Human()
 		maxThreshold[i]=Model::instance()->generateWantCommodityThreshold();
 		commoditiesHeld[i]=0;
 	}
-	//commoditiesHeld[producedCommodity]=salary;
+	allNeeds=0;
+	for(int i=0; i<10; i++)
+	{
+		allNeeds+=minThreshold[i];
+	}
+	salary=Model::instance()->generateSalary();
+	while(salary<allNeeds)
+	{
+		salary=Model::instance()->generateSalary();
+	}
 }
 
 Human::Human(Human * progenitor)
@@ -171,7 +183,6 @@ Human::Human(Human * progenitor)
 	residentCommunity=parent->residentCommunity;//Model::instance()->generateCommunity(this);
 	age=0;
 	timesTraded=0;
-	//Random initial savings?
 	for(int i=0; i<10; i++)
 	{
 		minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
@@ -202,6 +213,7 @@ void Human::earnIncome()
 //cout << "earning!!" << endl;
 	//savings+=(salary+(savings*rr))*mps;
 	commoditiesHeld[producedCommodity]+=salary;
+	Commodity::getCommNum(producedCommodity).produce(salary);
 }
 
 void Human::consume()
@@ -210,6 +222,8 @@ void Human::consume()
 	//cons.push_back(salary+(savings*rr))*(1-mps);
 	//cout<<*this<<endl;
 	//ofstream statsBeforeConsume;
+	if(Model::instance()->getTick()<Model::NUM_YEARS-1)
+	{
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
 		if(commoditiesHeld[i]-Commodity::getCommNum(i).getAmtCons()>=0)
@@ -224,6 +238,7 @@ void Human::consume()
 		}
 		//cout<<this;
 		//Commodity::getCommNum(i).consume();
+	}
 	}
 }
 
@@ -323,6 +338,7 @@ void Human::trade(int comm1Num, int comm2Num,
 		//std::cout<<B;
 		//std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
 		Model::instance()->incrementTrades();
+		Model::instance()->addToTradedAmount(change);
 		swap(change, B, comm1Num, comm2Num);
 		//std::cout<<*this;
 	}

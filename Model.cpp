@@ -15,6 +15,13 @@ int Model::INTROVERT_DIAL;
 int Model::SEED;
 //int Model::LEMMINGNESS;
 
+double Model::getTick()
+{
+    repast::ScheduleRunner &theScheduleRunner = 
+        repast::RepastProcess::instance()->getScheduleRunner();
+	return theScheduleRunner.currentTick();
+}
+
 repast::SharedContext<Human>& Model::getActors()
 {
 	return actors;
@@ -28,6 +35,19 @@ void Model::incrementTrades()
 void Model::resetTrades()
 {
 	yearlyTrades=0;
+}
+void Model::addToTradedAmount(double change)
+{
+	yearlyAmountTraded+=change;
+}
+void Model::resetTradedAmount()
+{
+	yearlyAmountTraded=0;
+}
+
+void Model::inter(Human * body)
+{
+	graveyard.push_back(body);
 }
 
 Model::Model()
@@ -58,6 +78,7 @@ Model::Model()
 		repast::Random::instance()->getGenerator("children");
 	fillCommunities();
 	yearlyTrades=0;
+	yearlyAmountTraded=0;
 }
 
 void Model::createInitialAgents() {
@@ -92,16 +113,18 @@ void Model::createInitialAgents() {
             new repast::MethodFunctor<Human>(newHuman,
                 &Human::consume)));
     }
-    /*theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Model>(this, &Model::printGini)));*/
+    theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::printGini)));
     theScheduleRunner.scheduleEvent(1.5, 1, repast::Schedule::FunctorPtr(
 		new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
+    theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetTradedAmount)));
 }
 
 void Model::printGini() {
 	std::cout << wealthGiniCoefficient() << ',' <<
 		satisfactionGiniCoefficient() << ',' <<
-		yearlyTrades << std::endl;
+		yearlyTrades<< std::endl;
 }
 
 void Model::startYear() {
@@ -205,17 +228,28 @@ void Model::fillCommunities()
 void Model::printCommodityStats(std::ostream & os) const {
 
 //cout << "printing all stats!" << endl;
-    repast::SharedContext<Human>::const_local_iterator actorIter = 
-        actors.localBegin();
+    //repast::SharedContext<Human>::const_local_iterator actorIter = 
+        //actors.localBegin();
 		//os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
-    while (actorIter != actors.localEnd()) {
+    //while (actorIter != actors.localEnd()) {
+	for(int k=0; k<Commodity::NUM_COMM; k++)
+	{
+		os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
+	}
+	for(int i=0; i<Model::COMMUNITIES; i++)
+	{
+		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
+		{
+		Human * man = Model::instance()->getCommunityMembers(i)[j];
 		os <</* (*actorIter)->getNumDeficientCommodities() << "," <<*/
-              ((*actorIter)->getNumSatisfiedCommodities() +
-              (*actorIter)->getNumBloatedCommodities()) << ","<<
-			  (*actorIter)->getCommunity() << "," <<
-			  (*actorIter)->getSalary()<< "," << 
-	//		  (*actorIter)->amtCommodity((*actorIter)->getMake())<< "," <<
-			  (*actorIter)->getTimesTraded()<< "," <<
+              ((*man).getNumSatisfiedCommodities() +
+              (*man).getNumBloatedCommodities()) << ","<<
+			  (*man).getCommunity() << "," <<
+			  (*man).getSalary()<< "," << 
+			  (*man).getMake()<< "," <<
+			  (*man).getTimesTraded()<< "," <<
+		//	  (*actorIter)->getNeeds()<< "," <<
+			  
 			  Model::INTROVERT_DIAL<< std::endl;
 /*
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
@@ -224,7 +258,8 @@ void Model::printCommodityStats(std::ostream & os) const {
               (*actorIter)->getNumBloatedCommodities() << endl;
 cout << *(*actorIter) << endl;
 */
-        actorIter++;
+        //actorIter++;
+	}
     }
 }
 

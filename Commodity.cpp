@@ -30,6 +30,11 @@ Commodity & Commodity::getCommNum(int num)
 	return *theCommodities[num];
 }
 
+double Commodity::getTotalAmt()
+{
+	return totalAmountInSystem;
+}
+
 Commodity::Commodity()//Determine consumption rate, set 
 {
 //std::cout << "entering constructor" << std::endl;

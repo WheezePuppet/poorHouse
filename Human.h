@@ -41,6 +41,7 @@ public:
 	void incrementTrades();
 	int getTimesTraded();
 	int getCommunity();
+	double getNeeds();
 private:
 	double mps;//Float less than one
 	double salary;//Between 3 and 7
@@ -51,6 +52,7 @@ private:
 	int age;
 	int residentCommunity;
 	int timesTraded;
+	double allNeeds;
 
     double commoditiesHeld [Commodity::NUM_COMM];
 	double minThreshold [Commodity::NUM_COMM];//Between 0 and 5
