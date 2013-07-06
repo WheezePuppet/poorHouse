@@ -162,10 +162,11 @@ Human::Human()
 		allNeeds+=minThreshold[i];
 	}
 	salary=Model::instance()->generateSalary();
-	while(salary<allNeeds)
+/*	while(salary<allNeeds)
 	{
 		salary=Model::instance()->generateSalary();
 	}
+*/
 }
 
 Human::Human(Human * progenitor)
@@ -222,8 +223,8 @@ void Human::consume()
 	//cons.push_back(salary+(savings*rr))*(1-mps);
 	//cout<<*this<<endl;
 	//ofstream statsBeforeConsume;
-	if(Model::instance()->getTick()<Model::NUM_YEARS-1)
-	{
+	//if(Model::instance()->getTick()<Model::NUM_YEARS-1)
+	//{
 	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
 		if(commoditiesHeld[i]-Commodity::getCommNum(i).getAmtCons()>=0)
@@ -238,7 +239,7 @@ void Human::consume()
 		}
 		//cout<<this;
 		//Commodity::getCommNum(i).consume();
-	}
+	//}
 	}
 }
 
