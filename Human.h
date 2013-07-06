@@ -43,6 +43,8 @@ public:
 	int getCommunity();
 	double getNeeds();
 private:
+	void bequeathOne(Human *);
+	void bequeathTwo(Human *);
 	double mps;//Float less than one
 	double salary;//Between 3 and 7
 	int producedCommodity;//Between 0 and 10

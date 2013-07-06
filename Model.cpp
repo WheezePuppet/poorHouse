@@ -48,6 +48,13 @@ void Model::resetTradedAmount()
 void Model::inter(Human * body)
 {
 	graveyard.push_back(body);
+	std::vector<Human *> grieving=communities[(*body).getCommunity()];
+	grieving.erase(std::find(grieving.begin(),grieving.end(),body));
+}
+
+std::vector<Human *> Model::getGraveyard()
+{
+	return graveyard;
 }
 
 Model::Model()
@@ -339,14 +346,22 @@ void Model::printCommunityStats(std::ostream & os) const
 double Model::wealthGiniCoefficient() const {
 
     vector<double> wealths;
-
+/*
     for (repast::SharedContext<Human>::const_local_iterator actorIter = 
         actors.localBegin();
         actorIter != actors.localEnd(); actorIter++) {
         
 		wealths.push_back((*actorIter)->getWealth());
     }
-
+*/
+	for(int i=0; i<Model::COMMUNITIES; i++)
+	{
+		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
+		{
+			Human * man = Model::instance()->getCommunityMembers(i)[j];
+			wealths.push_back((*man).getWealth());
+		}
+	}
     return computeGini(wealths);
 }
 
@@ -356,14 +371,22 @@ double Model::wealthGiniCoefficient() const {
 double Model::satisfactionGiniCoefficient() const {
 
     vector<double> satisfactions;
-
+/*
     for (repast::SharedContext<Human>::const_local_iterator actorIter = 
         actors.localBegin();
         actorIter != actors.localEnd(); actorIter++) {
         
 		satisfactions.push_back((*actorIter)->getSatisfaction());
     }
-
+*/
+	for(int i=0; i<Model::COMMUNITIES; i++)
+	{
+		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
+		{
+			Human * man = Model::instance()->getCommunityMembers(i)[j];
+			satisfactions.push_back((*man).getSatisfaction());
+		}
+	}
     return computeGini(satisfactions);
 }
 

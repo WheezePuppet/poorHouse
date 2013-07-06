@@ -35,6 +35,7 @@ public:
 	void setNUM_INITIAL_AGENTS(int);
 	void setNUM_YEARS(int);
     std::vector<Human *> getCommunityMembers(int communityNum) const;
+    std::vector<Human *> getGraveyard();
     int getCommunitySize(int communityNum) const;
     Human * getRandomCommunityMember(int communityNum) const;
     Human * getRandomGlobalMember();

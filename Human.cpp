@@ -244,13 +244,47 @@ void Human::consume()
 
 void Human::considerDeath()
 {
-	srand(time(0));
+	int prob=Model::instance()->generateLifeProb();
 	if(age>30)
 	{
-		int prob=rand()%100;
 		if(prob<4)
 		{
-			
+			Model::instance()->inter(this);
+			bequeathOne(this);
+		}
+	}
+}
+
+void Human::bequeathOne(Human * man)
+{
+	if((*man).children.size()==0)
+	{
+
+	}
+	else
+	{
+		for(int i=0; i<(*man).children.size(); i++)
+		{
+			for(int j=0; j<Commodity::NUM_COMM; j++)
+			{
+				double progeny=(*man).children.size();
+				(*man).children[i]->commoditiesHeld[j]+=(*man).commoditiesHeld[j]/progeny;
+			}
+		}
+	}
+}
+
+void Human::bequeathTwo(Human * man)
+{
+	if((*man).children.size()==0)
+	{
+		
+	}
+	else
+	{
+		for(int i=0; i<Commodity::NUM_COMM; i++)
+		{
+			(*man).children[0]->commoditiesHeld[i]+=(*man).commoditiesHeld[i];
 		}
 	}
 }
