@@ -10,8 +10,8 @@ class Model : public repast::Agent
 {
 public:
 	double getTick();
-    static const int NUM_INITIAL_AGENTS = 500;
-    static const int NUM_YEARS = 10;
+    static const int NUM_INITIAL_AGENTS = 100;
+    static const int NUM_YEARS = 100;
 	static int INTROVERT_DIAL;// = 50;
 	static int SEED;
 	static const int LEMMINGNESS = 100;
