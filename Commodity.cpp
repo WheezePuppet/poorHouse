@@ -15,12 +15,12 @@ void Commodity::consume()
 	totalAmountInSystem-=amtCons;
 }
 
-void Commodity::consFail(int x)
+void Commodity::consFail(double x)
 {
 	totalAmountInSystem-=x;
 }
 
-void Commodity::produce(float quantity)
+void Commodity::produce(double quantity)
 {
 	totalAmountInSystem+=quantity;
 }
@@ -30,7 +30,7 @@ Commodity & Commodity::getCommNum(int num)
 	return *theCommodities[num];
 }
 
-double Commodity::getTotalAmt()
+double Commodity::getTotalAmt() const
 {
 	return totalAmountInSystem;
 }
@@ -44,7 +44,7 @@ Commodity::Commodity()//Determine consumption rate, set
 //std::cout << "leaving constructor" << std::endl;
 }
 
-double Commodity::getAmtCons()
+double Commodity::getAmtCons() const
 {
 	return amtCons;
 }

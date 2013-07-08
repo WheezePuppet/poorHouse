@@ -15,6 +15,26 @@ int Model::INTROVERT_DIAL;
 int Model::SEED;
 //int Model::LEMMINGNESS;
 
+void Model::incrementPopulation()
+{
+	population++;
+}
+
+void Model::decrementPopulation()
+{
+	population--;
+}
+
+int Model::getPopulation()
+{
+	return population;
+}
+
+void Model::addToActors(Human * man)
+{
+	actors.addAgent(man);
+}
+
 double Model::getTick()
 {
     repast::ScheduleRunner &theScheduleRunner = 
@@ -49,7 +69,15 @@ void Model::inter(Human * body)
 {
 	graveyard.push_back(body);
 	std::vector<Human *> grieving=communities[(*body).getCommunity()];
-	grieving.erase(std::find(grieving.begin(),grieving.end(),body));
+	int h=grieving.size();
+	for(int i=0; i<h; i++)
+	{
+		if(grieving[i]==body)
+		{
+			grieving.erase(grieving.begin()+i);
+		}
+	}
+	//grieving.erase(std::find(grieving.begin(),grieving.end(),body));
 }
 
 std::vector<Human *> Model::getGraveyard()
@@ -73,8 +101,8 @@ Model::Model()
 		repast::Random::instance()->getGenerator("make");
 	mpsDistro =
 		repast::Random::instance()->getGenerator("mps");
-	deathChildDistro =		
-		repast::Random::instance()->getGenerator("deathChild");
+	deathDistro =		
+		repast::Random::instance()->getGenerator("death");
 	consumeDistro =
 		repast::Random::instance()->getGenerator("consume");
 	tradeDistro =
@@ -86,6 +114,7 @@ Model::Model()
 	fillCommunities();
 	yearlyTrades=0;
 	yearlyAmountTraded=0;
+	population=0;
 }
 
 void Model::createInitialAgents() {
@@ -105,20 +134,23 @@ void Model::createInitialAgents() {
     for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
         Human *newHuman = new Human();
         actors.addAgent(newHuman);
-        theScheduleRunner.scheduleEvent(1.1, 1, repast::Schedule::FunctorPtr(
+        theScheduleRunner.scheduleEvent(1.1, repast::Schedule::FunctorPtr(
             new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
-        theScheduleRunner.scheduleEvent(1.2, 1, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman,
-                &Human::tradeWithRandomAgents)));
+        theScheduleRunner.scheduleEvent(1.2, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::tradeWithRandomAgents)));
 		//Print the stats before consuming
 	/*	ofstream statsBeforeConsume;
 		statsBeforeConsume.open("statsBeforeConsume.txt");
         theScheduleRunner.scheduleEvent(1.25, 1, repast::Schedule::FunctorPtr(
 			new repast::MethodFunctor<Model>(this, &Model::printCommodityStats(statsBeforeConsume))));
 */
-        theScheduleRunner.scheduleEvent(1.3, 1, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman,
-                &Human::consume)));
+        theScheduleRunner.scheduleEvent(1.3, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::consume)));
+        theScheduleRunner.scheduleEvent(1.31, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::considerHavingAChild)));
+        theScheduleRunner.scheduleEvent(1.32, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::considerDeath)));
+		
     }
     theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
 		new repast::MethodFunctor<Model>(this, &Model::printGini)));
@@ -137,8 +169,8 @@ void Model::printGini() {
 void Model::startYear() {
     repast::ScheduleRunner &theScheduleRunner = 
         repast::RepastProcess::instance()->getScheduleRunner();
-    //cout << "======================================================" << endl;
-    //cout << "Now starting year " <<  theScheduleRunner.currentTick() << "!" << endl;
+    cout << "======================================================" << endl;
+    cout << "Now starting year " <<  theScheduleRunner.currentTick() << " with a population of " << population << "!" << endl;
 }
 
 void Model::startSimulation() {
@@ -193,7 +225,7 @@ int Model::generateMake() {
 }
 
 double Model::generateLifeProb() {
-	return deathChildDistro->next();
+	return deathDistro->next();
 }
 
 double Model::generateConsume() {
