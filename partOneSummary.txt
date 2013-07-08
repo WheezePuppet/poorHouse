@@ -7,15 +7,15 @@ This shift was remarkably unaffected by community size or increases in salary.
 
 	Beyond the point of salary being greater then the sum of the agent's needs, salary has no effect on number of satisfied goods.
 Once normalized to account for the normal distribution of salary, the satisfaction of agents above 30 salary stayed at roughly 8.
-When the salary selection was modified to prevent people's needs from being greater than their salary, gini dropped.
+When the salary selection was modified to prevent people's needs from being greater than their salary, Gini coefficient dropped.
 When salary was cranked up high, the Russll coefficient dropped.
 
-	Trading was assigned by a uniform distribution between 0 and 100 for each agent.
+	Frequency of trading was assigned by a uniform distribution between 0 and 100 for each agent.
 This was, in fact, only initiated trades, with the true number of trades being more interestingly distributed.
-Greater trading did have an effect, with a tipping point around 90 trades per year creating a higher number of satisfied goods.
+More frequent trading did have an effect, with a tipping point around 90 trades per year creating a higher number of satisfied goods.
 It may be that not the total number of trades, but the last year's trading luck has a greater effect on the number of satisfied goods.
 
-	When salary, trades, and agents were maxed out, there was still a non-zero gini coefficient.
+	When salary, trades, and agents were maximized, there was still a non-zero Gini coefficient.
 We determined that agents with more prevalent goods were more likely to be deficient in several goods.
 When the market was saturated, no one was willing to sell these agents anything for the good they produced.
 We created an instance of surplus with our 1:1 trading "price floor" and agents producing these could not fulfill their needs.
