@@ -19,7 +19,7 @@ int Model::SEED;
 //============================================================
 void Model::addToCommunity(int i, Human * man)
 {
-	//communities[i].push_back(man);
+	communities[i].push_back(man);
 }
 
 void Model::addToActors(Human * man)
@@ -30,13 +30,13 @@ void Model::addToActors(Human * man)
 void Model::inter(Human * body)
 {
 	graveyard.push_back(body);
-	std::vector<Human *> grieving=communities[(*body).getCommunity()];
-	int h=grieving.size();
+//	std::vector<Human *> grieving=communities[(*body).getCommunity()];
+	int h=communities[(*body).getCommunity()].size();
 	for(int i=0; i<h; i++)
 	{
-		if(grieving[i]==body)
+		if(communities[(*body).getCommunity()][i]==body)
 		{
-			grieving.erase(grieving.begin()+i);
+			//communities[(*body).getCommunity()].erase((communities[(*body).getCommunity()].begin())+i);
 		}
 	}
 	//grieving.erase(std::find(grieving.begin(),grieving.end(),body));
@@ -261,9 +261,9 @@ void Model::printCommodityStats(std::ostream & os) const {
               (*man).getNumBloatedCommodities()) << ","<<
 			  (*man).getCommunity() << "," <<
 			  (*man).getSalary()<< "," << 
-			  (*man).getMake()<< "," <<
+		//	  (*man).getMake()<< "," <<
 			  (*man).getTimesTraded()<< "," <<
-			  (*man).getWealth()<< "," <<
+		//	  (*man).getWealth()<< "," <<
 		//	  (*actorIter)->getNeeds()<< "," <<
 			  
 			  Model::INTROVERT_DIAL<< std::endl;
@@ -384,9 +384,11 @@ Model::Model()
 		repast::Random::instance()->getGenerator("consume");
 	tradeDistro =
 		repast::Random::instance()->getGenerator("trade");
-	communityDistro=
+	outsideTrade =
+		repast::Random::instance()->getGenerator("outside");
+	communityDistro =
 		repast::Random::instance()->getGenerator("community");
-	childDistro=
+	childDistro =
 		repast::Random::instance()->getGenerator("children");
 	fillCommunities();
 	yearlyTrades=0;

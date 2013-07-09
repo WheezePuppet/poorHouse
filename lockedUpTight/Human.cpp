@@ -11,27 +11,8 @@
 #include<SharedContext.h>
 #include<RepastProcess.h>
 #include<fstream>
-#include<cmath>
 
 using namespace std; 
-
-void Human::reschedule()
-{
-	repast::ScheduleRunner &theSchedule =
-		repast::RepastProcess::instance()->getScheduleRunner();
-	double time = floor(theSchedule.currentTick());
-	theSchedule.scheduleEvent(time+1.1, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Human>(this, &Human::earnIncome)));
-	theSchedule.scheduleEvent(time+1.2, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Human>(this, &Human::tradeWithRandomAgents)));
-	theSchedule.scheduleEvent(time+1.3, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Human>(this, &Human::consume)));
-	theSchedule.scheduleEvent(time+1.31, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Human>(this, &Human::considerHavingAChild)));
-	theSchedule.scheduleEvent(time+1.32, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Human>(this, &Human::considerDeath)));
-	age++;
-}
 
 double Human::getNeeds()
 {
@@ -201,7 +182,6 @@ Human::Human(Human * progenitor)
 	mps=Model::instance()->generateMps();
 	numTraders=Model::instance()->generateNumTraders();
 	residentCommunity=parent->residentCommunity;//Model::instance()->generateCommunity(this);
-	//Model::instance()->addToCommunity(residentCommunity,this);
 	age=0;
 	timesTraded=0;
 	for(int i=0; i<10; i++)
@@ -215,9 +195,6 @@ Human::Human(Human * progenitor)
 		commoditiesHeld[i]=0;
 	}
 	parent->children.push_back(this);
-	Model::instance()->addToActors(this);
-	Model::instance()->addToCommunity(residentCommunity,this);
-	reschedule();
 }
 
 Human::~Human() {
@@ -268,31 +245,14 @@ void Human::consume()
 
 void Human::considerDeath()
 {
+	int prob=Model::instance()->generateLifeProb();
 	if(age>30)
 	{
-		int prob=Model::instance()->generateLifeProb();
 		if(prob<4)
 		{
-			//std::cout<<"I'm dead!\n";
 			Model::instance()->inter(this);
-			Model::instance()->decrementPopulation();
 			bequeathOne(this);
 		}
-		else
-		{
-			reschedule();
-		}
-	}
-	else if(age>100)
-	{
-		//std::cout<<"I'm dead!\n";
-		Model::instance()->inter(this);
-		Model::instance()->decrementPopulation();
-		bequeathOne(this);
-	}
-	else
-	{
-		reschedule();
 	}
 }
 
@@ -333,13 +293,11 @@ void Human::bequeathTwo(Human * man)
 void Human::considerHavingAChild()
 {
 	int prob=Model::instance()->generateChild();
-	if(age>=20 && age<30)
+	if(age>20 && age<30)
 	{
-		if(prob>90)
+		if(prob>25)
 		{
-			//std::cout<<"Child!\n";
-			Human * newchild = new Human(this);
-			Model::instance()->incrementPopulation();
+			Human(this);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 What we know as of the end of part one, when we will introduce children:
-	In order to study the distribution of wealth over time in a community, 
 
 	When we created communities, we decided to study the effect of limiting the agents' trade access to other communities.
 This limitation, a dial called the "introversion level" determined whether they would trade locally or globally for that trade.
@@ -9,8 +8,7 @@ This shift was remarkably unaffected by community size or increases in salary.
 	Beyond the point of salary being greater then the sum of the agent's needs, salary has no effect on number of satisfied goods.
 Once normalized to account for the normal distribution of salary, the satisfaction of agents above 30 salary stayed at roughly 8.
 When the salary selection was modified to prevent people's needs from being greater than their salary, Gini coefficient dropped.
-Where Gini coefficient measures the distribution of total wealth, the satisfaction coefficient measures the distribution of satisfied goods.
-When salary was greatly increased, the satisfaction coefficient dropped.
+When salary was cranked up high, the Russll coefficient dropped.
 
 	Trading was assigned by a uniform distribution between 0 and 100 for each agent.
 This was, in fact, only initiated trades, with the true number of trades being more interestingly distributed.
@@ -20,7 +18,4 @@ It may be that not the total number of trades, but the last year's trading luck 
 	When salary, trades, and agents were maxed out, there was still a non-zero gini coefficient.
 We determined that agents with more prevalent goods were more likely to be deficient in several goods.
 When the market was saturated, no one was willing to sell these agents anything for the good they produced.
-A price floor is a situation where a price is mandated for a good above the price determined by the intersction of supply and demand.
-This effect means that buyers do not wish to buy at this high a price and, consequently, the market does not clear.
-In this model, these producers whose goods were not bought are also consumers; meaning that they could buy nothing when everyone was satisfied in their produced commodity.
 We created an instance of surplus with our 1:1 trading "price floor" and agents producing these could not fulfill their needs.
