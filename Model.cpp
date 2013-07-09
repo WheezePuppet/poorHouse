@@ -15,54 +15,16 @@ int Model::INTROVERT_DIAL;
 int Model::SEED;
 //int Model::LEMMINGNESS;
 
-void Model::incrementPopulation()
+//Miscellaneous
+//============================================================
+void Model::addToCommunity(int i, Human * man)
 {
-	population++;
-}
-
-void Model::decrementPopulation()
-{
-	population--;
-}
-
-int Model::getPopulation()
-{
-	return population;
+	//communities[i].push_back(man);
 }
 
 void Model::addToActors(Human * man)
 {
 	actors.addAgent(man);
-}
-
-double Model::getTick()
-{
-    repast::ScheduleRunner &theScheduleRunner = 
-        repast::RepastProcess::instance()->getScheduleRunner();
-	return theScheduleRunner.currentTick();
-}
-
-repast::SharedContext<Human>& Model::getActors()
-{
-	return actors;
-}
-
-void Model::incrementTrades()
-{
-	yearlyTrades++;
-}
-
-void Model::resetTrades()
-{
-	yearlyTrades=0;
-}
-void Model::addToTradedAmount(double change)
-{
-	yearlyAmountTraded+=change;
-}
-void Model::resetTradedAmount()
-{
-	yearlyAmountTraded=0;
 }
 
 void Model::inter(Human * body)
@@ -78,259 +40,6 @@ void Model::inter(Human * body)
 		}
 	}
 	//grieving.erase(std::find(grieving.begin(),grieving.end(),body));
-}
-
-std::vector<Human *> Model::getGraveyard()
-{
-	return graveyard;
-}
-
-Model::Model()
-{
-    // Initialize random number distributions.
-	repast::Random::instance()->initialize(SEED);
-    repast::Properties theProperties("./distributions.txt");
-    repast::initializeRandom(theProperties);
-    commodityNeedThresholdDistro =
-        repast::Random::instance()->getGenerator("commodityNeedThreshold");
-    commodityWantThresholdDistro =
-        repast::Random::instance()->getGenerator("commodityWantThreshold");
-    salaryDistro =
-        repast::Random::instance()->getGenerator("salary");
-	makeDistro =
-		repast::Random::instance()->getGenerator("make");
-	mpsDistro =
-		repast::Random::instance()->getGenerator("mps");
-	deathDistro =		
-		repast::Random::instance()->getGenerator("death");
-	consumeDistro =
-		repast::Random::instance()->getGenerator("consume");
-	tradeDistro =
-		repast::Random::instance()->getGenerator("trade");
-	communityDistro=
-		repast::Random::instance()->getGenerator("community");
-	childDistro=
-		repast::Random::instance()->getGenerator("children");
-	fillCommunities();
-	yearlyTrades=0;
-	yearlyAmountTraded=0;
-	population=0;
-}
-
-void Model::createInitialAgents() {
-
-    // Create the initial generation of agents, and add them to the Context.
-    // Schedule the startYear method to run at integer clock ticks (start
-    //   of year, say.
-    // While we're at it, schedule all agents to run on the following
-    //   schedule:
-    // - On integer + .1, earn income.
-    // - At integer + .2, trade with other random agents.
-    // - At integer + .3, consume commodities for the year.
-    repast::ScheduleRunner &theScheduleRunner = 
-        repast::RepastProcess::instance()->getScheduleRunner();
-    theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
-        new repast::MethodFunctor<Model>(this, &Model::startYear)));
-    for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
-        Human *newHuman = new Human();
-        actors.addAgent(newHuman);
-        theScheduleRunner.scheduleEvent(1.1, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
-        theScheduleRunner.scheduleEvent(1.2, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman, &Human::tradeWithRandomAgents)));
-		//Print the stats before consuming
-	/*	ofstream statsBeforeConsume;
-		statsBeforeConsume.open("statsBeforeConsume.txt");
-        theScheduleRunner.scheduleEvent(1.25, 1, repast::Schedule::FunctorPtr(
-			new repast::MethodFunctor<Model>(this, &Model::printCommodityStats(statsBeforeConsume))));
-*/
-        theScheduleRunner.scheduleEvent(1.3, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman, &Human::consume)));
-        theScheduleRunner.scheduleEvent(1.31, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman, &Human::considerHavingAChild)));
-        theScheduleRunner.scheduleEvent(1.32, repast::Schedule::FunctorPtr(
-            new repast::MethodFunctor<Human>(newHuman, &Human::considerDeath)));
-		
-    }
-    theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Model>(this, &Model::printGini)));
-    theScheduleRunner.scheduleEvent(1.5, 1, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
-    theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Model>(this, &Model::resetTradedAmount)));
-}
-
-void Model::printGini() {
-	std::cout << wealthGiniCoefficient() << ',' <<
-		satisfactionGiniCoefficient() << ',' <<
-		yearlyTrades<< std::endl;
-}
-
-void Model::startYear() {
-    repast::ScheduleRunner &theScheduleRunner = 
-        repast::RepastProcess::instance()->getScheduleRunner();
-    cout << "======================================================" << endl;
-    cout << "Now starting year " <<  theScheduleRunner.currentTick() << " with a population of " << population << "!" << endl;
-}
-
-void Model::startSimulation() {
-
-    createInitialAgents();
-/*
-	for(int i=0; i<COMMUNITIES; i++)
-	{
-		std::cout<<"Community "<< i <<" has "<< communities[i].size() <<" members\n";
-	}
-*/
-    repast::ScheduleRunner &theScheduleRunner = 
-        repast::RepastProcess::instance()->getScheduleRunner();
-
-    // Schedule an end point.
-    theScheduleRunner.scheduleStop(NUM_YEARS);
-
-    // Let's DO THIS THING!!!
-    theScheduleRunner.run();
-}
-
-Model * Model::instance() {
-    if (theInstance == NULL) {
-        theInstance = new Model();
-    }
-    return theInstance;
-}
-
-double Model::generateNeedCommodityThreshold() {
-    return commodityNeedThresholdDistro->next();
-}
-
-double Model::generateWantCommodityThreshold() {
-    return commodityWantThresholdDistro->next();
-}
-
-double Model::generateSalary() {
-    double thing=salaryDistro->next();
-	while(thing<0)
-	{
-		thing=salaryDistro->next();
-	}
-	return thing;
-}
-
-double Model::generateMps() {
-	return mpsDistro->next();
-}
-
-int Model::generateMake() {
-	return makeDistro->next();
-}
-
-double Model::generateLifeProb() {
-	return deathDistro->next();
-}
-
-double Model::generateConsume() {
-//	return consumeDistro->next();
-	double bob = consumeDistro->next();
-
-return bob;
-}
-
-int Model::generateNumTraders() {
-	return tradeDistro->next();
-}
-
-int Model::generateCommunity(Human * toAdd) {
-	int randomCommunity = communityDistro->next();
-	randomCommunity = randomCommunity%Model::COMMUNITIES;
-	communities[randomCommunity].push_back(toAdd);
-	return randomCommunity;
-}
-
-int Model::generateChild() {
-	return childDistro->next();
-}
-
-void Model::fillCommunities()
-{
-	for(int i=0; i<COMMUNITIES; i++)
-	{
-		communities.push_back(*(new std::vector<Human *>));
-		//std::cout<<"Added "<<i<<" communities\n";
-	}
-} 
-
-/*int Model::generateOutsideTrade()
-{
-	return outsideTrade->next();
-}
-*/
-void Model::printCommodityStats(std::ostream & os) const {
-
-//cout << "printing all stats!" << endl;
-    //repast::SharedContext<Human>::const_local_iterator actorIter = 
-        //actors.localBegin();
-		//os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
-    //while (actorIter != actors.localEnd()) {
-	for(int k=0; k<Commodity::NUM_COMM; k++)
-	{
-		os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
-	}
-	for(int i=0; i<Model::COMMUNITIES; i++)
-	{
-		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
-		{
-		Human * man = Model::instance()->getCommunityMembers(i)[j];
-		os <</* (*actorIter)->getNumDeficientCommodities() << "," <<*/
-              ((*man).getNumSatisfiedCommodities() +
-              (*man).getNumBloatedCommodities()) << ","<<
-			  (*man).getCommunity() << "," <<
-			  (*man).getSalary()<< "," << 
-			  (*man).getMake()<< "," <<
-			  (*man).getTimesTraded()<< "," <<
-		//	  (*actorIter)->getNeeds()<< "," <<
-			  
-			  Model::INTROVERT_DIAL<< std::endl;
-/*
-		std::cout<<(*actorIter)->getId() << " has these totals: " <<
-			  (*actorIter)->getNumDeficientCommodities() << "," <<
-              (*actorIter)->getNumSatisfiedCommodities() << "," <<
-              (*actorIter)->getNumBloatedCommodities() << endl;
-cout << *(*actorIter) << endl;
-*/
-        //actorIter++;
-	}
-    }
-}
-
-
-repast::AgentId & Model::getId() { 
-    return myId;
-}   
-
-const repast::AgentId & Model::getId() const {
-    return myId;
-}
-
-/*
-void Model::setNUM_INITIAL_AGENTS(int num)
-{
-	NUM_INITIAL_AGENTS=num;
-}
-
-void Model::setNUM_YEARS(int years)
-{
-	NUM_YEARS=years;
-}
-
-void Model::setTRADING_PARTNERS_PER_YEAR(int partners)
-{
-	TRADING_PARTNERS_PER_YEAR=partners;
-}
-*/
-
-std::vector<Human *> Model::getCommunityMembers(int communityNum) const
-{
-	return communities[communityNum];
 }
 
 int Model::getCommunitySize(int communityNum) const
@@ -362,14 +71,6 @@ double Model::getAvgDeficientCommComm(int commuNum) const
 	}
 	total/=i;
 	return total;
-}
-
-void Model::printCommunityStats(std::ostream & os) const
-{
-	for(int i=0; i<Commodity::NUM_COMM; i++)
-	{
-		os << "Community " << i << " has " << getCommunitySize(i) << " members and an average of " << getAvgDeficientCommComm(i) << " deficient commodities\n";
-	}
 }
 
 /*
@@ -422,6 +123,327 @@ double Model::satisfactionGiniCoefficient() const {
     return computeGini(satisfactions);
 }
 
+
+//Keep track of Model variables
+//============================================================
+
+void Model::incrementTrades()
+{
+	yearlyTrades++;
+}
+
+void Model::resetTrades()
+{
+	yearlyTrades=0;
+}
+
+void Model::addToTradedAmount(double change)
+{
+	yearlyAmountTraded+=change;
+}
+
+void Model::resetTradedAmount()
+{
+	yearlyAmountTraded=0;
+}
+
+void Model::incrementPopulation()
+{
+	population++;
+}
+
+void Model::decrementPopulation()
+{
+	population--;
+}
+
+//Repast things
+//============================================================
+repast::AgentId & Model::getId() { 
+    return myId;
+}   
+
+const repast::AgentId & Model::getId() const {
+    return myId;
+}
+
+Model * Model::instance() {
+    if (theInstance == NULL) {
+        theInstance = new Model();
+    }
+    return theInstance;
+}
+
+void Model::startSimulation() {
+
+    createInitialAgents();
+/*
+	for(int i=0; i<COMMUNITIES; i++)
+	{
+		std::cout<<"Community "<< i <<" has "<< communities[i].size() <<" members\n";
+	}
+*/
+    repast::ScheduleRunner &theScheduleRunner = 
+        repast::RepastProcess::instance()->getScheduleRunner();
+
+    // Schedule an end point.
+    theScheduleRunner.scheduleStop(NUM_YEARS);
+
+    // Let's DO THIS THING!!!
+    theScheduleRunner.run();
+}
+
+void Model::fillCommunities()
+{
+	for(int i=0; i<COMMUNITIES; i++)
+	{
+		communities.push_back(*(new std::vector<Human *>));
+		//std::cout<<"Added "<<i<<" communities\n";
+	}
+} 
+
+//Return model things
+//============================================================
+repast::SharedContext<Human>& Model::getActors()
+{
+	return actors;
+}
+
+std::vector<Human *> Model::getCommunityMembers(int communityNum) const
+{
+	return communities[communityNum];
+}
+
+std::vector<Human *> Model::getGraveyard()
+{
+	return graveyard;
+}
+
+double Model::getTick()
+{
+    repast::ScheduleRunner &theScheduleRunner = 
+        repast::RepastProcess::instance()->getScheduleRunner();
+	return theScheduleRunner.currentTick();
+}
+
+int Model::getPopulation()
+{
+	return population;
+}
+
+//Print things out
+//============================================================
+void Model::printGini() {
+	std::cout << wealthGiniCoefficient() << ',' <<
+		satisfactionGiniCoefficient() << ',' <<
+		population<< ',' <<
+		yearlyTrades<< std::endl;
+}
+
+void Model::printCommodityStats(std::ostream & os) const {
+
+//cout << "printing all stats!" << endl;
+    //repast::SharedContext<Human>::const_local_iterator actorIter = 
+        //actors.localBegin();
+		//os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
+    //while (actorIter != actors.localEnd()) {
+	for(int k=0; k<Commodity::NUM_COMM; k++)
+	{
+		os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
+	}
+	for(int i=0; i<Model::COMMUNITIES; i++)
+	{
+		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
+		{
+		Human * man = Model::instance()->getCommunityMembers(i)[j];
+		os <</* (*actorIter)->getNumDeficientCommodities() << "," <<*/
+              ((*man).getNumSatisfiedCommodities() +
+              (*man).getNumBloatedCommodities()) << ","<<
+			  (*man).getCommunity() << "," <<
+			  (*man).getSalary()<< "," << 
+			  (*man).getMake()<< "," <<
+			  (*man).getTimesTraded()<< "," <<
+			  (*man).getWealth()<< "," <<
+		//	  (*actorIter)->getNeeds()<< "," <<
+			  
+			  Model::INTROVERT_DIAL<< std::endl;
+/*
+		std::cout<<(*actorIter)->getId() << " has these totals: " <<
+			  (*actorIter)->getNumDeficientCommodities() << "," <<
+              (*actorIter)->getNumSatisfiedCommodities() << "," <<
+              (*actorIter)->getNumBloatedCommodities() << endl;
+cout << *(*actorIter) << endl;
+*/
+        //actorIter++;
+		}
+    }
+}
+
+void Model::printCommunityStats(std::ostream & os) const
+{
+	for(int i=0; i<Commodity::NUM_COMM; i++)
+	{
+		os << "Community " << i << " has " << getCommunitySize(i) <<
+			" members and an average of " << getAvgDeficientCommComm(i) <<
+			" deficient commodities\n";
+	}
+}
+
+//Random number generators
+//============================================================
+double Model::generateNeedCommodityThreshold() {
+    return commodityNeedThresholdDistro->next();
+}
+
+double Model::generateWantCommodityThreshold() {
+    return commodityWantThresholdDistro->next();
+}
+
+double Model::generateSalary() {
+    double thing=salaryDistro->next();
+	while(thing<0)
+	{
+		thing=salaryDistro->next();
+	}
+	return thing;
+}
+
+double Model::generateMps() {
+	return mpsDistro->next();
+}
+
+int Model::generateMake() {
+	return makeDistro->next();
+}
+
+double Model::generateLifeProb() {
+	return deathDistro->next();
+}
+
+double Model::generateConsume() {
+	return consumeDistro->next();
+}
+
+int Model::generateNumTraders() {
+	return tradeDistro->next();
+}
+
+int Model::generateOutsideTrade() {
+	return outsideTrade->next();
+}
+
+int Model::generateCommunity(Human * toAdd) {
+	int randomCommunity = communityDistro->next();
+	randomCommunity = randomCommunity%Model::COMMUNITIES;
+	communities[randomCommunity].push_back(toAdd);
+	return randomCommunity;
+}
+
+int Model::generateChild() {
+	return childDistro->next();
+}
+
+//Obsolete items
+/*
+void Model::setNUM_INITIAL_AGENTS(int num)
+{
+	NUM_INITIAL_AGENTS=num;
+}
+
+void Model::setNUM_YEARS(int years)
+{
+	NUM_YEARS=years;
+}
+
+void Model::setTRADING_PARTNERS_PER_YEAR(int partners)
+{
+	TRADING_PARTNERS_PER_YEAR=partners;
+}
+*/
+
+//Private functions
+Model::Model()
+{
+    // Initialize random number distributions.
+	repast::Random::instance()->initialize(SEED);
+    repast::Properties theProperties("./distributions.txt");
+    repast::initializeRandom(theProperties);
+    commodityNeedThresholdDistro =
+        repast::Random::instance()->getGenerator("commodityNeedThreshold");
+    commodityWantThresholdDistro =
+        repast::Random::instance()->getGenerator("commodityWantThreshold");
+    salaryDistro =
+        repast::Random::instance()->getGenerator("salary");
+	makeDistro =
+		repast::Random::instance()->getGenerator("make");
+	mpsDistro =
+		repast::Random::instance()->getGenerator("mps");
+	deathDistro =		
+		repast::Random::instance()->getGenerator("death");
+	consumeDistro =
+		repast::Random::instance()->getGenerator("consume");
+	tradeDistro =
+		repast::Random::instance()->getGenerator("trade");
+	communityDistro=
+		repast::Random::instance()->getGenerator("community");
+	childDistro=
+		repast::Random::instance()->getGenerator("children");
+	fillCommunities();
+	yearlyTrades=0;
+	yearlyAmountTraded=0;
+	population=NUM_INITIAL_AGENTS;
+}
+
+void Model::createInitialAgents() {
+
+    // Create the initial generation of agents, and add them to the Context.
+    // Schedule the startYear method to run at integer clock ticks (start
+    //   of year, say.
+    // While we're at it, schedule all agents to run on the following
+    //   schedule:
+    // - On integer + .1, earn income.
+    // - At integer + .2, trade with other random agents.
+    // - At integer + .3, consume commodities for the year.
+    repast::ScheduleRunner &theScheduleRunner = 
+        repast::RepastProcess::instance()->getScheduleRunner();
+    theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
+        new repast::MethodFunctor<Model>(this, &Model::startYear)));
+    for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
+        Human *newHuman = new Human();
+        actors.addAgent(newHuman);
+        theScheduleRunner.scheduleEvent(1.1, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
+        theScheduleRunner.scheduleEvent(1.2, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::tradeWithRandomAgents)));
+		//Print the stats before consuming
+	/*	ofstream statsBeforeConsume;
+		statsBeforeConsume.open("statsBeforeConsume.txt");
+        theScheduleRunner.scheduleEvent(1.25, 1, repast::Schedule::FunctorPtr(
+			new repast::MethodFunctor<Model>(this, &Model::printCommodityStats(statsBeforeConsume))));
+*/
+        theScheduleRunner.scheduleEvent(1.3, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::consume)));
+        theScheduleRunner.scheduleEvent(1.31, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::considerHavingAChild)));
+        theScheduleRunner.scheduleEvent(1.32, repast::Schedule::FunctorPtr(
+            new repast::MethodFunctor<Human>(newHuman, &Human::considerDeath)));
+		
+    }
+    theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::printGini)));
+    theScheduleRunner.scheduleEvent(1.5, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
+    theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetTradedAmount)));
+}
+
+void Model::startYear() {
+    repast::ScheduleRunner &theScheduleRunner = 
+        repast::RepastProcess::instance()->getScheduleRunner();
+    //cout << "======================================================" << endl;
+    //cout << "Now starting year " <<  theScheduleRunner.currentTick() << " with a population of " << population << "!" << endl;
+}
+
 /*
  * Dumbly and mechanically translated to C++ from R function in reldist 
  *   library; see http://rss.acs.unt.edu/Rdoc/library/reldist/html/gini.html.
@@ -464,4 +486,3 @@ double Model::computeGini(vector<double> values) const {
 
     return sum_first - sum_second;
 }
-

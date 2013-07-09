@@ -6,6 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+	std::cout<<"Got anywhere\n";
     if (argc != 3) {
         cout << "Usage: " << argv[0] << " dial." << endl;
         exit(1);
@@ -13,17 +14,22 @@ int main(int argc, char *argv[])
 
     Model::INTROVERT_DIAL = atoi(argv[1]);
 	Model::SEED = atoi(argv[2]);
+	std::cout<<"Set the statics\n";
 	//Model::LEMMINGNESS = atoi(argv[3]);
 
     Model *model;
+	std::cout<<"Problems with model?\n";
     
     try {
         boost::mpi::environment env(argc,argv);
         repast::RepastProcess::init("");
+		std::cout<<"Init comm\n";
 
         Commodity::initCommodities();
+		std::cout<<"init comm\n";
 
         //When you're feeling brave, Russell, comment this in.
+		std::cout<<"Got to the model\n";
         model = Model::instance();
         model->startSimulation();
 

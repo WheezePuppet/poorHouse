@@ -94,7 +94,7 @@ void Human::tradeWithRandomAgents()
 */
 	for(int i=0; i<numTraders; i++)
 	{
-		int roll=(Model::instance()->generateNumTraders());
+		int roll=(Model::instance()->generateOutsideTrade());
 		if(roll>Model::INTROVERT_DIAL)
 		{
 			//std::cout<<"Traded outside\n";
@@ -216,6 +216,7 @@ Human::Human(Human * progenitor)
 	}
 	parent->children.push_back(this);
 	Model::instance()->addToActors(this);
+	Model::instance()->addToCommunity(residentCommunity,this);
 	reschedule();
 }
 
@@ -272,7 +273,7 @@ void Human::considerDeath()
 		int prob=Model::instance()->generateLifeProb();
 		if(prob<4)
 		{
-			std::cout<<"I'm dead!\n";
+			//std::cout<<"I'm dead!\n";
 			Model::instance()->inter(this);
 			Model::instance()->decrementPopulation();
 			bequeathOne(this);
@@ -284,7 +285,7 @@ void Human::considerDeath()
 	}
 	else if(age>100)
 	{
-		std::cout<<"I'm dead!\n";
+		//std::cout<<"I'm dead!\n";
 		Model::instance()->inter(this);
 		Model::instance()->decrementPopulation();
 		bequeathOne(this);
@@ -332,9 +333,9 @@ void Human::bequeathTwo(Human * man)
 void Human::considerHavingAChild()
 {
 	int prob=Model::instance()->generateChild();
-	if(age>20 && age<30)
+	if(age>=20 && age<30)
 	{
-		if(prob>75)
+		if(prob>90)
 		{
 			//std::cout<<"Child!\n";
 			Human * newchild = new Human(this);

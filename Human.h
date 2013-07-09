@@ -18,6 +18,7 @@ class Human : public repast::Agent
 friend std::ostream & operator<<(std::ostream & os, const Human & h);
 
 public:
+	void reschedule();
 	void step();
 	Human();
 	Human(Human *);

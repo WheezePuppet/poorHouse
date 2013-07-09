@@ -9,8 +9,8 @@ class Commodity{
 		void consume();
 		void consFail(double x);
 		void produce(double quantity);
-		double getAmtCons();
-		double getTotalAmt();
+		double getAmtCons() const;
+		double getTotalAmt() const;
 
 	private:
 		static Commodity *theCommodities[NUM_COMM];
