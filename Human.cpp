@@ -40,8 +40,8 @@ double Human::getNeeds()
 
 int Human::getCommunity()
 {
-	int i=(Model::instance()->getCommunitySize(residentCommunity));
-	return i;
+	//int i=(Model::instance()->getCommunitySize(residentCommunity));
+	return residentCommunity;
 }
 
 int Human::getNumTraders()
@@ -94,7 +94,7 @@ void Human::tradeWithRandomAgents()
 */
 	for(int i=0; i<numTraders; i++)
 	{
-		int roll=(Model::instance()->generateNumTraders());
+		int roll=(Model::instance()->generateOutsideTrade());
 		if(roll>Model::INTROVERT_DIAL)
 		{
 			//std::cout<<"Traded outside\n";
@@ -277,6 +277,7 @@ void Human::considerDeath()
 			Model::instance()->inter(this);
 			Model::instance()->decrementPopulation();
 			bequeathOne(this);
+			std::cout<<"death\n";
 		}
 		else
 		{
@@ -300,7 +301,7 @@ void Human::bequeathOne(Human * man)
 {
 	if((*man).children.size()==0)
 	{
-
+		std::cout<<"Childless ";
 	}
 	else
 	{
@@ -335,7 +336,7 @@ void Human::considerHavingAChild()
 	int prob=Model::instance()->generateChild();
 	if(age>=20 && age<30)
 	{
-		if(prob>90)
+		if(prob>85)
 		{
 			//std::cout<<"Child!\n";
 			Human * newchild = new Human(this);

@@ -36,7 +36,7 @@ void Model::inter(Human * body)
 	{
 		if(communities[(*body).getCommunity()][i]==body)
 		{
-			//communities[(*body).getCommunity()].erase((communities[(*body).getCommunity()].begin())+i);
+			communities[(*body).getCommunity()].erase((communities[(*body).getCommunity()].begin())+i);
 		}
 	}
 	//grieving.erase(std::find(grieving.begin(),grieving.end(),body));
