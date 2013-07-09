@@ -12,12 +12,12 @@ When the salary selection was modified to prevent people's needs from being grea
 Where Gini coefficient measures the distribution of total wealth, the satisfaction coefficient measures the distribution of satisfied goods.
 When salary was greatly increased, the satisfaction coefficient dropped.
 
-	Frequency of trading was assigned by a uniform distribution between 0 and 100 for each agent.
+	Trading was assigned by a uniform distribution between 0 and 100 for each agent.
 This was, in fact, only initiated trades, with the true number of trades being more interestingly distributed.
-More frequent trading did have an effect, with a tipping point around 90 trades per year creating a higher number of satisfied goods.
+Greater trading did have an effect, with a tipping point around 90 trades per year creating a higher number of satisfied goods.
 It may be that not the total number of trades, but the last year's trading luck has a greater effect on the number of satisfied goods.
 
-	When salary, trades, and agents were maximized, there was still a non-zero Gini coefficient.
+	When salary, trades, and agents were maxed out, there was still a non-zero gini coefficient.
 We determined that agents with more prevalent goods were more likely to be deficient in several goods.
 When the market was saturated, no one was willing to sell these agents anything for the good they produced.
 A price floor is a situation where a price is mandated for a good above the price determined by the intersction of supply and demand.
