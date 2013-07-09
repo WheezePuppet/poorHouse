@@ -12,8 +12,9 @@
 #include<RepastProcess.h>
 #include<fstream>
 #include<cmath>
-
 using namespace std; 
+
+int Human::BEQ;
 
 void Human::reschedule()
 {
@@ -276,8 +277,15 @@ void Human::considerDeath()
 			//std::cout<<"I'm dead!\n";
 			Model::instance()->inter(this);
 			Model::instance()->decrementPopulation();
-			bequeathOne(this);
-			std::cout<<"death\n";
+			if(Human::BEQ==0)
+			{
+				omniBequeath(this);
+			}
+			if(Human::BEQ==1)
+			{
+				primoBequeath(this);
+			}
+			//std::cout<<"death\n";
 		}
 		else
 		{
@@ -289,7 +297,14 @@ void Human::considerDeath()
 		//std::cout<<"I'm dead!\n";
 		Model::instance()->inter(this);
 		Model::instance()->decrementPopulation();
-		bequeathOne(this);
+		if(Human::BEQ==0)
+		{
+			omniBequeath(this);
+		}
+		if(Human::BEQ==1)
+		{
+			primoBequeath(this);
+		}
 	}
 	else
 	{
@@ -297,11 +312,11 @@ void Human::considerDeath()
 	}
 }
 
-void Human::bequeathOne(Human * man)
+void Human::omniBequeath(Human * man)
 {
 	if((*man).children.size()==0)
 	{
-		std::cout<<"Childless ";
+		//std::cout<<"Childless ";
 	}
 	else
 	{
@@ -316,7 +331,7 @@ void Human::bequeathOne(Human * man)
 	}
 }
 
-void Human::bequeathTwo(Human * man)
+void Human::primoBequeath(Human * man)
 {
 	if((*man).children.size()==0)
 	{
