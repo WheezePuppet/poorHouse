@@ -12,7 +12,7 @@ public:
 
 	//Global constants
     static const int NUM_INITIAL_AGENTS = 100;
-    static const int NUM_YEARS = 200;
+    static const int NUM_YEARS = 750;
 	static int INTROVERT_DIAL;// = 50;
 	static int SEED;
 	static const int LEMMINGNESS = 100;
@@ -30,9 +30,11 @@ public:
 	int generateOutsideTrade();
 	int generateCommunity(Human *);
 	int generateChild();
+	int generateAge();
 
 	//Miscellaneous
     double wealthGiniCoefficient() const;
+	double adultWealthGiniCoefficient() const;
     double satisfactionGiniCoefficient() const;
     Human * getRandomCommunityMember(int communityNum) const;
     Human * getRandomGlobalMember();
@@ -48,6 +50,12 @@ public:
 	void resetTradedAmount();
 	void incrementPopulation();
 	void decrementPopulation();
+	void incrementOmniEvent();
+	void resetOmniEvent();
+	void calculateTotalWealth();
+	void resetTotalWealth();
+	void addToWealthRedistributed(double);
+	void resetWealthRedistributed();
 
 	//Repast things
 	virtual repast::AgentId & getId();
@@ -62,7 +70,10 @@ public:
     std::vector<Human *> getGraveyard();
     int getCommunitySize(int communityNum) const;
 	double getTick();
-	int getPopulation();
+	int getPopulation();// { return population; }
+	double getTotalWealth();
+	double getWealthRedistributed();
+	double calculatePercentWealthRedistributed();
 
 	//Print things out
     void printCommodityStats(std::ostream & os) const;
@@ -81,6 +92,9 @@ private:
 	int population;
 	double yearlyAmountTraded;
 	int yearlyTrades;
+	int numOmniEvents;
+	double totalWealth;
+	double wealthRedistributed;
 
 	//Functions
 	Model();
@@ -105,5 +119,6 @@ private:
 	repast::NumberGenerator *outsideTrade;
 	repast::NumberGenerator *communityDistro;
 	repast::NumberGenerator *childDistro;
+	repast::NumberGenerator *ageDistro;
 };
 #endif

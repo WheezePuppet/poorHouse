@@ -30,13 +30,18 @@ void Model::addToActors(Human * man)
 void Model::inter(Human * body)
 {
 	graveyard.push_back(body);
-//	std::vector<Human *> grieving=communities[(*body).getCommunity()];
+	//std::vector<Human *> grieving=communities[(*body).getCommunity()];
 	int h=communities[(*body).getCommunity()].size();
+	int cmp=(*body).getCommunity();
+	//int h=grieving.size();
+	//std::cout<<cmp<<','<<h<<std::endl;
 	for(int i=0; i<h; i++)
 	{
 		if(communities[(*body).getCommunity()][i]==body)
+		//if(grieving[i]==body)
 		{
 			communities[(*body).getCommunity()].erase((communities[(*body).getCommunity()].begin())+i);
+			//grieving.erase((grieving.begin()+i));
 		}
 	}
 	//grieving.erase(std::find(grieving.begin(),grieving.end(),body));
@@ -76,7 +81,7 @@ double Model::getAvgDeficientCommComm(int commuNum) const
 /*
  * wealthGiniCoefficient -- compute "Gini coefficient".
  */
-double Model::wealthGiniCoefficient() const {
+double Model::adultWealthGiniCoefficient() const {
 
     vector<double> wealths;
 /*
@@ -87,6 +92,24 @@ double Model::wealthGiniCoefficient() const {
 		wealths.push_back((*actorIter)->getWealth());
     }
 */
+	for(int i=0; i<Model::COMMUNITIES; i++)
+	{
+		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
+		{
+			Human * man = Model::instance()->getCommunityMembers(i)[j];
+			if(((*man).getAge())>20)
+			{
+				wealths.push_back((*man).getWealth());
+			}
+		}
+	}
+    return computeGini(wealths);
+}
+
+double Model::wealthGiniCoefficient() const {
+
+	vector<double> wealths;
+
 	for(int i=0; i<Model::COMMUNITIES; i++)
 	{
 		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
@@ -123,7 +146,6 @@ double Model::satisfactionGiniCoefficient() const {
     return computeGini(satisfactions);
 }
 
-
 //Keep track of Model variables
 //============================================================
 
@@ -155,6 +177,42 @@ void Model::incrementPopulation()
 void Model::decrementPopulation()
 {
 	population--;
+}
+
+void Model::incrementOmniEvent()
+{
+	numOmniEvents++;
+}
+
+void Model::resetOmniEvent()
+{
+	numOmniEvents=0;
+}
+
+void Model::calculateTotalWealth()
+{
+	for(int i=0; i<Model::COMMUNITIES; i++)
+	{
+		for(int j=0; j<communities[i].size(); j++)
+		{
+			totalWealth+=(communities[i][j])->getWealth();
+		}
+	}
+}
+
+void Model::resetTotalWealth()
+{
+	totalWealth=0;
+}
+
+void Model::addToWealthRedistributed(double value)
+{
+	wealthRedistributed+=value;
+}
+
+void Model::resetWealthRedistributed()
+{
+	wealthRedistributed=0;
 }
 
 //Repast things
@@ -231,12 +289,32 @@ int Model::getPopulation()
 	return population;
 }
 
+double Model::getTotalWealth()
+{
+	return totalWealth;
+}
+
+double Model::getWealthRedistributed()
+{
+	return wealthRedistributed;
+}
+
+double Model::calculatePercentWealthRedistributed()
+{
+	calculateTotalWealth();
+	double percent=wealthRedistributed/totalWealth;
+	return percent;
+}
+
 //Print things out
 //============================================================
 void Model::printGini() {
-	std::cout << wealthGiniCoefficient() << ',' <<
+	std::cout << adultWealthGiniCoefficient() << ',' <<
 		satisfactionGiniCoefficient() << ',' <<
 		population<< ',' <<
+		numOmniEvents<< ',' <<
+		calculatePercentWealthRedistributed() << ',' <<
+		wealthGiniCoefficient() << ',' <<
 		yearlyTrades<< std::endl;
 }
 
@@ -249,11 +327,11 @@ void Model::printCommodityStats(std::ostream & os) const {
     //while (actorIter != actors.localEnd()) {
 	for(int k=0; k<Commodity::NUM_COMM; k++)
 	{
-		os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
+		//os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
 	}
 	for(int i=0; i<Model::COMMUNITIES; i++)
 	{
-		for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++)
+		for(int j=0; j<communities[i].size()/*Model::instance()->getCommunityMembers(i).size()*/; j++)
 		{
 		Human * man = Model::instance()->getCommunityMembers(i)[j];
 		os <</* (*actorIter)->getNumDeficientCommodities() << "," <<*/
@@ -263,10 +341,10 @@ void Model::printCommodityStats(std::ostream & os) const {
 			  (*man).getSalary()<< "," << 
 		//	  (*man).getMake()<< "," <<
 			  (*man).getTimesTraded()<< "," <<
-		//	  (*man).getWealth()<< "," <<
+			  (*man).getWealth() << std::endl;
 		//	  (*actorIter)->getNeeds()<< "," <<
 			  
-			  Model::INTROVERT_DIAL<< std::endl;
+		//	  Model::INTROVERT_DIAL<< std::endl;
 /*
 		std::cout<<(*actorIter)->getId() << " has these totals: " <<
 			  (*actorIter)->getNumDeficientCommodities() << "," <<
@@ -343,6 +421,10 @@ int Model::generateChild() {
 	return childDistro->next();
 }
 
+int Model::generateAge() {
+	return ageDistro->next();
+}
+
 //Obsolete items
 /*
 void Model::setNUM_INITIAL_AGENTS(int num)
@@ -390,9 +472,14 @@ Model::Model()
 		repast::Random::instance()->getGenerator("community");
 	childDistro =
 		repast::Random::instance()->getGenerator("children");
+	ageDistro=
+		repast::Random::instance()->getGenerator("initialAge");
 	fillCommunities();
 	yearlyTrades=0;
 	yearlyAmountTraded=0;
+	numOmniEvents=0;
+	totalWealth=0;
+	wealthRedistributed=0;
 	population=NUM_INITIAL_AGENTS;
 }
 
@@ -437,6 +524,12 @@ void Model::createInitialAgents() {
 		new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
     theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
 		new repast::MethodFunctor<Model>(this, &Model::resetTradedAmount)));
+    theScheduleRunner.scheduleEvent(1.7, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetOmniEvent)));	
+    theScheduleRunner.scheduleEvent(1.8, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetTotalWealth)));	
+    theScheduleRunner.scheduleEvent(1.9, 1, repast::Schedule::FunctorPtr(
+		new repast::MethodFunctor<Model>(this, &Model::resetWealthRedistributed)));	
 }
 
 void Model::startYear() {

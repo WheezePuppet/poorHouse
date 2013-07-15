@@ -3,7 +3,7 @@
 #include<Random.h>
 class Commodity{
 	public:
-		static const int NUM_COMM=10;
+		static const int NUM_COMM=1;
 		static Commodity & getCommNum(int num);
         static void initCommodities();
 		void consume();

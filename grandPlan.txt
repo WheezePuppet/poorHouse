@@ -3,7 +3,8 @@
 was the state of affairs:
 
 WE KNOW
-	Tipping point at about 80 introversion level
+	**ATTENTION! The dependent variable in this section is satisfaction!**
+	Tipping point in satisfaction at about 80 introversion level
         This tipping point seems robust to changes in salary
             (Introversion65Salary, Introversion35Salary)
         This tipping point seems robust to changes in community size
@@ -13,9 +14,12 @@ WE KNOW
     Tipping point at about 90/year trading rate
 
 	Above a certain salary, salary is not very important to satisfaction
+
+	**Looked at effect of things on not satisfaction, but trade behavior**
     Number of successful trades reaches a wobbly equilibrium over time.
     Total traded volume reaches a wobbly equilibrium over time.
 
+	**Surplus good problem section**
     * There are a significant number of "unsatisfied people" (meaning, # of
         satisfied goods is < 8) even if:
         - we only look at people in the bottom half of total neediness
@@ -36,11 +40,17 @@ UNKNOWNS
     *Why* do we continue to have non-satisfied people, even considering all
         the attempts to create a satisfiable environment??
     Why the Russell coefficient wobbles over time. (not important)
-    How much does the tipping poitn at 90/year trading depend on what 
+    How much does the tipping point at 90/year trading depend on what 
         happened in the very last year of sim?
 
 
 -----------------------------------------
+Children section
+* Found that Gini tends to stabilize over time to about .44 for primogeniture
+	and .32 for omnigeniture
+* Killing off all the agents has much more effect than killing off all over 25
+* Primogeniture definitely has a higher Gini coefficient than omnigeniture
+
 Price equilibrium study:
 
 - If prices change based on individual negotiations, do relative price levels
@@ -49,3 +59,33 @@ Price equilibrium study:
   supply (salaries and good-that-i-get-my-salary-for are random.))
 - What if information is shared, globally or locally, to influence prices at
   the individual trade level?
+
+Talk Outline
+- Intro
+- This an agent based model
+	* An agent based model is
+- Trying to tackle economic questions of wealth distribution
+	* Explain Gini coefficient
+	* Graph of US Gini coefficients over time
+- Related work
+	* Epstein Axtell et alia
+	* Wealth distribution, intergenerational
+	* Our novelty to the field
+		- Contemplating different theory of motivation
+			* Needs and wants levels
+			* Multiple commodities
+			* Our transactions
+		- Local, stationary markets
+			* Introversion
+			* Number of trades initiated
+- Results
+	* How transactions and salary affect it
+	* Communities and introversion level effects
+	* Explain tipping point
+	* Theories of tipping point?
+- Graphs of these things to explain
+	* Use the wireplots
+	* Color graphs?
+- Part 2
+	* Primogeniture vs. omnigeniture
+	* 

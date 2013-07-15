@@ -9,3 +9,4 @@ distribution.trade = int_uniform, 0, 100
 distribution.outside = int_uniform, 0, 100
 distribution.community = int_uniform, 1, 100
 distribution.children = int_uniform, 0, 100
+distribution.initialAge = int_uniform, 0, 29

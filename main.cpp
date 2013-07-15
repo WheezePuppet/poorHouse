@@ -17,7 +17,6 @@ int main(int argc, char *argv[])
 	//Model::LEMMINGNESS = atoi(argv[3]);
 
     Model *model;
-    
     try {
         boost::mpi::environment env(argc,argv);
         repast::RepastProcess::init("");
@@ -34,7 +33,6 @@ int main(int argc, char *argv[])
 //		communityStatsFile.open("communityStats.txt");
         commodityStatsFile.open("commodityStats.txt");
         model->printCommodityStats(std::cout);//commodityStatsFile);
-	//	model->printCommunityStats(std::cout);//communityStatsFile);
         repast::RepastProcess::instance()->done();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;

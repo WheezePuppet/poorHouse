@@ -23,8 +23,8 @@ void Human::reschedule()
 	double time = floor(theSchedule.currentTick());
 	theSchedule.scheduleEvent(time+1.1, repast::Schedule::FunctorPtr(
 		new repast::MethodFunctor<Human>(this, &Human::earnIncome)));
-	theSchedule.scheduleEvent(time+1.2, repast::Schedule::FunctorPtr(
-		new repast::MethodFunctor<Human>(this, &Human::tradeWithRandomAgents)));
+	//theSchedule.scheduleEvent(time+1.2, repast::Schedule::FunctorPtr(
+		//new repast::MethodFunctor<Human>(this, &Human::tradeWithRandomAgents)));
 	theSchedule.scheduleEvent(time+1.3, repast::Schedule::FunctorPtr(
 		new repast::MethodFunctor<Human>(this, &Human::consume)));
 	theSchedule.scheduleEvent(time+1.31, repast::Schedule::FunctorPtr(
@@ -32,6 +32,11 @@ void Human::reschedule()
 	theSchedule.scheduleEvent(time+1.32, repast::Schedule::FunctorPtr(
 		new repast::MethodFunctor<Human>(this, &Human::considerDeath)));
 	age++;
+}
+
+int Human::getAge() const
+{
+	return age;
 }
 
 double Human::getNeeds()
@@ -157,16 +162,17 @@ totalNeeds += h.minThreshold[i];
     return os;
 }
 
+//This constructor is called for initial agents
 Human::Human()
 {
     myId = repast::AgentId(nextAgentNum++,0,0); 
-	producedCommodity=Model::instance()->generateMake();
+	producedCommodity=0;//Model::instance()->generateMake();
 	mps=Model::instance()->generateMps();
 	numTraders=Model::instance()->generateNumTraders();
 	residentCommunity=Model::instance()->generateCommunity(this);
-	age=0;
+	age=Model::instance()->generateAge();
 	timesTraded=0;
-	for(int i=0; i<10; i++)
+	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
 		minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
 		while(minThreshold[i]<Commodity::getCommNum(i).getAmtCons())
@@ -177,7 +183,7 @@ Human::Human()
 		commoditiesHeld[i]=0;
 	}
 	allNeeds=0;
-	for(int i=0; i<10; i++)
+	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
 		allNeeds+=minThreshold[i];
 	}
@@ -189,12 +195,12 @@ Human::Human()
 */
 }
 
+//This constructor is called for new children
 Human::Human(Human * progenitor)
 {
 	parent=progenitor;
     myId = repast::AgentId(nextAgentNum++,0,0); 
-	producedCommodity=Model::instance()->generateMake();
-	salary=Model::instance()->generateSalary();
+	producedCommodity=0;//Model::instance()->generateMake();
 	/*while((((salary-progenitor.salary)^2)/progenitor.salary)>Model::LEMMINGNESS)
 	{
 		salary=Model::instance()->generateSalary();
@@ -205,7 +211,7 @@ Human::Human(Human * progenitor)
 	//Model::instance()->addToCommunity(residentCommunity,this);
 	age=0;
 	timesTraded=0;
-	for(int i=0; i<10; i++)
+	for(int i=0; i<Commodity::NUM_COMM; i++)
 	{
 		minThreshold[i]=Model::instance()->generateNeedCommodityThreshold();	
 		while(minThreshold[i]<Commodity::getCommNum(i).getAmtCons())
@@ -215,6 +221,12 @@ Human::Human(Human * progenitor)
 		maxThreshold[i]=Model::instance()->generateWantCommodityThreshold();
 		commoditiesHeld[i]=0;
 	}
+	allNeeds=0;
+	for(int i=0; i<Commodity::NUM_COMM; i++)
+	{
+		allNeeds+=minThreshold[i];
+	}
+	salary=Model::instance()->generateSalary();
 	parent->children.push_back(this);
 	Model::instance()->addToActors(this);
 	Model::instance()->addToCommunity(residentCommunity,this);
@@ -235,7 +247,7 @@ const repast::AgentId & Human::getId() const {
 
 void Human::earnIncome()
 {
-//cout << "earning!!" << endl;
+//std::cout << "earning!!" << endl;
 	//savings+=(salary+(savings*rr))*mps;
 	commoditiesHeld[producedCommodity]+=salary;
 	Commodity::getCommNum(producedCommodity).produce(salary);
@@ -269,10 +281,11 @@ void Human::consume()
 
 void Human::considerDeath()
 {
-	if(age>30)
+	int BD=0;
+	if(Model::instance()->getTick()>80 && Model::instance()->getTick()<82 && BD)
 	{
 		int prob=Model::instance()->generateLifeProb();
-		if(prob<4)
+		if(prob<10)
 		{
 			//std::cout<<"I'm dead!\n";
 			Model::instance()->inter(this);
@@ -292,7 +305,36 @@ void Human::considerDeath()
 			reschedule();
 		}
 	}
-	else if(age>100)
+	else if(age>=25 && age<100)
+	{
+		int prob=Model::instance()->generateLifeProb();
+		//std::cout<<"Dying?\n";
+		int getAbove=6;
+		/*if(Model::instance()->getTick()>80 && Model::instance()->getTick()<85)
+		{
+			getAbove=90;
+		}*/
+		if(prob<getAbove)
+		{
+			//std::cout<<"I'm dead!\n";
+			Model::instance()->inter(this);
+			Model::instance()->decrementPopulation();
+			if(Human::BEQ==0)
+			{
+				omniBequeath(this);
+			}
+			if(Human::BEQ==1)
+			{
+				primoBequeath(this);
+			}
+			//std::cout<<"death\n";
+		}
+		else
+		{
+			reschedule();
+		}
+	}
+	else if(age>=100)
 	{
 		//std::cout<<"I'm dead!\n";
 		Model::instance()->inter(this);
@@ -310,6 +352,8 @@ void Human::considerDeath()
 	{
 		reschedule();
 	}
+
+	//reschedule();
 }
 
 void Human::omniBequeath(Human * man)
@@ -320,6 +364,11 @@ void Human::omniBequeath(Human * man)
 	}
 	else
 	{
+		if((*man).children.size()>1)
+		{
+			Model::instance()->addToWealthRedistributed((*man).getWealth());
+			Model::instance()->incrementOmniEvent();
+		}
 		for(int i=0; i<(*man).children.size(); i++)
 		{
 			for(int j=0; j<Commodity::NUM_COMM; j++)
@@ -349,9 +398,9 @@ void Human::primoBequeath(Human * man)
 void Human::considerHavingAChild()
 {
 	int prob=Model::instance()->generateChild();
-	if(age>=20 && age<30)
+	if(age>=20 && age<35)
 	{
-		if(prob>85)
+		if(prob>90)
 		{
 			//std::cout<<"Child!\n";
 			Human * newchild = new Human(this);
@@ -609,7 +658,7 @@ int Human::getNumBloatedCommodities() const {
     return getNumCommoditiesWithStatus(BLOATED);
 }
 
-double Human::amtCommodity(int x)
+double Human::getAmtOfCommodityX(int x)
 {
 	return commoditiesHeld [x];
 }
