@@ -1,0 +1,31 @@
+Model * Model::theInstance = NULL;
+                        for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++) {
+                                Human * man = Model::instance()->getCommunityMembers(i)[j];
+                        for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++) {
+                                Human * man = Model::instance()->getCommunityMembers(i)[j];
+                        for(int j=0; j<Model::instance()->getCommunityMembers(i).size(); j++) {
+                                Human * man = Model::instance()->getCommunityMembers(i)[j];
+        public static Model * instance();
+                        repast::RepastProcess::instance()->getScheduleRunner();
+                        repast::RepastProcess::instance()->getScheduleRunner();
+                        for(int j=0; j<communities[i].size()/*Model::instance()->getCommunityMembers(i).size()*/; j++)
+                                Human * man = Model::instance()->getCommunityMembers(i)[j];
+        private static Model * instance() {
+                if (theInstance == NULL) {
+                        theInstance = new Model();
+                return theInstance;
+                repast::Random::instance()->initialize(SEED);
+                        repast::Random::instance()->getGenerator("commodityNeedThreshold");
+                        repast::Random::instance()->getGenerator("commodityWantThreshold");
+                        repast::Random::instance()->getGenerator("salary");
+                        repast::Random::instance()->getGenerator("make");
+                        repast::Random::instance()->getGenerator("mps");
+                        repast::Random::instance()->getGenerator("death");
+                        repast::Random::instance()->getGenerator("consume");
+                        repast::Random::instance()->getGenerator("trade");
+                        repast::Random::instance()->getGenerator("outside");
+                        repast::Random::instance()->getGenerator("community");
+                        repast::Random::instance()->getGenerator("children");
+                        repast::Random::instance()->getGenerator("initialAge");
+                        repast::RepastProcess::instance()->getScheduleRunner();
+                        repast::RepastProcess::instance()->getScheduleRunner();

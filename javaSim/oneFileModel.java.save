@@ -1,0 +1,1109 @@
+import sim.util.distribution.*;
+import sim.engine.*;
+import java.util.*;
+import ec.util.MersenneTwisterFast;
+//import org.apache.commons.lang.ArrayUtils;
+//import org.apache.commons.lang.*;
+
+class Commodity{
+        //Functions
+        public void initCommodities() {
+                for (int i=0; i<NUM_COMM; i++) {
+                        theCommodities[i] = new Commodity();
+                }
+        }
+
+        public void consume() {
+                totalAmountInSystem-=amtCons;
+        }
+
+        //Consumer does not have enough to consume, so doesn't quite
+        public void consFail(double x) {
+                totalAmountInSystem-=x;
+        }
+
+        public void produce(double quantity) {
+                totalAmountInSystem+=quantity;
+        }
+
+        public static Commodity getCommNum(int num) {
+                return theCommodities[num];
+        }
+
+        public double getTotalAmt() {
+                return totalAmountInSystem;
+        }
+
+        private Commodity()//Determine consumption rate, set 
+        {
+                //std::cout << "entering constructor" << std::endl;
+                totalAmountInSystem=0;
+                amtCons=Model.instance().generateConsume();
+                //std::cout<<"Consumption rate is "<<amtCons<<std::endl;
+                //std::cout << "leaving constructor" << std::endl;
+        }
+
+        public double getAmtCons() {
+                return amtCons;
+        }
+
+        //Data
+        public static final int NUM_COMM=10;
+        private static Commodity [] theCommodities = new Commodity [NUM_COMM];
+        private double totalAmountInSystem;
+        private double amtCons;
+}
+
+class Human implements Steppable {
+
+        //int Human::nextAgentNum = 0;
+        //private static int nextAgentNum = 0;
+
+        public enum CommodityStatus { DEFICIENT, SATISFIED, BLOATED };
+        public enum LifeStage { EARNING, TRADING, CONSUMING, BIRTHING, DYING }; 
+
+        public String commodityStatusString(CommodityStatus cs) {
+                switch (cs) {
+                        case DEFICIENT:
+                                return "DEFICIENT";
+                        case BLOATED:
+                                return "BLOATED";
+                        case SATISFIED:
+                                return "SATISFIED";
+                }
+                return "SOMETHING IS DREADFULLY WRONG!!!!!";
+        }
+
+        //friend std::ostream & operator<<(std::ostream & os,  Human & h);
+
+        public void print() {
+                double totalNeeds = 0;
+                for (int i=0; i<Commodity.NUM_COMM; i++) {
+                        totalNeeds += this.minThreshold[i];
+                }
+                //System.out.print(h.myId << " Salary " << h.salary << " Make " << h.producedCommodity << " mps "
+                //        << h.mps << " total needs " << totalNeeds << " Trades with " 
+                //        << h.numTraders << " Traded " << h.timesTraded << " times " << std::endl << "[";
+                System.out.printf("Salary %d Make %d mps %d total needs %d Trades with %d Traded %d times \n["
+                                ,this.salary,this.producedCommodity,this.mps,totalNeeds,this.numTraders,this.timesTraded);
+                for(int i=0; i<Commodity.NUM_COMM; i++)
+                {
+                        CommodityStatus cs = this.checkStatus(i);
+                        switch (cs) {
+                                case BLOATED:
+                                        System.out.printf("*");
+                                        break;
+                                case DEFICIENT:
+                                        System.out.printf("?");
+                                        break;
+                                case SATISFIED:
+                                        System.out.printf("=");
+                                        break;
+                        }
+                        System.out.printf("%d",this.commoditiesHeld[i]);
+                        if (i<Commodity.NUM_COMM-1) {
+                                System.out.printf(", ");
+                        }
+                }
+                System.out.printf("]\n");
+        }
+
+        //Global static values
+        public static int BEQ;
+
+        //public virtual repast::AgentId & getId() { return myId; }
+
+        //Scheduled events
+        public void earnIncome() {
+                //savings+=(salary+(savings*rr))*mps;
+                commoditiesHeld[producedCommodity]+=salary;
+                Commodity.getCommNum(producedCommodity).produce(salary);
+        }
+
+        public void tradeWithRandomAgents() {
+                /*
+                   Ok, new plan. Trading with communities in play.
+                   Generate a number every time, if you are below, trade in community.
+                   If you're above, you may trade with the world at large.
+                 */
+                for(int i=0; i<numTraders; i++) {
+                        int roll=(Model.instance().generateOutsideTrade());
+                        if(roll>Model.INTROVERT_DIAL) {
+                                transactWith(Model.instance().getRandomGlobalMember());
+                        } else {
+                                transactWith(Model.instance().getRandomCommunityMember(residentCommunity));
+                        }
+                }
+        }
+
+        public void consume() {
+                //cout << "consuming!!" << endl;
+                //cons.push_back(salary+(savings*rr))*(1-mps);
+                //cout<<*this<<endl;
+                //ofstream statsBeforeConsume;
+                //if(Model::instance()->getTick()<Model::NUM_YEARS-1)
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
+                                commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
+                                Commodity.getCommNum(i).consume();
+                        } else {
+                                Commodity.getCommNum(i).consFail(Commodity.getCommNum(i).getAmtCons()-commoditiesHeld[i]);
+                                commoditiesHeld[i]=0;
+                        }
+                        //cout<<this;
+                        //Commodity::getCommNum(i).consume();
+                }
+        }
+
+        public void considerHavingAChild() {
+                int prob=Model.instance().generateChild();
+                if(age>=20 && age<35) {
+                        if(prob>90) {
+                                //std::cout<<"Child!\n";
+                                Human newchild = new Human(this);
+                                Model.instance().schedule.scheduleOnceIn(.6,this);
+                                Model.instance().incrementPopulation();
+                        }
+                }
+        }
+
+        public void considerDeath() {
+                int BD=0;
+                if(Model.instance().getTick()>80 && Model.instance().getTick()<82 && BD == 1) {
+                        int prob=Model.instance().generateLifeProb();
+                        if(prob<10) {
+                                //std::cout<<"I'm dead!\n";
+                                Model.instance().inter(this);
+                                Model.instance().decrementPopulation();
+                                if(BEQ==0) {
+                                        omniBequeath(this);
+                                }
+                                if(BEQ==1) {
+                                        primoBequeath(this);
+                                }
+                                //std::cout<<"death\n";
+                        } else {
+                                //reschedule();
+                                Model.instance().schedule.scheduleOnceIn(.6,this);
+                        }
+                } else if(age>=25 && age<100) {
+                        int prob=Model.instance().generateLifeProb();
+                        //std::cout<<"Dying?\n";
+                        int getAbove=6;
+                        /*if(Model::instance()->getTick()>80 && Model::instance()->getTick()<85)
+                          {
+                          getAbove=90;
+                          }*/
+                        if(prob<getAbove) {
+                                //std::cout<<"I'm dead!\n";
+                                Model.instance().inter(this);
+                                Model.instance().decrementPopulation();
+                                if(BEQ==0) {
+                                        omniBequeath(this);
+                                }
+                                if(BEQ==1) {
+                                        primoBequeath(this);
+                                }
+                                //std::cout<<"death\n";
+                        } else {
+                                //reschedule();
+                                Model.instance().schedule.scheduleOnceIn(.6,this);
+                        }
+                } else if(age>=100) {
+                        //std::cout<<"I'm dead!\n";
+                        Model.instance().inter(this);
+                        Model.instance().decrementPopulation();
+                        if(BEQ==0) {
+                                omniBequeath(this);
+                        }
+                        if(BEQ==1) {
+                                primoBequeath(this);
+                        }
+                } else {
+                        //reschedule();
+                        Model.instance().schedule.scheduleOnceIn(.6,this);
+                }
+        }
+
+        public void step(SimState state) {
+                //earn
+                if(mode == LifeStage.EARNING){
+                        this.earnIncome();
+                        mode = LifeStage.TRADING;
+                        Model.instance().schedule.scheduleOnceIn(.1,this);
+                        //trade
+                }else if(mode == LifeStage.TRADING){
+                        this.tradeWithRandomAgents();
+                        mode = LifeStage.CONSUMING;
+                        Model.instance().schedule.scheduleOnceIn(.1,this);
+                        //consume
+                }else if(mode == LifeStage.CONSUMING){
+                        this.consume();
+                        mode = LifeStage.BIRTHING;
+                        Model.instance().schedule.scheduleOnceIn(.1,this);
+                        //child
+                }else if(mode == LifeStage.BIRTHING){
+                        this.considerHavingAChild();
+                        mode = LifeStage.DYING;
+                        Model.instance().schedule.scheduleOnceIn(.1,this);
+                        //death
+                }else if(mode == LifeStage.DYING){
+                        this.considerDeath();
+                        mode = LifeStage.EARNING;
+                }
+        }
+        /*
+           public void reschedule() {
+           repast::ScheduleRunner &theSchedule =
+           repast::RepastProcess::instance()->getScheduleRunner();
+           double time = floor(theSchedule.currentTick());
+           theSchedule.scheduleEvent(time+1.1, repast::Schedule::FunctorPtr(
+           new repast::MethodFunctor<Human>(this, &Human::earnIncome)));
+           theSchedule.scheduleEvent(time+1.2, repast::Schedule::FunctorPtr(
+           new repast::MethodFunctor<Human>(this, &Human::tradeWithRandomAgents)));
+           theSchedule.scheduleEvent(time+1.3, repast::Schedule::FunctorPtr(
+           new repast::MethodFunctor<Human>(this, &Human::consume)));
+           theSchedule.scheduleEvent(time+1.31, repast::Schedule::FunctorPtr(
+           new repast::MethodFunctor<Human>(this, &Human::considerHavingAChild)));
+           theSchedule.scheduleEvent(time+1.32, repast::Schedule::FunctorPtr(
+           new repast::MethodFunctor<Human>(this, &Human::considerDeath)));
+           age++;
+           }*/
+
+        //Constructors & destructors
+        //This constructor is called for initial agents
+        public Human() {
+                //myId = repast::AgentId(nextAgentNum++,0,0); 
+                myId = nextAgentNum++; 
+                mode = LifeStage.EARNING;
+                producedCommodity=Model.instance().generateMake();
+                mps=Model.instance().generateMps();
+                numTraders=Model.instance().generateNumTraders();
+                residentCommunity=Model.instance().generateCommunity(this);
+                age=Model.instance().generateAge();
+                timesTraded=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                        while(minThreshold[i]<Commodity.getCommNum(i).getAmtCons()) {
+                                minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                        }
+                        maxThreshold[i]=Model.instance().generateWantCommodityThreshold();
+                        commoditiesHeld[i]=0;
+                }
+                allNeeds=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        allNeeds+=minThreshold[i];
+                }
+                salary=Model.instance().generateSalary();
+                Model.instance().addToActors(this);
+        }
+
+        //This constructor is called for new children
+        public Human(Human progenitor) {
+                mode = LifeStage.EARNING;
+                parent=progenitor;
+                //myId = repast::AgentId(nextAgentNum++,0,0); 
+                myId = nextAgentNum++; 
+                producedCommodity=Model.instance().generateMake();
+                /*while((((salary-progenitor.salary)^2)/progenitor.salary)>Model::LEMMINGNESS)
+                  {
+                  salary=Model::instance()->generateSalary();
+                  }*/
+                mps=Model.instance().generateMps();
+                numTraders=Model.instance().generateNumTraders();
+                residentCommunity=parent.residentCommunity;
+                age=0;
+                timesTraded=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                        while(minThreshold[i]<Commodity.getCommNum(i).getAmtCons()) {
+                                minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                        }
+                        maxThreshold[i]=Model.instance().generateWantCommodityThreshold();
+                        commoditiesHeld[i]=0;
+                }
+                allNeeds=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        allNeeds+=minThreshold[i];
+                }
+                salary=Model.instance().generateSalary();
+                parent.children.add(this);
+                Model.instance().addToActors(this);
+                Model.instance().addToCommunity(residentCommunity,this);
+                //reschedule();
+        }
+
+        //Return singular, unchanging data about the agent
+        public int getCommunity() { return residentCommunity; }
+        public int getTimesTraded() { return timesTraded; }
+        public int getMake() { return producedCommodity; }
+        public double getSalary() { return salary; }
+        public int getNumTraders() { return numTraders; }
+        public int getAge()  { return age; }
+        public int getId()  { return myId; }
+
+        //Return composite data about the agent
+        public double getWealth() {
+                double wealth = 0;
+                for (int i=0; i<Commodity.NUM_COMM; i++) {
+                        wealth += commoditiesHeld[i];
+                }
+                return wealth;
+        }
+
+        public double getSatisfaction() { return getNumSatisfiedCommodities() + getNumBloatedCommodities(); }
+        public double getNeeds() { return allNeeds; }
+        public double getAmtOfCommodityX(int x) { return commoditiesHeld[x]; }
+        public int getNumDeficientCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.DEFICIENT); }
+        public int getNumSatisfiedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.SATISFIED); }
+        public int getNumBloatedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.BLOATED); }
+
+        //Human data unchanging
+        private double mps;//Float less than one
+        private double salary;//Between 3 and 7
+        private int producedCommodity;//Between 0 and 10
+        private int numTraders;//Between 5 and 100
+        private Human parent;
+        //private repast::AgentId myId;
+        private int myId;
+        private int residentCommunity;
+        private double allNeeds;
+        private double [] minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
+        private double [] maxThreshold = new double [Commodity.NUM_COMM];//Between 6 and 10
+
+        //Human data changing
+        private int age;
+        private int timesTraded;
+        private double [] commoditiesHeld = new double [Commodity.NUM_COMM];
+        private ArrayList <Human> children;
+        public LifeStage mode;
+
+        //Ummm...
+        private static int nextAgentNum = 0;
+
+        //Private trade functions
+        private void makeTradesSuchThat(Human other, 
+                        CommodityStatus aTooLowStatus_C1,//The level A wants to get above in good 1
+                        CommodityStatus aWantToPreserveStatus_C2,//The level A doesn't want to fall below in good 2
+                        CommodityStatus otherWantToPreserveStatus_C1,//The level B doesn't want to fall below in good 1
+                        CommodityStatus otherTooLowStatus_C2)//The level B wants to get above in good 2
+        {
+                int numTrades = 0;
+
+                // Go through all my commodities, searching for ones I'm below my lower bound in.
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        i= findStatusCommodityStartingAt(i, aTooLowStatus_C1);
+                        if(i!=Commodity.NUM_COMM &&
+                                        other.checkStatus(i)==otherWantToPreserveStatus_C1) {
+                                // Okay, this is now true: I want more of commodity i, and the
+                                // RHS (possibly) has some to spare. (We say "possibly" because
+                                // they might be exactly at the threshold of their current
+                                // status, and so actually wouldn't want to trade any of it.)
+                                // So we've "halfway" found a possible super-satisfiable trade.
+
+                                for(int j=0; j<Commodity.NUM_COMM; j++) {
+                                        j=other.findStatusCommodityStartingAt(j, otherTooLowStatus_C2);
+                                        if(j==Commodity.NUM_COMM) {
+                                                // Well, bummer. The RHS doesn't want anything,
+                                                // so there are no trades of this kind possible.
+                                                return;
+                                        }
+                                        if(checkStatus(j) == aWantToPreserveStatus_C2) {
+                                                // Do actual trade! This is because we now know:
+                                                //   - A wants more i
+                                                //   - B has an excess of i
+                                                //   - B wants more j
+                                                //   - A has an excess of j 
+                                                double aWantToBuy_Ci = 0;
+                                                double aWillingToSell_Cj = 0;
+                                                double otherWantToBuy_Cj = 0;
+                                                double otherWillingToSell_Ci = 0;
+                                                switch(aTooLowStatus_C1) {
+                                                        case DEFICIENT:
+                                                                aWantToBuy_Ci=minThreshold[i]-commoditiesHeld[i];
+                                                                break;
+                                                        case SATISFIED:
+                                                                aWantToBuy_Ci=maxThreshold[i]-commoditiesHeld[i];
+                                                                break;
+                                                }
+                                                switch(otherTooLowStatus_C2) {
+                                                        case DEFICIENT:
+                                                                otherWantToBuy_Cj=
+                                                                        other.minThreshold[j]-other.commoditiesHeld[j];
+                                                                break;
+                                                        case SATISFIED:
+                                                                otherWantToBuy_Cj=
+                                                                        other.maxThreshold[j]-other.commoditiesHeld[j];
+                                                                break;
+                                                }
+                                                switch(aWantToPreserveStatus_C2) {
+                                                        case BLOATED:
+                                                                aWillingToSell_Cj=commoditiesHeld[j]-maxThreshold[j];
+                                                                break;
+                                                        case SATISFIED:
+                                                                aWillingToSell_Cj=commoditiesHeld[j]-minThreshold[j];
+                                                                break;
+                                                }
+                                                switch(otherWantToPreserveStatus_C1) {
+                                                        case BLOATED:
+                                                                otherWillingToSell_Ci=
+                                                                        other.commoditiesHeld[i]-other.maxThreshold[i];
+                                                                break;
+                                                        case SATISFIED:
+                                                                otherWillingToSell_Ci=
+                                                                        other.commoditiesHeld[i]-other.minThreshold[i];
+                                                                break;
+                                                }
+                                                trade(i,
+                                                                j,
+                                                                aWantToBuy_Ci,
+                                                                otherWillingToSell_Ci,
+                                                                otherWantToBuy_Cj,
+                                                                aWillingToSell_Cj,
+                                                                other);
+
+                                                numTrades++;
+
+                                                // We have now traded. However, I may still be too low
+                                                // in commodity i. If so, I need to continue to look 
+                                                // for other j's to continue to satisfy my i.
+                                        }
+                                }
+                                // At this point, one of two things is true:
+                                // (a) I am no longer lacking in commodity i. Yay!  ...or...
+                                // (b) I am still lacking in commodity i, but I've exhausted
+                                // all possibilities of trading with RHS for it.
+                                // So now, continue looking for other i's I may be lacking in.
+                        }
+                }
+                //cout << "Made " << numTrades << " trades." << endl;
+        }
+
+        private void transactWith(Human other) {
+                incrementTrades();
+                other.incrementTrades();
+                //cout << "transacting from " << getId() << " to " << other.getId() << endl;
+
+                /*
+                   D,B,B,D  - SUPER
+
+                   D,B,B,S  - HALF-SUPER
+                   D,B,S,D  - HALF-SUPER
+                   S,B,B,D  - HALF-SUPER
+                   D,S,B,D  - HALF-SUPER
+
+                   D,S,S,D  - ORDINARY
+                   S,B,B,S  - ORDINARY
+                   S,B,D,S  - ORDINARY
+                   S,D,B,S  - ORDINARY
+
+                 */
+
+                // 1. Make super-satisfiable trades where possible.
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
+
+                // 2. Make half-super-satisfiable trades where possible.
+
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
+
+                // 3. make ordinary-satisfiable trades happen.
+
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
+        }
+
+        private void swap(double x, Human other, int alow, int blow) {
+                commoditiesHeld[alow]+=x;
+                other.commoditiesHeld[alow]-=x;
+                commoditiesHeld[blow]-=x;
+                other.commoditiesHeld[blow]+=x;
+        }
+
+        private void trade(int comm1Num, int comm2Num,
+                        double amtAWillingToBuyOf1, double amtBWillingToBuyOf2,
+                        double amtAWillingToSellOf2, double amtBWillingToSellOf1,
+                        Human B) {
+
+                //cout << "ACTUALLY trading between " << getId() << " and " << B.getId() << "!!" << endl;
+                double [] coms = new double [4];
+                coms[0] = amtAWillingToBuyOf1;
+                coms[1] = amtBWillingToSellOf1;
+                coms[2] = amtBWillingToBuyOf2;
+                coms[3] = amtAWillingToSellOf2;
+
+                boolean good=true;
+                for(int i=0; i<4; i++) {
+                        if(coms[i]<0) {
+                                coms[i]=10000;//Make all negative lows really high to prevent their being chosen to be traded
+                        } else if(coms[i]==0) {
+                                good=false;//If at least one is not negative or zero, make it possible to trade 
+                        }
+                }
+
+                if(good) {
+                        //List b = Arrays.asList(ArrayUtils.toObject(coms));
+                        //double x = Collections.min(b);
+                        //double x = min(coms[0], coms[1]);//, min(coms[2],coms[3])));//Choose the lowest of the options for trades so that you don't overstep any of the bounds
+                        double x = (coms[0] > coms[2] ? coms[0] : coms[1]);
+                        x = (x > coms[2] ? coms[2] : x);
+                        x = (x > coms[3] ? coms[3] : x);
+                        //double y = min(x,coms[2]);
+                        //x = min(x,coms[3]);
+                        double change=x;
+                        //std::cout<<*this;
+                        //std::cout<<B;
+                        //std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
+                        Model.instance().incrementTrades();
+                        Model.instance().addToTradedAmount(change);
+                        swap(change, B, comm1Num, comm2Num);
+                        //std::cout<<*this;
+                }
+        }
+
+        private void incrementTrades() { timesTraded++; }
+
+        //Commodity checking utilties
+        private CommodityStatus checkStatus(int commodityNum) {
+                if(commoditiesHeld[commodityNum]<minThreshold[commodityNum]) {
+                        return CommodityStatus.DEFICIENT;
+                }
+                if(commoditiesHeld[commodityNum]>maxThreshold[commodityNum]) {
+                        return CommodityStatus.BLOATED;
+                }
+                return CommodityStatus.SATISFIED;
+        }
+
+        // Return the number of the commodity greater than or equal to x that we are
+        // deficient in. If we are not deficient in any, return NUM_COMM (which is an
+        // illegal commodity number.)
+        private int findStatusCommodityStartingAt(int x, CommodityStatus specifiedCommStatus) {
+                for(int i=x; i<Commodity.NUM_COMM; i++) {
+                        if(checkStatus(i)==specifiedCommStatus) {
+                                return i;
+                        }
+                }
+                return Commodity.NUM_COMM;
+        }
+
+        private int getNumCommoditiesWithStatus(CommodityStatus status) {
+                int i=0;
+                for (int j=0; j<Commodity.NUM_COMM; j++) {
+                        if (checkStatus(j) == status) {
+                                i++;
+                        }
+                }
+                return i;
+        }
+
+        //Inheritance functions
+        private void omniBequeath(Human man) {
+                if(man.children.size()==0) {
+                        //std::cout<<"Childless ";
+                } else {
+                        if(man.children.size()>1) {
+                                Model.instance().addToWealthRedistributed(man.getWealth());
+                                Model.instance().incrementOmniEvent();
+                        }
+                        for(int i=0; i<man.children.size(); i++) {
+                                for(int j=0; j<Commodity.NUM_COMM; j++) {
+                                        double progeny=man.children.size();
+                                        man.children.get(i).commoditiesHeld[j]+=man.commoditiesHeld[j]/progeny;
+                                }
+                        }
+                }
+        }
+
+        private void primoBequeath(Human man) {
+                if(man.children.size()==0) {
+
+                } else {
+                        for(int i=0; i<Commodity.NUM_COMM; i++) {
+                                man.children.get(0).commoditiesHeld[i]+=man.commoditiesHeld[i];
+                        }
+                }
+        }
+};
+
+// For weird C++ reasons, "define" the static variables. (??)
+//Model * Model::theInstance = NULL;
+//public int Model::INTROVERT_DIAL;
+//public int Model::SEED;
+//int Model::LEMMINGNESS;
+
+public class Model extends SimState implements Steppable
+{
+        //Create singleton model
+        private static Model theInstance = instance();
+
+        //Global constants
+        public static int NUM_INITIAL_AGENTS = 100;
+        public static int NUM_YEARS = 100;
+        public static int INTROVERT_DIAL;// = 50;
+        public static long SEED = 0;
+        public static int LEMMINGNESS = 100;
+        public static int COMMUNITIES = 10;
+
+        //Random number generator next functions
+
+        public double generateNeedCommodityThreshold() { return commodityNeedThresholdDistro.nextDouble(); }
+        public double generateWantCommodityThreshold() { return commodityWantThresholdDistro.nextDouble(); }
+        public double generateSalary() {
+                double thing=salaryDistro.nextDouble();
+                while(thing<0)
+                {
+                        thing=salaryDistro.nextDouble();
+                }
+                return thing;
+        }
+        public int generateMake() { return makeDistro.nextInt(); }
+        public double generateMps() { return mpsDistro.nextDouble(); }
+        public int generateLifeProb() { return deathDistro.nextInt(); }
+        public double generateConsume() { return consumeDistro.nextDouble(); }
+        public int generateNumTraders() { return tradeDistro.nextInt(); }
+        public int generateOutsideTrade() { return outsideTrade.nextInt(); }
+        public int generateCommunity(Human toAdd) {
+                int randomCommunity = communityDistro.nextInt();
+                randomCommunity = randomCommunity%COMMUNITIES;
+                communities.get(randomCommunity).add(toAdd);
+                return randomCommunity;
+        }
+        public int generateChild() { return childDistro.nextInt(); }
+        public int generateAge() { return ageDistro.nextInt(); }
+
+        //Miscellaneous
+        public double wealthGiniCoefficient() {
+                //vector<double> wealths;//Total amount of goods held by each agent
+                ArrayList<Double> wealths = new ArrayList<Double>();//Total amount of goods held by each agent
+                for(int i=0; i<COMMUNITIES; i++) {
+                        for(int j=0; j<Model.instance().getCommunityMembers(i).size(); j++) {
+                                Human man = Model.instance().getCommunityMembers(i).get(j);
+                                wealths.add(man.getWealth());
+                        }
+                }
+                return computeGini(wealths);
+        }
+        public double adultWealthGiniCoefficient() {
+                ArrayList<Double> wealths = new ArrayList<Double>();
+                for(int i=0; i<COMMUNITIES; i++) {
+                        for(int j=0; j<Model.instance().getCommunityMembers(i).size(); j++) {
+                                Human man = Model.instance().getCommunityMembers(i).get(j);
+                                if((man.getAge())>20) {
+                                        wealths.add(man.getWealth());
+                                }
+                        }
+                }
+                return computeGini(wealths);
+        }
+        public double satisfactionGiniCoefficient() {
+                ArrayList<Double> satisfactions = new ArrayList<Double>();
+                for(int i=0; i<COMMUNITIES; i++) {
+                        for(int j=0; j<Model.instance().getCommunityMembers(i).size(); j++) {
+                                Human man = Model.instance().getCommunityMembers(i).get(j);
+                                satisfactions.add(man.getSatisfaction());
+                        }
+                }
+                return computeGini(satisfactions);
+        }
+
+        public Human getRandomCommunityMember(int communityNum) {
+                int indexOfRandomMember = tradeDistro.nextInt();
+                indexOfRandomMember = indexOfRandomMember%(communities.get(communityNum).size());
+                return communities.get(communityNum).get(indexOfRandomMember);
+        }
+
+        public Human getRandomGlobalMember() {
+                //std::vector<Human *> oneAgent;
+                //ArrayList<Human> oneAgent = new ArrayList<Human>();
+                //actors.getRandomAgents(1,oneAgent);
+                int big = actors.size();
+                Enumeration<Integer> allKeys = actors.keys();
+                int randomHash = tradeDistro.nextInt()%big;
+                int toTake = 0;
+                for(int i=0; i<randomHash; i++) {
+                        toTake = allKeys.nextElement();
+                }
+                Human oneAgent = actors.get(toTake);
+                return oneAgent;
+        }
+
+        public double getAvgDeficientCommComm(int commuNum) {
+                int i=getCommunitySize(commuNum);
+                double total=0;
+                for(int j=0; j<i; j++) {
+                        total += ((getCommunityMembers(commuNum)).get(j)).getNumDeficientCommodities();
+                }
+                total/=i;
+                return total;
+        }
+
+        public void inter(Human body) {
+                //graveyard.push_back(body);
+                graveyard.add(body);
+                int h=communities.get(body.getCommunity()).size();
+                for(int i=0; i<h; i++) {
+                        if(communities.get(body.getCommunity()).get(i)==body) {
+                                //communities.get(body.getCommunity()).remove((communities.get(body.getCommunity()).begin())+i);
+                                communities.get(body.getCommunity()).remove(i);
+                        }
+                }
+        }
+        public void addToActors(Human man) { actors.put(man.getId(),man); }
+        public void addToCommunity(int i, Human man) { communities.get(i).add(man); }
+
+        //Keep track of Model variables
+        public void incrementTrades() { yearlyTrades++; }
+        public void resetTrades() { yearlyTrades=0; }
+        public void addToTradedAmount(double change) { yearlyAmountTraded+=change; }
+        public void resetTradedAmount() { yearlyAmountTraded=0; }
+        public void incrementPopulation() { population++; }
+        public void decrementPopulation() { population--; }
+        public void incrementOmniEvent() { numOmniEvents++; }
+        public void resetOmniEvent() { numOmniEvents=0; }
+        public void calculateTotalWealth() {
+                for(int i=0; i<COMMUNITIES; i++) {
+                        for(int j=0; j<communities.get(i).size(); j++) {
+                                totalWealth+=communities.get(i).get(j).getWealth();
+                        }
+                }
+        }
+
+        public void resetTotalWealth() { totalWealth=0; }
+        public void addToWealthRedistributed(double value) { wealthRedistributed+=value; }
+        public void resetWealthRedistributed() { wealthRedistributed=0; }
+
+        //Repast things
+        //public virtual repast::AgentId & getId() { return myId; }
+        public static Model instance(){
+                if(theInstance == null){
+                        theInstance = new Model(SEED);
+                }
+                return theInstance;
+        }
+
+        public void start() {
+                createInitialAgents();
+                schedule.scheduleOnce(1,this);
+
+                // Schedule an end point.
+                //theScheduleRunner.scheduleStop(NUM_YEARS);
+
+                // Let's DO THIS THING!!!
+                //theScheduleRunner.run();
+        }
+
+        public void fillCommunities() {
+                for(int i=0; i<COMMUNITIES; i++) {
+                        communities.add(new ArrayList<Human>());
+                }
+        } 
+
+        //Return model things
+        /*public repast::SharedContext<Human>& getActors() {
+          return actors;
+          }*/
+
+        //public std::vector<Human *> getCommunityMembers(int communityNum) {
+        public ArrayList<Human> getCommunityMembers(int communityNum) {
+                return communities.get(communityNum);
+        }
+
+        //public std::vector<Human *> getGraveyard() {
+        public ArrayList<Human> getGraveyard() {
+                return graveyard;
+        }
+        public int getCommunitySize(int communityNum) { return communities.get(communityNum).size(); }
+        public double getTick() {
+                /*repast::ScheduleRunner &theScheduleRunner = 
+                  repast::RepastProcess::instance()->getScheduleRunner();
+                  return theScheduleRunner.currentTick();*/
+                return schedule.getTime();
+        }
+
+        public int getPopulation() { return population; }
+        public double getTotalWealth() { return totalWealth; }
+        public double getWealthRedistributed() { return wealthRedistributed; }
+        public double calculatePercentWealthRedistributed() {
+                calculateTotalWealth();
+                double percent=wealthRedistributed/totalWealth;
+                return percent;
+        }
+
+        //Print things out
+        /*public void printCommodityStats(std::ostream & os) {
+
+        //cout << "printing all stats!" << endl;
+        //repast::SharedContext<Human>::const_local_iterator actorIter = 
+        //actors.localBegin();
+        //os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
+        //while (actorIter != actors.localEnd()) {
+        for(int k=0; k<Commodity::NUM_COMM; k++)
+        {
+        //os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
+        }
+        for(int i=0; i<COMMUNITIES; i++)
+        {
+        for(int j=0; j<communities.get(i).size()|||Model::instance()->getCommunityMembers(i).size(); j++)
+        {
+        Human * man = Model.instance().getCommunityMembers(i)[j];
+        os <<// (*actorIter)->getNumDeficientCommodities() << "," <<
+        ((*man).getNumSatisfiedCommodities() +
+        (*man).getNumBloatedCommodities()) << ","<<
+        (*man).getCommunity() << "," <<
+        (*man).getSalary()<< "," << 
+        //	  (*man).getMake()<< "," <<
+        (*man).getTimesTraded()<< "," <<
+        (*man).getWealth() << std::endl;
+        //	  (*actorIter)->getNeeds()<< "," <<
+
+        //	  Model::INTROVERT_DIAL<< std::endl;
+        |||
+        std::cout<<(*actorIter)->getId() << " has these totals: " <<
+        (*actorIter)->getNumDeficientCommodities() << "," <<
+        (*actorIter)->getNumSatisfiedCommodities() << "," <<
+        (*actorIter)->getNumBloatedCommodities() << endl;
+        cout << *(*actorIter) << endl;
+        |||
+        //actorIter++;
+        }
+        }
+        }
+         */
+        public void printGini() {
+                /*std::cout << adultWealthGiniCoefficient() << ',' <<
+                  satisfactionGiniCoefficient() << ',' <<
+                  population<< ',' <<
+                  numOmniEvents<< ',' <<
+                  calculatePercentWealthRedistributed() << ',' <<
+                  wealthGiniCoefficient() << ',' <<
+                  yearlyTrades<< std::endl;*/
+                System.out.printf("%f,%f,%d,%d,%f,%f,%d\n",
+                                adultWealthGiniCoefficient(),
+                                satisfactionGiniCoefficient(),
+                                population,
+                                numOmniEvents,
+                                calculatePercentWealthRedistributed(),
+                                wealthGiniCoefficient(),
+                                yearlyTrades);
+
+        }
+
+        public void printCommunityStats(/*std::ostream & os*/) {
+                for(int i=0; i<Commodity.NUM_COMM; i++)
+                {
+                        /*os << "Community " << i << " has " << getCommunitySize(i) <<
+                          " members and an average of " << getAvgDeficientCommComm(i) <<
+                          " deficient commodities\n";*/
+                }
+        }
+
+        //Private things
+        //private repast::AgentId myId;
+
+        //Trackers
+        private int population;
+        private double yearlyAmountTraded;
+        private int yearlyTrades;
+        private int numOmniEvents;
+        private double totalWealth;
+        private double wealthRedistributed;
+
+        //Functions
+        private Model(long seed) {
+                // Initialize random number distributions.
+                /*repast::Random::instance()->initialize(SEED);
+                  repast::Properties theProperties("./distributions.txt");
+                  repast::initializeRandom(theProperties);
+                  commodityNeedThresholdDistro =
+                  repast::Random::instance()->getGenerator("commodityNeedThreshold");
+                  commodityWantThresholdDistro =
+                  repast::Random::instance()->getGenerator("commodityWantThreshold");
+                  salaryDistro =
+                  repast::Random::instance()->getGenerator("salary");
+                  makeDistro =
+                  repast::Random::instance()->getGenerator("make");
+                  mpsDistro =
+                  repast::Random::instance()->getGenerator("mps");
+                  deathDistro =		
+                  repast::Random::instance()->getGenerator("death");
+                  consumeDistro =
+                  repast::Random::instance()->getGenerator("consume");
+                  tradeDistro =
+                  repast::Random::instance()->getGenerator("trade");
+                  outsideTrade =
+                  repast::Random::instance()->getGenerator("outside");
+                  communityDistro =
+                  repast::Random::instance()->getGenerator("community");
+                  childDistro =
+                  repast::Random::instance()->getGenerator("children");
+                  ageDistro=
+                  repast::Random::instance()->getGenerator("initialAge");
+                 */
+                super(seed);
+                randomGenerator = new MersenneTwisterFast();
+                fillCommunities();
+                yearlyTrades=0;
+                yearlyAmountTraded=0;
+                numOmniEvents=0;
+                totalWealth=0;
+                wealthRedistributed=0;
+                population=NUM_INITIAL_AGENTS;
+        }
+        private void createInitialAgents() {
+
+                // Create the initial generation of agents, and add them to the Context.
+                // Schedule the startYear method to run at integer clock ticks (start
+                //   of year, say.
+                // While we're at it, schedule all agents to run on the following
+                //   schedule:
+                // - On integer + .1, earn income.
+                // - At integer + .2, trade with other random agents.
+                // - At integer + .3, consume commodities for the year.
+                //repast::ScheduleRunner &theScheduleRunner = 
+                //repast::RepastProcess::instance()->getScheduleRunner();
+                //theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
+                //new repast::MethodFunctor<Model>(this, &Model::startYear)));
+                for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
+                        Human newHuman = new Human();
+                        //add agent to hash table
+                        schedule.scheduleOnce(.1,newHuman);
+                        //actors.addAgent(newHuman);
+                        /*theScheduleRunner.scheduleEvent(1.1, repast::Schedule::FunctorPtr(
+                          new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
+                          theScheduleRunner.scheduleEvent(1.2, repast::Schedule::FunctorPtr(
+                          new repast::MethodFunctor<Human>(newHuman, &Human::tradeWithRandomAgents)));*/
+                        //Print the stats before consuming
+                        /*	ofstream statsBeforeConsume;
+                            statsBeforeConsume.open("statsBeforeConsume.txt");
+                            theScheduleRunner.scheduleEvent(1.25, 1, repast::Schedule::FunctorPtr(
+                            new repast::MethodFunctor<Model>(this, &Model::printCommodityStats(statsBeforeConsume))));
+                         */
+                        /*theScheduleRunner.scheduleEvent(1.3, repast::Schedule::FunctorPtr(
+                          new repast::MethodFunctor<Human>(newHuman, &Human::consume)));
+                          theScheduleRunner.scheduleEvent(1.31, repast::Schedule::FunctorPtr(
+                          new repast::MethodFunctor<Human>(newHuman, &Human::considerHavingAChild)));
+                          theScheduleRunner.scheduleEvent(1.32, repast::Schedule::FunctorPtr(
+                          new repast::MethodFunctor<Human>(newHuman, &Human::considerDeath)));*/
+
+                }
+                /*theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
+                  new repast::MethodFunctor<Model>(this, &Model::printGini)));
+                  theScheduleRunner.scheduleEvent(1.5, 1, repast::Schedule::FunctorPtr(
+                  new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
+                  theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
+                  new repast::MethodFunctor<Model>(this, &Model::resetTradedAmount)));
+                  theScheduleRunner.scheduleEvent(1.7, 1, repast::Schedule::FunctorPtr(
+                  new repast::MethodFunctor<Model>(this, &Model::resetOmniEvent)));	
+                  theScheduleRunner.scheduleEvent(1.8, 1, repast::Schedule::FunctorPtr(
+                  new repast::MethodFunctor<Model>(this, &Model::resetTotalWealth)));	
+                  theScheduleRunner.scheduleEvent(1.9, 1, repast::Schedule::FunctorPtr(
+                  new repast::MethodFunctor<Model>(this, &Model::resetWealthRedistributed)));	*/
+        }
+
+        public void step(SimState model) {
+                printGini();
+                resetTrades();
+                resetTradedAmount();
+                resetOmniEvent();
+                resetTotalWealth();
+                resetWealthRedistributed();
+                schedule.scheduleOnceIn(1,this);
+        }
+
+        private void startYear() {
+                //repast::ScheduleRunner &theScheduleRunner = 
+                //repast::RepastProcess::instance()->getScheduleRunner();
+                //cout << "======================================================" << endl;
+                //cout << "Now starting year " <<  theScheduleRunner.currentTick() << " with a population of " << population << "!" << endl;
+        }
+
+        private double computeGini(ArrayList<Double> vals) {
+                int n = vals.size();
+                double [] values = new double[n];
+                for(int i =0; i<n; i++) {
+                        values[i] = vals.get(i);
+                }
+                /*ArrayList<Double> p = new ArrayList<Double>();
+                  ArrayList<Double> nu = new ArrayList<Double>();
+                  ArrayList<Double> wx = new ArrayList<Double>();
+                  ArrayList<Double> first = new ArrayList<Double>();
+                  ArrayList<Double> second = new ArrayList<Double>();*/
+                double [] p = new double[n];
+                double [] nu = new double[n];
+                double [] wx = new double[n];
+                double [] first = new double[n];
+                double [] second = new double[n];
+
+                //sort(values.begin(), values.end());
+                Arrays.sort(values);
+
+                for (int i=0; i<n; i++) {
+                        p[i] = ((double)i+1)/n;
+                }
+                for (int i=0; i<n; i++) {
+                        wx[i] = values[i]/n;
+                }
+                nu[0] = wx[0];
+                for (int i=1; i<n; i++) {
+                        nu[i] = nu[i-1] + wx[i];
+                }
+                for (int i=0; i<n; i++) {
+                        nu[i] /= nu[n-1];
+                }
+                double sum_first = 0.0;
+                for (int i=0; i<n-1; i++) {
+                        first[i] = nu[i+1] * p[i];
+                        sum_first += first[i];
+                }
+                double sum_second = 0.0;
+                for (int i=0; i<n-1; i++) {
+                        second[i] = nu[i] * p[i+1];
+                        sum_second += second[i];
+                }
+
+                return sum_first - sum_second;
+        }
+
+        //Agent containers
+        //private repast::SharedContext<Human> actors;
+        private Hashtable<Integer,Human> actors;
+        //private std::vector<std::vector<Human *> > communities;
+        private ArrayList<ArrayList<Human> > communities;
+        //private std::vector<Human *> graveyard;
+        private ArrayList <Human> graveyard;
+
+        //Random number generator declarations
+        //All of these must be redone
+        private MersenneTwisterFast randomGenerator;
+        private Uniform commodityNeedThresholdDistro = new Uniform(1.0,5.0,randomGenerator);
+        private Uniform commodityWantThresholdDistro = new Uniform(6.0,10.0,randomGenerator);
+        private Normal salaryDistro = new Normal(35,15,randomGenerator);
+        private Uniform makeDistro = new Uniform(0,9,randomGenerator);
+        private Uniform deathDistro = new Uniform(0,100,randomGenerator);
+        private Uniform mpsDistro = new Uniform(.1,.7,randomGenerator);
+        private Uniform consumeDistro = new Uniform(1,4,randomGenerator);
+        private Uniform tradeDistro = new Uniform(0,1000,randomGenerator);
+        private Uniform outsideTrade = new Uniform(0,100,randomGenerator);
+        private Uniform communityDistro = new Uniform(1,100,randomGenerator);
+        private Uniform childDistro = new Uniform(0,100,randomGenerator);
+        private Uniform ageDistro = new Uniform(0,29,randomGenerator);
+
+        public static void main(String args[]) {
+                if(args.length!=3) {
+                        System.out.println("You need three numbers here.");
+                        System.exit(1);
+                }
+                doLoop(new MakesSimState() {
+                                public SimState newInstance(long seed, String[] args) {
+                                return instance();
+                                }
+                                public Class simulationClass() {
+                                return Model.class;
+                                }
+                                }, args);
+        }
+}
