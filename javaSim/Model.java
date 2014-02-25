@@ -2,11 +2,6 @@ import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;
 import ec.util.MersenneTwisterFast;
-// For weird C++ reasons, "define" the static variables. (??)
-//Model * Model::theInstance = NULL;
-//public int Model::INTROVERT_DIAL;
-//public int Model::SEED;
-//int Model::LEMMINGNESS;
 
 public class Model extends SimState implements Steppable
 {
@@ -14,8 +9,8 @@ public class Model extends SimState implements Steppable
         private static Model theInstance = instance();
 
         //Global constants
-        public static int NUM_INITIAL_AGENTS = 100;
-        public static int NUM_YEARS = 100;
+        public static final int NUM_INITIAL_AGENTS = 100;
+        public static final int NUM_YEARS = 100;
         public static int INTROVERT_DIAL;// = 50;
         public static long SEED = 0;
         public static int LEMMINGNESS = 100;
@@ -189,24 +184,16 @@ public class Model extends SimState implements Steppable
         } 
 
         //Return model things
-        /*public repast::SharedContext<Human>& getActors() {
-          return actors;
-          }*/
 
-        //public std::vector<Human *> getCommunityMembers(int communityNum) {
         public ArrayList<Human> getCommunityMembers(int communityNum) {
                 return communities.get(communityNum);
         }
 
-        //public std::vector<Human *> getGraveyard() {
         public ArrayList<Human> getGraveyard() {
                 return graveyard;
         }
         public int getCommunitySize(int communityNum) { return communities.get(communityNum).size(); }
         public double getTick() {
-                /*repast::ScheduleRunner &theScheduleRunner = 
-                  repast::RepastProcess::instance()->getScheduleRunner();
-                  return theScheduleRunner.currentTick();*/
                 return schedule.getTime();
         }
 
@@ -220,53 +207,7 @@ public class Model extends SimState implements Steppable
         }
 
         //Print things out
-        /*public void printCommodityStats(std::ostream & os) {
-
-        //cout << "printing all stats!" << endl;
-        //repast::SharedContext<Human>::const_local_iterator actorIter = 
-        //actors.localBegin();
-        //os << "DEFICIENT,SATISFIED,BLOATED,COMMUNITY,SALARY,TIMES_TRADED,INTROVERSION" << std::endl;
-        //while (actorIter != actors.localEnd()) {
-        for(int k=0; k<Commodity::NUM_COMM; k++)
-        {
-        //os << Commodity::getCommNum(k).getTotalAmt() << std::endl;
-        }
-        for(int i=0; i<COMMUNITIES; i++)
-        {
-        for(int j=0; j<communities.get(i).size()|||Model::instance()->getCommunityMembers(i).size(); j++)
-        {
-        Human * man = Model.instance().getCommunityMembers(i)[j];
-        os <<// (*actorIter)->getNumDeficientCommodities() << "," <<
-        ((*man).getNumSatisfiedCommodities() +
-        (*man).getNumBloatedCommodities()) << ","<<
-        (*man).getCommunity() << "," <<
-        (*man).getSalary()<< "," << 
-        //	  (*man).getMake()<< "," <<
-        (*man).getTimesTraded()<< "," <<
-        (*man).getWealth() << std::endl;
-        //	  (*actorIter)->getNeeds()<< "," <<
-
-        //	  Model::INTROVERT_DIAL<< std::endl;
-        |||
-        std::cout<<(*actorIter)->getId() << " has these totals: " <<
-        (*actorIter)->getNumDeficientCommodities() << "," <<
-        (*actorIter)->getNumSatisfiedCommodities() << "," <<
-        (*actorIter)->getNumBloatedCommodities() << endl;
-        cout << *(*actorIter) << endl;
-        |||
-        //actorIter++;
-        }
-        }
-        }
-         */
         public void printGini() {
-                /*std::cout << adultWealthGiniCoefficient() << ',' <<
-                  satisfactionGiniCoefficient() << ',' <<
-                  population<< ',' <<
-                  numOmniEvents<< ',' <<
-                  calculatePercentWealthRedistributed() << ',' <<
-                  wealthGiniCoefficient() << ',' <<
-                  yearlyTrades<< std::endl;*/
                 System.out.printf("%f,%f,%d,%d,%f,%f,%d\n",
                                 adultWealthGiniCoefficient(),
                                 satisfactionGiniCoefficient(),
@@ -318,10 +259,8 @@ public class Model extends SimState implements Steppable
 
                 communities = new ArrayList<ArrayList<Human>>();
                 fillCommunities();
-                /*Hashtable<Integer,Human>*/ actors = new Hashtable<Integer,Human>();
-        //private std::vector<std::vector<Human *> > communities;
-        //private std::vector<Human *> graveyard;
-                /*ArrayList <Human>*/ graveyard = new ArrayList<Human>();
+                actors = new Hashtable<Integer,Human>();
+                graveyard = new ArrayList<Human>();
                 yearlyTrades=0;
                 yearlyAmountTraded=0;
                 numOmniEvents=0;
@@ -339,45 +278,11 @@ public class Model extends SimState implements Steppable
                 // - On integer + .1, earn income.
                 // - At integer + .2, trade with other random agents.
                 // - At integer + .3, consume commodities for the year.
-                //repast::ScheduleRunner &theScheduleRunner = 
-                //repast::RepastProcess::instance()->getScheduleRunner();
-                //theScheduleRunner.scheduleEvent(1, 1, repast::Schedule::FunctorPtr(
-                //new repast::MethodFunctor<Model>(this, &Model::startYear)));
                 for (int i=0; i<NUM_INITIAL_AGENTS; i++) {
-                        Human newHuman = new Human();
                         //add agent to hash table
+                        Human newHuman = new Human();
                         schedule.scheduleOnce(.1,newHuman);
-                        //actors.addAgent(newHuman);
-                        /*theScheduleRunner.scheduleEvent(1.1, repast::Schedule::FunctorPtr(
-                          new repast::MethodFunctor<Human>(newHuman, &Human::earnIncome)));
-                          theScheduleRunner.scheduleEvent(1.2, repast::Schedule::FunctorPtr(
-                          new repast::MethodFunctor<Human>(newHuman, &Human::tradeWithRandomAgents)));*/
-                        //Print the stats before consuming
-                        /*	ofstream statsBeforeConsume;
-                            statsBeforeConsume.open("statsBeforeConsume.txt");
-                            theScheduleRunner.scheduleEvent(1.25, 1, repast::Schedule::FunctorPtr(
-                            new repast::MethodFunctor<Model>(this, &Model::printCommodityStats(statsBeforeConsume))));
-                         */
-                        /*theScheduleRunner.scheduleEvent(1.3, repast::Schedule::FunctorPtr(
-                          new repast::MethodFunctor<Human>(newHuman, &Human::consume)));
-                          theScheduleRunner.scheduleEvent(1.31, repast::Schedule::FunctorPtr(
-                          new repast::MethodFunctor<Human>(newHuman, &Human::considerHavingAChild)));
-                          theScheduleRunner.scheduleEvent(1.32, repast::Schedule::FunctorPtr(
-                          new repast::MethodFunctor<Human>(newHuman, &Human::considerDeath)));*/
-
                 }
-                /*theScheduleRunner.scheduleEvent(1.4, 1, repast::Schedule::FunctorPtr(
-                  new repast::MethodFunctor<Model>(this, &Model::printGini)));
-                  theScheduleRunner.scheduleEvent(1.5, 1, repast::Schedule::FunctorPtr(
-                  new repast::MethodFunctor<Model>(this, &Model::resetTrades)));	
-                  theScheduleRunner.scheduleEvent(1.6, 1, repast::Schedule::FunctorPtr(
-                  new repast::MethodFunctor<Model>(this, &Model::resetTradedAmount)));
-                  theScheduleRunner.scheduleEvent(1.7, 1, repast::Schedule::FunctorPtr(
-                  new repast::MethodFunctor<Model>(this, &Model::resetOmniEvent)));	
-                  theScheduleRunner.scheduleEvent(1.8, 1, repast::Schedule::FunctorPtr(
-                  new repast::MethodFunctor<Model>(this, &Model::resetTotalWealth)));	
-                  theScheduleRunner.scheduleEvent(1.9, 1, repast::Schedule::FunctorPtr(
-                  new repast::MethodFunctor<Model>(this, &Model::resetWealthRedistributed)));	*/
         }
 
         public void step(SimState model) {
@@ -387,7 +292,9 @@ public class Model extends SimState implements Steppable
                 resetOmniEvent();
                 resetTotalWealth();
                 resetWealthRedistributed();
-                schedule.scheduleOnceIn(1,this);
+                if(population >0){
+                    schedule.scheduleOnceIn(1,this);
+                }
         }
 
         private void startYear() {
@@ -399,11 +306,6 @@ public class Model extends SimState implements Steppable
 
         private double computeGini(ArrayList<Double> vals) {
                 int n = vals.size();
-                /*ArrayList<Double> p = new ArrayList<Double>();
-                ArrayList<Double> nu = new ArrayList<Double>();
-                ArrayList<Double> wx = new ArrayList<Double>();
-                ArrayList<Double> first = new ArrayList<Double>();
-                ArrayList<Double> second = new ArrayList<Double>();*/
                 double [] p = new double[n];
                 double [] nu = new double[n];
                 double [] wx = new double[n];
@@ -440,15 +342,11 @@ public class Model extends SimState implements Steppable
         }
 
         //Agent containers
-        //private repast::SharedContext<Human> actors;
         private Hashtable<Integer,Human> actors;
-        //private std::vector<std::vector<Human *> > communities;
         private ArrayList<ArrayList<Human> > communities;
-        //private std::vector<Human *> graveyard;
         private ArrayList <Human> graveyard;
 
         //Random number generator declarations
-        //All of these must be redone
         private MersenneTwisterFast randomGenerator;
         private Uniform commodityNeedThresholdDistro;
         private Uniform commodityWantThresholdDistro;

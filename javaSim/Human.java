@@ -22,8 +22,6 @@ public class Human implements Steppable {
                 return "SOMETHING IS DREADFULLY WRONG!!!!!";
         }
 
-        //friend std::ostream & operator<<(std::ostream & os,  Human & h);
-
         public void print() {
                 double totalNeeds = 0;
                 for (int i=0; i<Commodity.NUM_COMM; i++) {
@@ -106,10 +104,12 @@ public class Human implements Steppable {
         public void considerHavingAChild() {
                 int prob=Model.instance().generateChild();
                 if(age>=20 && age<35) {
+                                //System.out.println("child possible!");
                         if(prob>90) {
                                 //std::cout<<"Child!\n";
+                                //System.out.println("child made!");
                                 Human newchild = new Human(this);
-                                Model.instance().schedule.scheduleOnceIn(.6,this);
+                                Model.instance().schedule.scheduleOnceIn(.6,newchild);
                                 Model.instance().incrementPopulation();
                         }
                 }
@@ -131,8 +131,7 @@ public class Human implements Steppable {
                                 }
                                 //std::cout<<"death\n";
                         } else {
-                                //reschedule();
-                                Model.instance().schedule.scheduleOnceIn(.6,this);
+                                Model.instance().schedule.scheduleOnceIn(.7,this);
                         }
                 } else if(age>=25 && age<100) {
                         int prob=Model.instance().generateLifeProb();
@@ -154,8 +153,7 @@ public class Human implements Steppable {
                                 }
                                 //std::cout<<"death\n";
                         } else {
-                                //reschedule();
-                                Model.instance().schedule.scheduleOnceIn(.6,this);
+                                Model.instance().schedule.scheduleOnceIn(.7,this);
                         }
                 } else if(age>=100) {
                         //std::cout<<"I'm dead!\n";
@@ -168,9 +166,9 @@ public class Human implements Steppable {
                                 primoBequeath(this);
                         }
                 } else {
-                        //reschedule();
-                        Model.instance().schedule.scheduleOnceIn(.6,this);
+                        Model.instance().schedule.scheduleOnceIn(.7,this);
                 }
+                age++;
         }
 
         public void step(SimState state) {
@@ -199,6 +197,7 @@ public class Human implements Steppable {
                 this.considerDeath();
                 mode = LifeStage.EARNING;
             }
+            //age++;
         }
 /*
         public void reschedule() {
