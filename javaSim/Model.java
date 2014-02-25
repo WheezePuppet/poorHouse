@@ -267,14 +267,14 @@ public class Model extends SimState implements Steppable
                   calculatePercentWealthRedistributed() << ',' <<
                   wealthGiniCoefficient() << ',' <<
                   yearlyTrades<< std::endl;*/
-                /*System.out.printf("%f,%f,%d,%d,%f,%f,%d\n",
+                System.out.printf("%f,%f,%d,%d,%f,%f,%d\n",
                                 adultWealthGiniCoefficient(),
                                 satisfactionGiniCoefficient(),
                                 population,
                                 numOmniEvents,
                                 calculatePercentWealthRedistributed(),
                                 wealthGiniCoefficient(),
-                                yearlyTrades);*/
+                                yearlyTrades);
 
         }
 
