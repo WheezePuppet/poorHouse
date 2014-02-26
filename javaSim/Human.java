@@ -116,9 +116,11 @@ public class Human implements Steppable {
         }
 
         public void considerDeath() {
-                int BD=0;
-                if(Model.instance().getTick()>80 && Model.instance().getTick()<82 && BD != 0) {
-                        int prob=Model.instance().generateLifeProb();
+                int BD=1;
+                int prob=Model.instance().generateLifeProb();
+                if(prob == 101) {
+
+                } else if(Model.instance().getTick()>80 && Model.instance().getTick()<82 && BD != 0) {
                         if(prob<10) {
                                 //std::cout<<"I'm dead!\n";
                                 Model.instance().inter(this);
@@ -134,7 +136,6 @@ public class Human implements Steppable {
                                 Model.instance().schedule.scheduleOnceIn(.7,this);
                         }
                 } else if(age>=25 && age<100) {
-                        int prob=Model.instance().generateLifeProb();
                         //std::cout<<"Dying?\n";
                         int getAbove=6;
                         /*if(Model::instance()->getTick()>80 && Model::instance()->getTick()<85)
@@ -155,7 +156,7 @@ public class Human implements Steppable {
                         } else {
                                 Model.instance().schedule.scheduleOnceIn(.7,this);
                         }
-                } else if(age>=100) {
+                } else if(age>=100 ) {
                         //std::cout<<"I'm dead!\n";
                         Model.instance().inter(this);
                         Model.instance().decrementPopulation();
@@ -165,7 +166,7 @@ public class Human implements Steppable {
                         if(BEQ==1) {
                                 primoBequeath(this);
                         }
-                } else {
+                } else{
                         Model.instance().schedule.scheduleOnceIn(.7,this);
                 }
                 age++;

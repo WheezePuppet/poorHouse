@@ -30,7 +30,9 @@ public class Model extends SimState implements Steppable
         }
         public int generateMake() { return makeDistro.nextInt(); }
         public double generateMps() { return mpsDistro.nextDouble(); }
-        public int generateLifeProb() { return deathDistro.nextInt(); }
+        public int generateLifeProb() { 
+            return (years < NUM_YEARS) ? deathDistro.nextInt() : 101;
+             }
         public double generateConsume() { return consumeDistro.nextDouble(); }
         public int generateNumTraders() { return tradeDistro.nextInt(); }
         public int generateOutsideTrade() { return outsideTrade.nextInt(); }
@@ -238,6 +240,7 @@ public class Model extends SimState implements Steppable
         private int numOmniEvents;
         private double totalWealth;
         private double wealthRedistributed;
+        private int years;
 
         //Functions
         private Model(long seed) {
@@ -267,6 +270,7 @@ public class Model extends SimState implements Steppable
                 totalWealth=0;
                 wealthRedistributed=0;
                 population=NUM_INITIAL_AGENTS;
+                years = 0;
         }
         private void createInitialAgents() {
 
@@ -292,7 +296,8 @@ public class Model extends SimState implements Steppable
                 resetOmniEvent();
                 resetTotalWealth();
                 resetWealthRedistributed();
-                if(population >0){
+                years++;
+                if(population >0 && years < NUM_YEARS){
                     schedule.scheduleOnceIn(1,this);
                 }
         }
@@ -362,7 +367,7 @@ public class Model extends SimState implements Steppable
         private Uniform ageDistro;
 
         public static void main(String args[]) {
-                if(args.length!=3){
+                if(args.length<3){
                     System.out.println("You need DIAL, SEED, and BEQ");
                     System.exit(1);
                 }
