@@ -1,13 +1,14 @@
+//package jsim;
+
 import java.util.*;
 import sim.util.*;
 import sim.engine.*;
 
 public class Human implements Steppable {
-
-        //int Human::nextAgentNum = 0;
-        //private static int nextAgentNum = 0;
-
+        /*What is the relation of the agent's held commodities to their
+        need level*/
         public enum CommodityStatus { DEFICIENT, SATISFIED, BLOATED };
+        //What stage of the year an agent is in
         public enum LifeStage { EARNING, TRADING, CONSUMING, BIRTHING, DYING }; 
 
         public String commodityStatusString(CommodityStatus cs) {
@@ -22,6 +23,7 @@ public class Human implements Steppable {
                 return "SOMETHING IS DREADFULLY WRONG!!!!!";
         }
 
+        //Print the status of each of the agent's commodities
         public void print() {
                 double totalNeeds = 0;
                 for (int i=0; i<Commodity.NUM_COMM; i++) {
@@ -57,15 +59,16 @@ public class Human implements Steppable {
         //Global static values
         public static int BEQ;
 
-        //public virtual repast::AgentId & getId() { return myId; }
-
         //Scheduled events
+//--------------------------------------------------------------------------------
+        //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
                 //savings+=(salary+(savings*rr))*mps;
                 commoditiesHeld[producedCommodity]+=salary;
                 Commodity.getCommNum(producedCommodity).produce(salary);
         }
 
+        //Initiate random trades with other agents
         public void tradeWithRandomAgents() {
                 /*
                    Ok, new plan. Trading with communities in play.
@@ -82,6 +85,8 @@ public class Human implements Steppable {
                 }
         }
 
+        //Reduce each of the agent's commodities by the amount dictated
+        //by the commodity class in question
         public void consume() {
                 //cout << "consuming!!" << endl;
                 //cons.push_back(salary+(savings*rr))*(1-mps);
@@ -95,19 +100,19 @@ public class Human implements Steppable {
                         } else {
                                 Commodity.getCommNum(i).consFail(Commodity.getCommNum(i).getAmtCons()-commoditiesHeld[i]);
                                 commoditiesHeld[i]=0;
+                                //considerDeath();
                         }
                         //cout<<this;
                         //Commodity::getCommNum(i).consume();
                 }
         }
 
+        /*Probabilistically determine whether an agent will have a child
+        and add a new agent to the schedule if so*/
         public void considerHavingAChild() {
                 int prob=Model.instance().generateChild();
                 if(age>=20 && age<35) {
-                                //System.out.println("child possible!");
                         if(prob>90) {
-                                //std::cout<<"Child!\n";
-                                //System.out.println("child made!");
                                 Human newchild = new Human(this);
                                 Model.instance().schedule.scheduleOnceIn(.6,newchild);
                                 Model.instance().incrementPopulation();
@@ -115,6 +120,8 @@ public class Human implements Steppable {
                 }
         }
 
+        /*Pobabilistically determine whether an agent will die and inter
+        them and distribute their wealth*/
         public void considerDeath() {
                 int BD=1;
                 int prob=Model.instance().generateLifeProb();
@@ -122,7 +129,6 @@ public class Human implements Steppable {
 
                 } else if(Model.instance().getTick()>80 && Model.instance().getTick()<82 && BD != 0) {
                         if(prob<10) {
-                                //std::cout<<"I'm dead!\n";
                                 Model.instance().inter(this);
                                 Model.instance().decrementPopulation();
                                 if(BEQ==0) {
@@ -131,19 +137,16 @@ public class Human implements Steppable {
                                 if(BEQ==1) {
                                         primoBequeath(this);
                                 }
-                                //std::cout<<"death\n";
                         } else {
                                 Model.instance().schedule.scheduleOnceIn(.7,this);
                         }
                 } else if(age>=25 && age<100) {
-                        //std::cout<<"Dying?\n";
                         int getAbove=6;
                         /*if(Model::instance()->getTick()>80 && Model::instance()->getTick()<85)
                           {
                           getAbove=90;
                           }*/
                         if(prob<getAbove) {
-                                //std::cout<<"I'm dead!\n";
                                 Model.instance().inter(this);
                                 Model.instance().decrementPopulation();
                                 if(BEQ==0) {
@@ -152,12 +155,10 @@ public class Human implements Steppable {
                                 if(BEQ==1) {
                                         primoBequeath(this);
                                 }
-                                //std::cout<<"death\n";
                         } else {
                                 Model.instance().schedule.scheduleOnceIn(.7,this);
                         }
                 } else if(age>=100 ) {
-                        //std::cout<<"I'm dead!\n";
                         Model.instance().inter(this);
                         Model.instance().decrementPopulation();
                         if(BEQ==0) {
@@ -172,6 +173,7 @@ public class Human implements Steppable {
                 age++;
         }
 
+        /*Execute each of the agent's yearly actions in turn*/
         public void step(SimState state) {
             //earn
             if(mode == LifeStage.EARNING){
@@ -198,31 +200,12 @@ public class Human implements Steppable {
                 this.considerDeath();
                 mode = LifeStage.EARNING;
             }
-            //age++;
         }
-/*
-        public void reschedule() {
-                repast::ScheduleRunner &theSchedule =
-                        repast::RepastProcess::instance()->getScheduleRunner();
-                double time = floor(theSchedule.currentTick());
-                theSchedule.scheduleEvent(time+1.1, repast::Schedule::FunctorPtr(
-                                        new repast::MethodFunctor<Human>(this, &Human::earnIncome)));
-                theSchedule.scheduleEvent(time+1.2, repast::Schedule::FunctorPtr(
-                                        new repast::MethodFunctor<Human>(this, &Human::tradeWithRandomAgents)));
-                theSchedule.scheduleEvent(time+1.3, repast::Schedule::FunctorPtr(
-                                        new repast::MethodFunctor<Human>(this, &Human::consume)));
-                theSchedule.scheduleEvent(time+1.31, repast::Schedule::FunctorPtr(
-                                        new repast::MethodFunctor<Human>(this, &Human::considerHavingAChild)));
-                theSchedule.scheduleEvent(time+1.32, repast::Schedule::FunctorPtr(
-                                        new repast::MethodFunctor<Human>(this, &Human::considerDeath)));
-                age++;
-        }*/
 
         //Constructors & destructors
+//--------------------------------------------------------------------------------
         //This constructor is called for initial agents
         public Human() {
-                //System.out.println("Creating a new human!");
-                //myId = repast::AgentId(nextAgentNum++,0,0); 
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
                 producedCommodity=Model.instance().generateMake();
@@ -240,10 +223,10 @@ public class Human implements Steppable {
                         /*if(minThreshold == null){
                             System.out.println("minThresh null");
                         }
-                        System.out.println("minThres i is " + minThreshold[i]);
+                        System.out.println("minThres i is " + minThreshold[i]);*/
                         while( minThreshold[i]< Commodity.getCommNum(i).getAmtCons()) {
                                 minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
-                        }*/
+                        }
                         maxThreshold[i]=Model.instance().generateWantCommodityThreshold();
                         commoditiesHeld[i]=0;
                 }
@@ -259,7 +242,6 @@ public class Human implements Steppable {
         public Human(Human progenitor) {
                 mode = LifeStage.EARNING;
                 parent=progenitor;
-                //myId = repast::AgentId(nextAgentNum++,0,0); 
                 myId = nextAgentNum++; 
                 producedCommodity=Model.instance().generateMake();
                 /*while((((salary-progenitor.salary)^2)/progenitor.salary)>Model::LEMMINGNESS)
@@ -291,58 +273,48 @@ public class Human implements Steppable {
                 parent.children.add(this);
                 Model.instance().addToActors(this);
                 Model.instance().addToCommunity(residentCommunity,this);
-                //reschedule();
         }
-
-        //Return singular, unchanging data about the agent
-        public int getCommunity() { return residentCommunity; }
-        public int getTimesTraded() { return timesTraded; }
-        public int getMake() { return producedCommodity; }
-        public double getSalary() { return salary; }
-        public int getNumTraders() { return numTraders; }
-        public int getAge()  { return age; }
-        public int getId()  { return myId; }
-
-        //Return composite data about the agent
-        public double getWealth() {
-                double wealth = 0;
-                for (int i=0; i<Commodity.NUM_COMM; i++) {
-                        wealth += commoditiesHeld[i];
-                }
-                return wealth;
-        }
-
-        public double getSatisfaction() { return getNumSatisfiedCommodities() + getNumBloatedCommodities(); }
-        public double getNeeds() { return allNeeds; }
-        public double getAmtOfCommodityX(int x) { return commoditiesHeld[x]; }
-        public int getNumDeficientCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.DEFICIENT); }
-        public int getNumSatisfiedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.SATISFIED); }
-        public int getNumBloatedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.BLOATED); }
-
-        //Human data unchanging
-        private double mps;//Float less than one
-        private double salary;//Between 3 and 7
-        private int producedCommodity;//Between 0 and 10
-        private int numTraders;//Between 5 and 100
-        private Human parent;
-        //private repast::AgentId myId;
-        private int myId;
-        private int residentCommunity;
-        private double allNeeds;
-        private double [] minThreshold;// = new double [Commodity.NUM_COMM];//Between 0 and 5
-        private double [] maxThreshold;// = new double [Commodity.NUM_COMM];//Between 6 and 10
-
-        //Human data changing
-        private int age;
-        private int timesTraded;
-        private double [] commoditiesHeld;// = new double [Commodity.NUM_COMM];
-        private ArrayList <Human> children;
-        public LifeStage mode;
-
-        //Ummm...
-        private static int nextAgentNum = 0;
 
         //Private trade functions
+//--------------------------------------------------------------------------------
+        private void transactWith(Human other) {
+                incrementTrades();
+                other.incrementTrades();
+                //cout << "transacting from " << getId() << " to " << other.getId() << endl;
+
+                /*
+                   D,B,B,D  - SUPER
+
+                   D,B,B,S  - HALF-SUPER
+                   D,B,S,D  - HALF-SUPER
+                   S,B,B,D  - HALF-SUPER
+                   D,S,B,D  - HALF-SUPER
+
+                   D,S,S,D  - ORDINARY
+                   S,B,B,S  - ORDINARY
+                   S,B,D,S  - ORDINARY
+                   S,D,B,S  - ORDINARY
+
+                 */
+
+                // 1. Make super-satisfiable trades where possible.
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
+
+                // 2. Make half-super-satisfiable trades where possible.
+
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
+
+                // 3. make ordinary-satisfiable trades happen.
+
+                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED);
+                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
+        }
+
         private void makeTradesSuchThat(Human other, 
                         CommodityStatus aTooLowStatus_C1,//The level A wants to get above in good 1
                         CommodityStatus aWantToPreserveStatus_C2,//The level A doesn't want to fall below in good 2
@@ -437,52 +409,6 @@ public class Human implements Steppable {
                                 // So now, continue looking for other i's I may be lacking in.
                         }
                 }
-                //cout << "Made " << numTrades << " trades." << endl;
-        }
-
-        private void transactWith(Human other) {
-                incrementTrades();
-                other.incrementTrades();
-                //cout << "transacting from " << getId() << " to " << other.getId() << endl;
-
-                /*
-                   D,B,B,D  - SUPER
-
-                   D,B,B,S  - HALF-SUPER
-                   D,B,S,D  - HALF-SUPER
-                   S,B,B,D  - HALF-SUPER
-                   D,S,B,D  - HALF-SUPER
-
-                   D,S,S,D  - ORDINARY
-                   S,B,B,S  - ORDINARY
-                   S,B,D,S  - ORDINARY
-                   S,D,B,S  - ORDINARY
-
-                 */
-
-                // 1. Make super-satisfiable trades where possible.
-                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
-
-                // 2. Make half-super-satisfiable trades where possible.
-
-                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
-                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT);
-                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
-                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT);
-
-                // 3. make ordinary-satisfiable trades happen.
-
-                makeTradesSuchThat(other, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT);
-                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
-                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.BLOATED, CommodityStatus.DEFICIENT, CommodityStatus.SATISFIED);
-                makeTradesSuchThat(other, CommodityStatus.SATISFIED, CommodityStatus.DEFICIENT, CommodityStatus.BLOATED, CommodityStatus.SATISFIED);
-        }
-
-        private void swap(double x, Human other, int alow, int blow) {
-                commoditiesHeld[alow]+=x;
-                other.commoditiesHeld[alow]-=x;
-                commoditiesHeld[blow]-=x;
-                other.commoditiesHeld[blow]+=x;
         }
 
         private void trade(int comm1Num, int comm2Num,
@@ -509,14 +435,19 @@ public class Human implements Steppable {
                 if(good) {
                         double x = min(coms);//Choose the lowest of the options for trades so that you don't overstep any of the bounds
                         double change=x;
-                        //std::cout<<*this;
-                        //std::cout<<B;
-                        //std::cout<<"Exchanging "<<change<<" units of commodities " <<comm1Num<< " and " <<comm2Num <<std::endl;
                         Model.instance().incrementTrades();
                         Model.instance().addToTradedAmount(change);
                         swap(change, B, comm1Num, comm2Num);
-                        //std::cout<<*this;
                 }
+        }
+
+        /* Lower and raise traded commodity amounts of agents
+        by the amount just traded*/
+        private void swap(double x, Human other, int alow, int blow) {
+                commoditiesHeld[alow]+=x;
+                other.commoditiesHeld[alow]-=x;
+                commoditiesHeld[blow]-=x;
+                other.commoditiesHeld[blow]+=x;
         }
 
         private double min(double[] numbers){  
@@ -532,6 +463,9 @@ public class Human implements Steppable {
         private void incrementTrades() { timesTraded++; }
 
         //Commodity checking utilties
+//--------------------------------------------------------------------------------
+        /* Return whether the agent is DEFICIENT, SATISFIED, or BLOATED in the
+        given commodity*/
         private CommodityStatus checkStatus(int commodityNum) {
                 if(commoditiesHeld[commodityNum]<minThreshold[commodityNum]) {
                         return CommodityStatus.DEFICIENT;
@@ -542,9 +476,9 @@ public class Human implements Steppable {
                 return CommodityStatus.SATISFIED;
         }
 
-        // Return the number of the commodity greater than or equal to x that we are
-        // deficient in. If we are not deficient in any, return NUM_COMM (which is an
-        // illegal commodity number.)
+        /* Return the number of the commodity greater than or equal to x that we are
+         deficient in. If we are not deficient in any, return NUM_COMM (which is an
+         illegal commodity number.)*/
         private int findStatusCommodityStartingAt(int x, CommodityStatus specifiedCommStatus) {
                 for(int i=x; i<Commodity.NUM_COMM; i++) {
                         if(checkStatus(i)==specifiedCommStatus) {
@@ -554,6 +488,7 @@ public class Human implements Steppable {
                 return Commodity.NUM_COMM;
         }
 
+        /* Return how many commodities the agent is [CommodityStatus] in */
         private int getNumCommoditiesWithStatus(CommodityStatus status) {
                 int i=0;
                 for (int j=0; j<Commodity.NUM_COMM; j++) {
@@ -565,6 +500,8 @@ public class Human implements Steppable {
         }
 
         //Inheritance functions
+//--------------------------------------------------------------------------------
+        /*Give an even portion of the agent's goods to all the children*/
         private void omniBequeath(Human man) {
                 if(man.children.size()==0) {
                         //std::cout<<"Childless ";
@@ -582,6 +519,7 @@ public class Human implements Steppable {
                 }
         }
 
+        /*Give all of the dead agent's goods to first child agent*/
         private void primoBequeath(Human man) {
                 if(man.children.size()==0) {
 
@@ -591,4 +529,61 @@ public class Human implements Steppable {
                         }
                 }
         }
+
+        //Human data retrieval
+//--------------------------------------------------------------------------------
+        //Return singular, unchanging data about the agent
+        public int getCommunity() { return residentCommunity; }
+        public int getTimesTraded() { return timesTraded; }
+        public int getMake() { return producedCommodity; }
+        public double getSalary() { return salary; }
+        public int getNumTraders() { return numTraders; }
+        public int getAge()  { return age; }
+        public int getId()  { return myId; }
+
+        //Return composite data about the agent
+        //Return total amount of all commodities
+        public double getWealth() {
+                double wealth = 0;
+                for (int i=0; i<Commodity.NUM_COMM; i++) {
+                        wealth += commoditiesHeld[i];
+                }
+                return wealth;
+        }
+        //Return how many goods an agent is satisfied or bloated in
+        public double getSatisfaction() { return getNumSatisfiedCommodities() + getNumBloatedCommodities(); }
+        //Return sum of all need levels
+        public double getNeeds() { return allNeeds; }
+        //Return how much of commodity x an agent has
+        public double getAmtOfCommodityX(int x) { return commoditiesHeld[x]; }
+        //Return the number of commmodities the agent is below need threshold on
+        public int getNumDeficientCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.DEFICIENT); }
+        //Return the number of goods an agent is above need and below want
+        public int getNumSatisfiedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.SATISFIED); }
+        //Return the number of goods an agent is above want in
+        public int getNumBloatedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.BLOATED); }
+
+        //Human data
+//--------------------------------------------------------------------------------
+        //Human data unchanging
+        private double mps;//Float less than one (which seems never to be used)
+        private double salary;//Between 3 and 7
+        private int producedCommodity;//Between 0 and 10
+        private int numTraders;//Between 5 and 100
+        private Human parent;
+        private int myId;
+        private int residentCommunity;
+        private double allNeeds;
+        private double [] minThreshold;
+        private double [] maxThreshold;
+
+        //Human data changing
+        private int age;
+        private int timesTraded;
+        private double [] commoditiesHeld;
+        private ArrayList <Human> children;
+        public LifeStage mode;
+
+        //Static agent id creator reference
+        private static int nextAgentNum = 0;
 };

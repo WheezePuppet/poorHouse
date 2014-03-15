@@ -1,3 +1,5 @@
+//package jsim;
+
 import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;
@@ -17,7 +19,6 @@ public class Model extends SimState implements Steppable
         public static final int COMMUNITIES = 10;
 
         //Random number generator next functions
-
         public double generateNeedCommodityThreshold() { return commodityNeedThresholdDistro.nextDouble(); }
         public double generateWantCommodityThreshold() { return commodityWantThresholdDistro.nextDouble(); }
         public double generateSalary() {
@@ -39,18 +40,51 @@ public class Model extends SimState implements Steppable
         public int generateCommunity(Human toAdd) {
                 int randomCommunity = communityDistro.nextInt();
                 randomCommunity = randomCommunity%COMMUNITIES;
-                //if(communities==null){
-                    //System.out.println(communities.size());
-                //}
                 communities.get(randomCommunity).add(toAdd);
                 return randomCommunity;
         }
         public int generateChild() { return childDistro.nextInt(); }
         public int generateAge() { return ageDistro.nextInt(); }
 
-        //Miscellaneous
+        //Gini functions
+//--------------------------------------------------------------------------------
+        /* Find the gini coefficient of a collection of doubles */
+        private double computeGini(ArrayList<Double> vals) {
+                int n = vals.size();
+                double [] p = new double[n];
+                double [] nu = new double[n];
+                double [] wx = new double[n];
+                double [] first = new double[n];
+                double [] second = new double[n];
+                java.util.Collections.sort(vals);
+                for (int i=0; i<n; i++) {
+                        p[i] = ((double)i+1)/n;
+                }
+                for (int i=0; i<n; i++) {
+                        wx[i] = vals.get(i)/n;
+                }
+                nu[0] = wx[0];
+                for (int i=1; i<n; i++) {
+                        nu[i] = nu[i-1] + wx[i];
+                }
+                for (int i=0; i<n; i++) {
+                        nu[i] /= nu[n-1];
+                }
+                double sum_first = 0.0;
+                for (int i=0; i<n-1; i++) {
+                        first[i] = nu[i+1] * p[i];
+                        sum_first += first[i];
+                }
+                double sum_second = 0.0;
+                for (int i=0; i<n-1; i++) {
+                        second[i] = nu[i] * p[i+1];
+                        sum_second += second[i];
+                }
+                return sum_first - sum_second;
+        }
+
+        /* Return gini of the total commodity amounts held by all agents */
         public double wealthGiniCoefficient() {
-                //vector<double> wealths;//Total amount of goods held by each agent
                 ArrayList<Double> wealths = new ArrayList<Double>();//Total amount of goods held by each agent
                 for(int i=0; i<COMMUNITIES; i++) {
                         for(int j=0; j<Model.instance().getCommunityMembers(i).size(); j++) {
@@ -60,6 +94,9 @@ public class Model extends SimState implements Steppable
                 }
                 return computeGini(wealths);
         }
+
+        /* Return gini of the total commodity amounts held by all agents over
+        the age of twenty*/
         public double adultWealthGiniCoefficient() {
                 ArrayList<Double> wealths = new ArrayList<Double>();
                 for(int i=0; i<COMMUNITIES; i++) {
@@ -72,6 +109,9 @@ public class Model extends SimState implements Steppable
                 }
                 return computeGini(wealths);
         }
+
+        /* Return gini of total number of goods each agent is satisfied or
+        bloated in */
         public double satisfactionGiniCoefficient() {
                 ArrayList<Double> satisfactions = new ArrayList<Double>();
                 for(int i=0; i<COMMUNITIES; i++) {
@@ -83,12 +123,17 @@ public class Model extends SimState implements Steppable
                 return computeGini(satisfactions);
         }
 
+        //Trade facilitation functions
+//--------------------------------------------------------------------------------
+        /* Give the trading agent a random member of their own community to
+        trade with */
         public Human getRandomCommunityMember(int communityNum) {
                 int indexOfRandomMember = tradeDistro.nextInt();
                 indexOfRandomMember = indexOfRandomMember%(communities.get(communityNum).size());
                 return communities.get(communityNum).get(indexOfRandomMember);
         }
 
+        /* Give the trading agent a random member of the world to trade with */
         public Human getRandomGlobalMember() {
                 //std::vector<Human *> oneAgent;
                 //ArrayList<Human> oneAgent = new ArrayList<Human>();
@@ -113,9 +158,8 @@ public class Model extends SimState implements Steppable
                 total/=i;
                 return total;
         }
-
+        //
         public void inter(Human body) {
-                //graveyard.push_back(body);
                 graveyard.add(body);
                 int h=communities.get(body.getCommunity()).size();
                 //System.out.println("comm size is " + h);
@@ -307,43 +351,6 @@ public class Model extends SimState implements Steppable
                 //repast::RepastProcess::instance()->getScheduleRunner();
                 //cout << "======================================================" << endl;
                 //cout << "Now starting year " <<  theScheduleRunner.currentTick() << " with a population of " << population << "!" << endl;
-        }
-
-        private double computeGini(ArrayList<Double> vals) {
-                int n = vals.size();
-                double [] p = new double[n];
-                double [] nu = new double[n];
-                double [] wx = new double[n];
-                double [] first = new double[n];
-                double [] second = new double[n];
-
-                java.util.Collections.sort(vals);
-
-                for (int i=0; i<n; i++) {
-                        p[i] = ((double)i+1)/n;
-                }
-                for (int i=0; i<n; i++) {
-                        wx[i] = vals.get(i)/n;
-                }
-                nu[0] = wx[0];
-                for (int i=1; i<n; i++) {
-                        nu[i] = nu[i-1] + wx[i];
-                }
-                for (int i=0; i<n; i++) {
-                        nu[i] /= nu[n-1];
-                }
-                double sum_first = 0.0;
-                for (int i=0; i<n-1; i++) {
-                        first[i] = nu[i+1] * p[i];
-                        sum_first += first[i];
-                }
-                double sum_second = 0.0;
-                for (int i=0; i<n-1; i++) {
-                        second[i] = nu[i] * p[i+1];
-                        sum_second += second[i];
-                }
-
-                return sum_first - sum_second;
         }
 
         //Agent containers

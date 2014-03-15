@@ -1,3 +1,5 @@
+//package jsim;
+
 public class Commodity{
     //Functions
         public static void initCommodities() {
