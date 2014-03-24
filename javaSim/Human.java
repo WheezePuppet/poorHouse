@@ -60,7 +60,7 @@ public class Human implements Steppable {
         public static int BEQ;
 
         //Scheduled events
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
                 //savings+=(salary+(savings*rr))*mps;
@@ -123,7 +123,7 @@ public class Human implements Steppable {
         /*Pobabilistically determine whether an agent will die and inter
         them and distribute their wealth*/
         public void considerDeath() {
-                int BD=1;
+                int BD=0;
                 int prob=Model.instance().generateLifeProb();
                 if(prob == 101) {
 
@@ -203,7 +203,7 @@ public class Human implements Steppable {
         }
 
         //Constructors & destructors
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         //This constructor is called for initial agents
         public Human() {
                 myId = nextAgentNum++; 
@@ -276,7 +276,7 @@ public class Human implements Steppable {
         }
 
         //Private trade functions
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         private void transactWith(Human other) {
                 incrementTrades();
                 other.incrementTrades();
@@ -463,7 +463,7 @@ public class Human implements Steppable {
         private void incrementTrades() { timesTraded++; }
 
         //Commodity checking utilties
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         /* Return whether the agent is DEFICIENT, SATISFIED, or BLOATED in the
         given commodity*/
         private CommodityStatus checkStatus(int commodityNum) {
@@ -500,7 +500,7 @@ public class Human implements Steppable {
         }
 
         //Inheritance functions
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         /*Give an even portion of the agent's goods to all the children*/
         private void omniBequeath(Human man) {
                 if(man.children.size()==0) {
@@ -531,7 +531,7 @@ public class Human implements Steppable {
         }
 
         //Human data retrieval
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         //Return singular, unchanging data about the agent
         public int getCommunity() { return residentCommunity; }
         public int getTimesTraded() { return timesTraded; }
@@ -564,7 +564,7 @@ public class Human implements Steppable {
         public int getNumBloatedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.BLOATED); }
 
         //Human data
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         //Human data unchanging
         private double mps;//Float less than one (which seems never to be used)
         private double salary;//Between 3 and 7

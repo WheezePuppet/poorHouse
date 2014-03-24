@@ -298,7 +298,7 @@ public class Model extends SimState implements Steppable
                 deathDistro = new Uniform(0,100,randomGenerator);
                 mpsDistro = new Uniform(.1,.7,randomGenerator);
                 consumeDistro = new Uniform(1,4,randomGenerator);
-                tradeDistro = new Uniform(0,1000,randomGenerator);
+                tradeDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 childDistro = new Uniform(0,100,randomGenerator);
