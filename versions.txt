@@ -1,0 +1,34 @@
+
+V1:
+Fixed number of commodities, each with its own fixed consumption rate (not
+    dependent on consumer)
+One commodity called gold
+Every person produces some amount of one commodity per time period
+Every person starts with a random amount needed for each commodity
+Every person starts with a random expected price for each commodity
+Every person encounters some number of people per time period
+On each encounter:
+    for each commodity:
+        if both lack, revise price upwards 
+        if both have enough, revise price downwards
+        if one lacks and other has, trade at average price and revise price
+            to average 
+Money can go negative
+
+Q's:
+Do prices level out according to scarcity?
+How long it takes prices to reach equilibrium if they do?
+look at variance of expected price in addition to mean
+
+
+V2:
+    strategies for restoring equilibrium:
+        - new agents (kids) decide on businesses
+        - existing agents can change their business
+        - existing agents have a dynamic choice of what to produce
+
+
+
+V3+:
+communities
+can't buy when you're broke
