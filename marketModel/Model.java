@@ -1,4 +1,3 @@
-
 import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;
@@ -11,17 +10,17 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static final int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 100;
+        public static final int NUM_YEARS = 5;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
 
         //Random number generator next functions
-        public double generateNeedCommodityThreshold() { return commodityNeedThresholdDistro.nextDouble(); }
+        public int generateNeedCommodityThreshold() {
+            return commodityNeedThresholdDistro.nextInt(); }
         public double generateSalary() {
                 double thing=salaryDistro.nextDouble();
-                while(thing<0)
-                {
+                while(thing<0) {
                         thing=salaryDistro.nextDouble();
                 }
                 return thing;
@@ -32,7 +31,7 @@ public class Model extends SimState implements Steppable
             return (years < NUM_YEARS) ? deathDistro.nextInt() : 101;
              }
         public double generateConsume() { return consumeDistro.nextInt(); }
-        public double generateExpPrice() { return priceDistro.nextInt(); }
+        public double generateExpPrice() { return priceDistro.nextDouble(); }
         public int generateNumTraders() { return tradeDistro.nextInt(); }
         public int generateOutsideTrade() { return outsideTrade.nextInt(); }
         public int generateCommunity(Human toAdd) {
@@ -45,7 +44,7 @@ public class Model extends SimState implements Steppable
         public int generateAge() { return ageDistro.nextInt(); }
 
         //Trade facilitation functions
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
         /* Give the trading agent a random member of their own community to
         trade with */
         public Human getRandomCommunityMember(int communityNum) {
@@ -83,7 +82,6 @@ public class Model extends SimState implements Steppable
                 //System.out.println("comm size is " + h);
                 for(int i=0; i<h-1; i++) {
                         if(communities.get(body.getCommunity()).get(i)==body) {
-                                //communities.get(body.getCommunity()).remove((communities.get(body.getCommunity()).begin())+i);
                                 communities.get(body.getCommunity()).remove(i);
                         }
                 }
@@ -115,7 +113,7 @@ public class Model extends SimState implements Steppable
         public void addToWealthRedistributed(double value) { wealthRedistributed+=value; }
         public void resetWealthRedistributed() { wealthRedistributed=0; }
 
-        //Repast things
+        //Modeling software things
         public static Model instance(){
                 if(theInstance == null){
                     theInstance = new Model(SEED);
@@ -130,11 +128,6 @@ public class Model extends SimState implements Steppable
         }
 
         public void fillCommunities() {
-                //System.out.println("filling com");
-                if(communities != null){
-                    //System.out.println("not com");
-                    //System.out.println(COMMUNITIES);
-                }
                 for(int i=0; i<COMMUNITIES; i++) {
                         communities.add(new ArrayList<Human>());
                 }
@@ -165,13 +158,8 @@ public class Model extends SimState implements Steppable
 
         //Print things out
         public void printGini() {
-                System.out.printf("%f,%f,%d,%d,%f,%f,%d\n",
-                                adultWealthGiniCoefficient(),
-                                satisfactionGiniCoefficient(),
+                System.out.printf("%d,%d\n",
                                 population,
-                                numOmniEvents,
-                                calculatePercentWealthRedistributed(),
-                                wealthGiniCoefficient(),
                                 yearlyTrades);
 
         }
@@ -236,13 +224,18 @@ public class Model extends SimState implements Steppable
         }
 
         public void step(SimState model) {
-                printGini();
+                //printGini();
                 resetTrades();
                 resetTradedAmount();
                 resetOmniEvent();
                 resetTotalWealth();
                 resetWealthRedistributed();
                 years++;
+                double food = Commodity.getCommNum(1).getTotalAmt();
+                System.out.printf("food: %f\n",food );
+                if(years > NUM_YEARS){
+                    System.exit(0);
+                }
                 if(population >0 && years < NUM_YEARS){
                     schedule.scheduleOnceIn(1,this);
                 }
@@ -270,7 +263,7 @@ public class Model extends SimState implements Steppable
 
         public static void main(String args[]) {
                 if(args.length<3){
-                    System.out.println("You need DIAL, SEED, and BEQ");
+                    System.out.println("You need DAL, SEED, and BEQ");
                     System.exit(1);
                 }
                 doLoop(new MakesSimState() {
