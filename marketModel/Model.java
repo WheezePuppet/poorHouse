@@ -10,7 +10,7 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static final int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 5;
+        public static final int NUM_YEARS = 10;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
@@ -108,6 +108,17 @@ public class Model extends SimState implements Steppable
                         }
                 }
         }
+        /*TODO*/
+        /*public void avgPrice(int comm){
+            int avg = 0;
+            return avg;
+        }
+        public void sdPrice(int comm){
+            int avg = avgPrice(comm);
+            double sd;
+            
+            return sd;
+        }*/
 
         public void resetTotalWealth() { totalWealth=0; }
         public void addToWealthRedistributed(double value) { wealthRedistributed+=value; }

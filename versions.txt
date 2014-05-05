@@ -2,7 +2,7 @@
 V1:
 Fixed number of commodities, each with its own fixed consumption rate (not
     dependent on consumer)
-One commodity called gold
+One commodity called money
 Every person produces some amount of one commodity per time period
 Every person starts with a random amount needed for each commodity
 Every person starts with a random expected price for each commodity

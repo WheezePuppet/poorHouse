@@ -82,7 +82,13 @@ public class Human implements Steppable {
         //Reduce each of the agent's commodities by the amount dictated
         //by the commodity class in question
         public void consume() {
+                int j = 0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        if(age == 5 && i == 1 && j ==0){
+                            //System.out.println("EEK!");
+                            //i--;
+                            j++;
+                        }
                         if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
                                 commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
                                 Commodity.getCommNum(i).consume();
@@ -170,9 +176,11 @@ public class Human implements Steppable {
                 if(Model.instance().generateLifeProb()==101){
                         mode = LifeStage.DYING;
                 }
-                System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
                 //earn
                 if(mode == LifeStage.EARNING){
+                        if(age == 5 && producedCommodity == 1){
+                            this.earnIncome();
+                        }
                         this.earnIncome();
                         mode = LifeStage.TRADING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
@@ -184,9 +192,11 @@ public class Human implements Steppable {
                         //consume
                 }else if(mode == LifeStage.CONSUMING){
                         this.consume();
+                        System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
                         //mode = LifeStage.BIRTHING;
                         mode = LifeStage.EARNING;
-                        Model.instance().schedule.scheduleOnceIn(.8,this);
+                        Model.instance().schedule.scheduleOnceIn(.9,this);
+                        age++;
                         //child
                 }/*else if(mode == LifeStage.BIRTHING){
                         this.considerHavingAChild();
@@ -209,7 +219,7 @@ public class Human implements Steppable {
                 mps=Model.instance().generateMps();
                 numTraders=Model.instance().generateNumTraders();
                 residentCommunity=Model.instance().generateCommunity(this);
-                age=Model.instance().generateAge();
+                age=0;//Model.instance().generateAge();
                 money=100;
                 children = new ArrayList<Human>();
                 minThreshold = new int [Commodity.NUM_COMM];//Between 0 and 5
@@ -279,6 +289,8 @@ public class Human implements Steppable {
                             expPrice[i]*=1.01;
                             other.expPrice[i]*=1.01;
                         }
+                    }else if(other.checkStatus(i)==CommodityStatus.SATISFIED){
+                        
                     }
                 }
         }
