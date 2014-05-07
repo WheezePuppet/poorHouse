@@ -137,7 +137,7 @@ public class Human implements Steppable {
                                         primoBequeath(this);
                                 }
                         } else {
-                                Model.instance().schedule.scheduleOnceIn(.7,this);
+                                Model.instance().schedule.scheduleOnceIn(.6,this);
                         }
                         //Normal death
                 } else if(age>=25 && age<100) {
@@ -156,7 +156,7 @@ public class Human implements Steppable {
                                         primoBequeath(this);
                                 }
                         } else {
-                                Model.instance().schedule.scheduleOnceIn(.7,this);
+                                Model.instance().schedule.scheduleOnceIn(.6,this);
                         }
                         //No one lives over 100 years
                 } else if(age>=100 ) {
@@ -170,7 +170,7 @@ public class Human implements Steppable {
                         }
                         //Person survived
                 } else{
-                        Model.instance().schedule.scheduleOnceIn(.7,this);
+                        Model.instance().schedule.scheduleOnceIn(.6,this);
                 }
                 age++;
         }
@@ -183,7 +183,7 @@ public class Human implements Steppable {
                 //earn
                 if(mode == LifeStage.EARNING){
                         if(age == 5 && producedCommodity == 1){
-                            this.earnIncome();
+                            //this.earnIncome();
                         }
                         this.earnIncome();
                         mode = LifeStage.TRADING;
@@ -197,19 +197,19 @@ public class Human implements Steppable {
                 }else if(mode == LifeStage.CONSUMING){
                         this.consume();
                         //System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
-                        //mode = LifeStage.BIRTHING;
-                        mode = LifeStage.EARNING;
-                        Model.instance().schedule.scheduleOnceIn(.9,this);
-                        age++;
+                        mode = LifeStage.BIRTHING;
+                        //mode = LifeStage.EARNING;
+                        Model.instance().schedule.scheduleOnceIn(.1,this);
+                        //age++;
                         //child
-                }/*else if(mode == LifeStage.BIRTHING){
+                }else if(mode == LifeStage.BIRTHING){
                         this.considerHavingAChild();
                         mode = LifeStage.DYING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
                         //death
-                }*/else if(mode == LifeStage.DYING){
+                }else if(mode == LifeStage.DYING){
                         this.considerDeath();
-                        //mode = LifeStage.EARNING;
+                        mode = LifeStage.EARNING;
                 }
         }
 
@@ -223,11 +223,12 @@ public class Human implements Steppable {
                 mps=Model.instance().generateMps();
                 numTraders=Model.instance().generateNumTraders();
                 residentCommunity=Model.instance().generateCommunity(this);
-                age=0;//Model.instance().generateAge();
+                age=Model.instance().generateAge();
+                //age=0;
                 money=100;
                 children = new ArrayList<Human>();
-                minThreshold = new int [Commodity.NUM_COMM];//Between 0 and 5
-                commoditiesHeld = new int [Commodity.NUM_COMM];
+                minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
+                commoditiesHeld = new double [Commodity.NUM_COMM];
                 expPrice = new double [Commodity.NUM_COMM];
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
@@ -253,15 +254,22 @@ public class Human implements Steppable {
                 mode = LifeStage.EARNING;
                 parent=progenitor;
                 myId = nextAgentNum++; 
-                producedCommodity=Model.instance().generateMake();
+                //producedCommodity=Model.instance().generateMake();
+                producedCommodity=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                    if(parent.expPrice[i]>parent.expPrice[producedCommodity]){
+                        producedCommodity = i;
+                    }
+                }
                 mps=Model.instance().generateMps();
                 numTraders=Model.instance().generateNumTraders();
                 residentCommunity=parent.residentCommunity;
                 age=0;
                 money=100;
                 children = new ArrayList<Human>();
-                minThreshold = new int [Commodity.NUM_COMM];//Between 0 and 5
-                commoditiesHeld = new int [Commodity.NUM_COMM];
+                minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
+                commoditiesHeld = new double [Commodity.NUM_COMM];
+                expPrice = new double [Commodity.NUM_COMM];
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
@@ -298,15 +306,15 @@ public class Human implements Steppable {
                             other.expPrice[i]*=1.003;
                         }
                     }else if(other.checkStatus(i)==CommodityStatus.SATISFIED){
-                        expPrice[i] *= .99;
-                        other.expPrice[i] *= .99;
+                        expPrice[i]*=.99;
+                        other.expPrice[i]*=.99;
                     }
                 }
         }
 
         private void trade(int x, Human other){
-            int deficit = minThreshold[x]-commoditiesHeld[x];
-            int surplus = other.commoditiesHeld[x]-other.minThreshold[x];
+            double deficit = minThreshold[x]-commoditiesHeld[x];
+            double surplus = other.commoditiesHeld[x]-other.minThreshold[x];
             if(expPrice[x]>other.expPrice[x]){
                 double price = (expPrice[x]+other.expPrice[x])/2;
                 //expPrice[x] = price*.99;
@@ -442,14 +450,14 @@ public class Human implements Steppable {
         private Human parent;
         private int myId;
         private int residentCommunity;
-        private int allNeeds;
-        private int [] minThreshold;
+        private double allNeeds;
+        private double [] minThreshold;
 
         //Human data changing
         private int age;
         private double money;
         private int timesTraded;
-        private int [] commoditiesHeld;
+        private double [] commoditiesHeld;
         private double [] expPrice;
         private ArrayList <Human> children;
         public LifeStage mode;

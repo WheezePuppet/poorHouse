@@ -1,3 +1,13 @@
+touch a.txt
+touch b.txt
+touch c.txt
+touch d.txt
+touch e.txt
+touch f.txt
+touch g.txt
+touch h.txt
+touch i.txt
+touch j.txt
 grep A results.txt > a.txt
 grep B results.txt > b.txt
 grep C results.txt > c.txt

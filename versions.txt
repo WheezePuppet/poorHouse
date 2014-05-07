@@ -20,6 +20,12 @@ Do prices level out according to scarcity?
 How long it takes prices to reach equilibrium if they do?
 look at variance of expected price in addition to mean
 
+A's:
+Prices rise slowly if the produce/need ratio is greater than one
+Prices rise quickly if the produce/need ratio is less than one (scarce resource)
+Variance (standard deviation) increases as price gets very high
+    May be an issue with integer/double precision
+
 
 V2:
     strategies for restoring equilibrium:
