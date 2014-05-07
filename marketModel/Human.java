@@ -58,8 +58,12 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
-                commoditiesHeld[producedCommodity]+=salary;
-                Commodity.getCommNum(producedCommodity).produce(salary);
+                //if(age > 3 && producedCommodity == 1){
+
+                //}else{
+                    commoditiesHeld[producedCommodity]+=salary;
+                    Commodity.getCommNum(producedCommodity).produce(salary);
+                //}
         }
 
         //Initiate random trades with other agents
@@ -192,7 +196,7 @@ public class Human implements Steppable {
                         //consume
                 }else if(mode == LifeStage.CONSUMING){
                         this.consume();
-                        System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
+                        //System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
                         //mode = LifeStage.BIRTHING;
                         mode = LifeStage.EARNING;
                         Model.instance().schedule.scheduleOnceIn(.9,this);
@@ -231,6 +235,7 @@ public class Human implements Steppable {
                         while( minThreshold[i]< Commodity.getCommNum(i).getAmtCons()) {
                                 minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
                         }
+                        Commodity.getCommNum(i).incNeed(minThreshold[i]);
                         expPrice[i]=Model.instance().generateExpPrice();
                         commoditiesHeld[i]=0;
                 }
@@ -239,6 +244,7 @@ public class Human implements Steppable {
                         allNeeds+=minThreshold[i];
                 }
                 salary=Model.instance().generateSalary();
+                Commodity.getCommNum(producedCommodity).incMakerNum(salary);
                 Model.instance().addToActors(this);
         }
 
@@ -262,6 +268,7 @@ public class Human implements Steppable {
                         while(minThreshold[i]<Commodity.getCommNum(i).getAmtCons()) {
                                 minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
                         }
+                        Commodity.getCommNum(i).incNeed(minThreshold[i]);
                         expPrice[i]=Model.instance().generateExpPrice();
                         commoditiesHeld[i]=0;
                 }
@@ -270,6 +277,7 @@ public class Human implements Steppable {
                         allNeeds+=minThreshold[i];
                 }
                 salary=Model.instance().generateSalary();
+                Commodity.getCommNum(producedCommodity).incMakerNum(salary);
                 parent.children.add(this);
                 Model.instance().addToActors(this);
                 Model.instance().addToCommunity(residentCommunity,this);
@@ -362,6 +370,7 @@ public class Human implements Steppable {
         private void omniBequeath(Human man) {
                 if(man.children.size()==0) {
                         //std::cout<<"Childless ";
+                        /*TODO remove holdings from model*/
                 } else {
                         if(man.children.size()>1) {
                                 Model.instance().addToWealthRedistributed(man.getWealth());
@@ -419,6 +428,8 @@ public class Human implements Steppable {
         public int getNumDeficientCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.DEFICIENT); }
         //Return the number of goods an agent is above need and below want
         public int getNumSatisfiedCommodities()  { return getNumCommoditiesWithStatus(CommodityStatus.SATISFIED); }
+        //Return one of their expected prices
+        public double getPrice(int comm) { return expPrice[comm]; }
 
         //Human data
         //--------------------------------------------------------------------------

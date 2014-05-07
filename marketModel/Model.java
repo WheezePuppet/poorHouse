@@ -10,7 +10,7 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static final int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 10;
+        public static final int NUM_YEARS = 15;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
@@ -108,17 +108,34 @@ public class Model extends SimState implements Steppable
                         }
                 }
         }
-        /*TODO*/
-        /*public void avgPrice(int comm){
-            int avg = 0;
+
+        //Returns the average price of a commodity
+        public double avgPrice(int comm){
+            int sizeOfMap = actors.size();
+            double avg = 0;
+            for(Map.Entry<Integer, Human> entry : actors.entrySet()){
+                Integer key = entry.getKey();
+                Human value = entry.getValue();
+                avg += value.getPrice(comm);
+            }
+            avg /= sizeOfMap;
             return avg;
         }
-        public void sdPrice(int comm){
-            int avg = avgPrice(comm);
-            double sd;
-            
+
+        //Returns the standard deviation of the price of a commodity
+        public double sdPrice(int comm){
+            double avg = avgPrice(comm);
+            double sd=0;
+            for(Map.Entry<Integer, Human> entry : actors.entrySet()){
+                Integer key = entry.getKey();
+                Human value = entry.getValue();
+                double diff = (value.getPrice(comm) - avg);
+                sd += (diff * diff);
+            }
+            sd /= actors.size();
+            sd = Math.sqrt(sd);
             return sd;
-        }*/
+        }
 
         public void resetTotalWealth() { totalWealth=0; }
         public void addToWealthRedistributed(double value) { wealthRedistributed+=value; }
@@ -199,13 +216,13 @@ public class Model extends SimState implements Steppable
         private Model(long seed) {
                 // Initialize random number distributions.
                 super(seed);
-                randomGenerator = new MersenneTwisterFast();
+                randomGenerator = new MersenneTwisterFast(50);
                 commodityNeedThresholdDistro = new Uniform(1.0,5.0,randomGenerator);
                 salaryDistro = new Normal(35,15,randomGenerator);
                 makeDistro = new Uniform(0,9,randomGenerator);
                 deathDistro = new Uniform(0,100,randomGenerator);
                 mpsDistro = new Uniform(.1,.7,randomGenerator);
-                consumeDistro = new Uniform(1,4,randomGenerator);
+                consumeDistro = new Uniform(1,5,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
                 tradeDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
@@ -242,8 +259,13 @@ public class Model extends SimState implements Steppable
                 resetTotalWealth();
                 resetWealthRedistributed();
                 years++;
-                double food = Commodity.getCommNum(1).getTotalAmt();
-                System.out.printf("food: %f\n",food );
+                double foodAmt = Commodity.getCommNum(1).getTotalAmt();
+                double foodAvgPrice = avgPrice(1);
+                double foodPriceSd = sdPrice(1);
+                System.out.printf("amount produced, need, avg price, sd, char\n year: %d\n", years);
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                    System.out.printf("%f, %f, %f, %f, %c\n",Commodity.getCommNum(i).getProducedQuantity(), Commodity.getCommNum(i).getAmtNeeded(), avgPrice(i), sdPrice(i), i+65);
+                }
                 if(years > NUM_YEARS){
                     System.exit(0);
                 }

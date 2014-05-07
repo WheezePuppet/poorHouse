@@ -26,7 +26,7 @@ V2:
         - new agents (kids) decide on businesses
         - existing agents can change their business
         - existing agents have a dynamic choice of what to produce
-
+    Note: when agent dies childless, holdings must be removed from commodity
 
 
 V3+:
