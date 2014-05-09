@@ -80,6 +80,15 @@ public class Human implements Steppable {
                         /*} else {
                                 buyFrom(Model.instance().getRandomCommunityMember(residentCommunity));
                         }*/
+                        int k=0;
+                        for(int j=0; j<Commodity.NUM_COMM; j++){
+                            if(checkStatus(j)==CommodityStatus.DEFICIENT){
+                                k=1;
+                            }
+                        }
+                        if(k==0){
+                            break;
+                        }
                 }
         }
 
@@ -183,7 +192,7 @@ public class Human implements Steppable {
                 //earn
                 if(mode == LifeStage.EARNING){
                         if(age == 5 && producedCommodity == 1){
-                            this.earnIncome();
+                            //this.earnIncome();
                         }
                         this.earnIncome();
                         mode = LifeStage.TRADING;
@@ -199,7 +208,7 @@ public class Human implements Steppable {
                         //System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
                         //mode = LifeStage.BIRTHING;
                         mode = LifeStage.EARNING;
-                        Model.instance().schedule.scheduleOnceIn(.9,this);
+                        Model.instance().schedule.scheduleOnceIn(.8,this);
                         age++;
                         //child
                 }/*else if(mode == LifeStage.BIRTHING){
@@ -287,16 +296,23 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
 
         private void buyFrom(Human other){
+                //Show that the agents have engaged in another trade
                 incrementTrades();
                 other.incrementTrades();
+                //Check each commodity for trading value
                 for(int i=0; i<Commodity.NUM_COMM; i++){
+                    //If the buyer is low in the commodity...
                     if(checkStatus(i)==CommodityStatus.DEFICIENT){
+                        //And the seller is satisfied...
                         if(other.checkStatus(i)==CommodityStatus.SATISFIED){
+                            //Let the trades begin!
                             trade(i,other);
                         }else{
-                            expPrice[i]*=1.003;
-                            other.expPrice[i]*=1.003;
+                            //If the seller is also low, the good is scarce and price expectations rise
+                            expPrice[i]*=1.01;
+                            other.expPrice[i]*=1.01;
                         }
+                    //If both agents are satisfied, the good is not as scarce and price expectations fall
                     }else if(other.checkStatus(i)==CommodityStatus.SATISFIED){
                         expPrice[i] *= .99;
                         other.expPrice[i] *= .99;
@@ -305,12 +321,21 @@ public class Human implements Steppable {
         }
 
         private void trade(int x, Human other){
-            int deficit = minThreshold[x]-commoditiesHeld[x];
-            int surplus = other.commoditiesHeld[x]-other.minThreshold[x];
-            if(expPrice[x]>other.expPrice[x]){
+            //Determine how low and high the agents are in the given good (not Giffen good)
+            double deficit = minThreshold[x]-commoditiesHeld[x];
+            double surplus = other.commoditiesHeld[x]-other.minThreshold[x];
+            //Sell only if the buyer is willing to pay more than the seller wants???
+            //if(expPrice[x]>other.expPrice[x]){//SELLER HAS MONOPOLISTIC CONTROL!!! MAYDAY!
+                //Haggle to the price being the average of the two expecteds
                 double price = (expPrice[x]+other.expPrice[x])/2;
-                //expPrice[x] = price*.99;
-                //other.expPrice[x] = price*.99;
+                double diff = price - expPrice[x];
+                //Bring both agents' expectations a tenth of the way to the average
+                diff/=10;
+                expPrice[x]+=diff;
+                diff = price - other.expPrice[x];
+                diff/=10;
+                other.expPrice[x]+=diff;
+                //Decide the amount to buy so as not to bring buyer above or seller below need level
                 if(deficit>surplus){
                     money -= surplus*price;
                     other.money += surplus*price;
@@ -322,11 +347,12 @@ public class Human implements Steppable {
                     other.commoditiesHeld[x]-=deficit;
                     commoditiesHeld[x]+=deficit;
                 }
+                //Increment model-wide trades
                 Model.instance().incrementTrades();
-            }else{
-                other.expPrice[x] = other.expPrice[x]-((other.expPrice[x]-expPrice[x])/4);
-                expPrice[x] = expPrice[x]+((other.expPrice[x]-expPrice[x])/4);
-            }
+            /*}else{
+                other.expPrice[x] = other.expPrice[x]-((other.expPrice[x]-expPrice[x])/10);
+                expPrice[x] = expPrice[x]+((other.expPrice[x]-expPrice[x])/10);
+            }*/
         }
 
         private void incrementTrades() { timesTraded++; }
@@ -442,14 +468,14 @@ public class Human implements Steppable {
         private Human parent;
         private int myId;
         private int residentCommunity;
-        private int allNeeds;
-        private int [] minThreshold;
+        private double allNeeds;
+        private double [] minThreshold;
 
         //Human data changing
         private int age;
         private double money;
         private int timesTraded;
-        private int [] commoditiesHeld;
+        private double [] commoditiesHeld;
         private double [] expPrice;
         private ArrayList <Human> children;
         public LifeStage mode;

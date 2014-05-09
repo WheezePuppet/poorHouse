@@ -10,14 +10,14 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static final int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 10;
+        public static final int NUM_YEARS = 15;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
 
         //Random number generator next functions
         public int generateNeedCommodityThreshold() {
-            return commodityNeedThresholdDistro.nextInt(); }
+            return commodityNeedThresholdDistro.nextDouble(); }
         public double generateSalary() {
                 double thing=salaryDistro.nextDouble();
                 while(thing<0) {
@@ -29,18 +29,18 @@ public class Model extends SimState implements Steppable
         public double generateMps() { return mpsDistro.nextDouble(); }
         public int generateLifeProb() { 
             return (years < NUM_YEARS) ? deathDistro.nextInt() : 101;
-             }
-        public double generateConsume() { return consumeDistro.nextInt(); }
+             }//Make this a double?
+        public double generateConsume() { return consumeDistro.nextDouble(); }
         public double generateExpPrice() { return priceDistro.nextDouble(); }
         public int generateNumTraders() { return tradeDistro.nextInt(); }
-        public int generateOutsideTrade() { return outsideTrade.nextInt(); }
+        public int generateOutsideTrade() { return outsideTrade.nextInt(); }//Change to double TODO On second thought, it's the introvert dial
         public int generateCommunity(Human toAdd) {
                 int randomCommunity = communityDistro.nextInt();
                 randomCommunity = randomCommunity%COMMUNITIES;
                 communities.get(randomCommunity).add(toAdd);
                 return randomCommunity;
         }
-        public int generateChild() { return childDistro.nextInt(); }
+        public int generateChild() { return childDistro.nextInt(); }//Changed to double
         public int generateAge() { return ageDistro.nextInt(); }
 
         //Trade facilitation functions
