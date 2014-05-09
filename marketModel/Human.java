@@ -194,18 +194,15 @@ public class Human implements Steppable {
                 }
                 //earn
                 if(mode == LifeStage.EARNING){
-                        if(age == 5 && producedCommodity == 1){
-                            //this.earnIncome();
-                        }
                         this.earnIncome();
                         mode = LifeStage.TRADING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
-                        //trade
+                //trade
                 }else if(mode == LifeStage.TRADING){
                         this.tradeWithRandomAgents();
                         mode = LifeStage.CONSUMING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
-                        //consume
+                //consume
                 }else if(mode == LifeStage.CONSUMING){
                         this.consume();
                         //System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
@@ -213,12 +210,12 @@ public class Human implements Steppable {
                         mode = LifeStage.EARNING;
                         Model.instance().schedule.scheduleOnceIn(.8,this);
                         age++;
-                        //child
+                //child
                 }/*else if(mode == LifeStage.BIRTHING){
                         this.considerHavingAChild();
                         mode = LifeStage.DYING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
-                        //death
+                //death
                 }*/else if(mode == LifeStage.DYING){
                         this.considerDeath();
                         //mode = LifeStage.EARNING;
