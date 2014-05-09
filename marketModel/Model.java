@@ -35,7 +35,7 @@ public class Model extends SimState implements Steppable
         public int generateNumTraders() { return tradeDistro.nextInt(); }
         public int generateOutsideTrade() { return outsideTrade.nextInt(); }//Change to double TODO On second thought, it's the introvert dial
         public int generateCommunity(Human toAdd) {
-                int randomCommunity = communityDistro.nextInt();
+                int randomCommunity = 0;//communityDistro.nextInt();
                 randomCommunity = randomCommunity%COMMUNITIES;
                 communities.get(randomCommunity).add(toAdd);
                 return randomCommunity;
@@ -75,7 +75,7 @@ public class Model extends SimState implements Steppable
                 total/=i;
                 return total;
         }
-        //
+
         public void inter(Human body) {
                 graveyard.add(body);
                 int h=communities.get(body.getCommunity()).size();
@@ -261,9 +261,9 @@ public class Model extends SimState implements Steppable
                 double foodAmt = Commodity.getCommNum(1).getTotalAmt();
                 double foodAvgPrice = avgPrice(1);
                 double foodPriceSd = sdPrice(1);
-                System.out.printf("amount produced/need, avg price, sd, consumption_rate, char\n year: %d\n", years);
+                System.out.printf("amount produced/need, avg price, sd, consumption_rate, avg def comm, char\n year: %d\n", years);
                 for(int i=0; i<Commodity.NUM_COMM; i++){
-                    System.out.printf("%f, %f, %f, %f,%c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), i+65);
+                    System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), getAvgDeficientCommComm(0),i+65);
                 }
                 if(years > NUM_YEARS){
                     System.exit(0);

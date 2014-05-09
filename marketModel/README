@@ -1,0 +1,7 @@
+To run the model,
+    javac *.java
+    java Model /d /d /d > results.txt
+    mv results.txt /directory
+    sh splitNew.sh
+    R
+        source deviation
