@@ -60,7 +60,7 @@ public class Human implements Steppable {
         public void earnIncome() {
                 int com = 0;
                 double max = 0;
-                for(int i=0; i<Commodity.COMM_NUM; i++){
+                for(int i=0; i<Commodity.NUM_COMM; i++){
                     if(expPrice[i] > max){
                         com = i;
                         max = expPrice[i];
@@ -82,14 +82,14 @@ public class Human implements Steppable {
                    Generate a number every time, if you are below, trade in community.
                    If you're above, you may trade with the world at large.
                  */
-                for(int i=0; i<50/*numTraders*/; i++) {
+                for(int i=0; i<10/*numTraders*/; i++) {
                         int roll=(Model.instance().generateOutsideTrade());
                         //if(roll>Model.INTROVERT_DIAL) {
                                 buyFrom(Model.instance().getRandomGlobalMember());
                         /*} else {
                                 buyFrom(Model.instance().getRandomCommunityMember(residentCommunity));
                         }*/
-                        int k=0;
+                        /*int k=0;
                         for(int j=0; j<Commodity.NUM_COMM; j++){
                             if(checkStatus(j)==CommodityStatus.DEFICIENT){
                                 k=1;
@@ -97,7 +97,7 @@ public class Human implements Steppable {
                         }
                         if(k==0){
                             break;
-                        }
+                        }*/
                 }
         }
 
