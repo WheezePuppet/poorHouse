@@ -5,6 +5,7 @@ Fixed number of commodities, each with its own fixed consumption rate (not
 One commodity called money
 Every person produces some amount of one commodity per time period
 Every person starts with a random amount needed for each commodity
+    Which is the same as the consumption level
 Every person starts with a random expected price for each commodity
 Every person encounters some number of people per time period
 On each encounter:
@@ -12,7 +13,7 @@ On each encounter:
         if both lack, revise price upwards 
         if both have enough, revise price downwards
         if one lacks and other has, trade at average price and revise price
-            to average 
+            toward average 
 Money can go negative
 
 Q's:
@@ -21,10 +22,10 @@ How long it takes prices to reach equilibrium if they do?
 look at variance of expected price in addition to mean
 
 A's:
-Prices rise slowly if the produce/need ratio is greater than one
-Prices rise quickly if the produce/need ratio is less than one (scarce resource)
-Variance (standard deviation) increases as price gets very high
-    May be an issue with integer/double precision
+    Prices fall to zero or go to infinity exponentially
+        Production level is fixed, no compensation or arbitrage
+    No
+    Variance does decrease over time, except when going to infinite price
 
 
 V2:

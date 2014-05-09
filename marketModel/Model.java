@@ -16,7 +16,7 @@ public class Model extends SimState implements Steppable
         public static final int COMMUNITIES = 10;
 
         //Random number generator next functions
-        public int generateNeedCommodityThreshold() {
+        public double generateNeedCommodityThreshold() {
             return commodityNeedThresholdDistro.nextDouble(); }
         public double generateSalary() {
                 double thing=salaryDistro.nextDouble();
@@ -218,14 +218,13 @@ public class Model extends SimState implements Steppable
                 super(seed);
                 randomGenerator = new MersenneTwisterFast(50);
                 commodityNeedThresholdDistro = new Uniform(1.0,5.0,randomGenerator);
-                salaryDistro = new Normal(35,15,randomGenerator);
+                salaryDistro = new Normal(30,15,randomGenerator);
                 makeDistro = new Uniform(0,9,randomGenerator);
                 deathDistro = new Uniform(0,100,randomGenerator);
-                mpsDistro = new Uniform(.1,.7,randomGenerator);
                 consumeDistro = new Uniform(1,5,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
-                tradeDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
+                tradeDistro = new Uniform(0,100, randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 childDistro = new Uniform(0,100,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);

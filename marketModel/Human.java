@@ -22,7 +22,7 @@ public class Human implements Steppable {
         }
 
         //Print the status of each of the agent's commodities
-        public void print() {
+        /*public void print() {
                 double totalNeeds = 0;
                 for (int i=0; i<Commodity.NUM_COMM; i++) {
                         totalNeeds += this.minThreshold[i];
@@ -49,7 +49,7 @@ public class Human implements Steppable {
                         }
                 }
                 System.out.printf("]\n");
-        }
+        }*/
 
         //Global static values
         public static int BEQ;
@@ -95,13 +95,7 @@ public class Human implements Steppable {
         //Reduce each of the agent's commodities by the amount dictated
         //by the commodity class in question
         public void consume() {
-                int j = 0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        if(age == 5 && i == 1 && j ==0){
-                            //System.out.println("EEK!");
-                            //i--;
-                            j++;
-                        }
                         if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
                                 commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
                                 Commodity.getCommNum(i).consume();
@@ -229,21 +223,19 @@ public class Human implements Steppable {
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
                 producedCommodity=Model.instance().generateMake();
-                mps=Model.instance().generateMps();
-                numTraders=Model.instance().generateNumTraders();
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
                 money=100;
                 children = new ArrayList<Human>();
-                minThreshold = new int [Commodity.NUM_COMM];//Between 0 and 5
-                commoditiesHeld = new int [Commodity.NUM_COMM];
+                minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
+                commoditiesHeld = new double [Commodity.NUM_COMM];
                 expPrice = new double [Commodity.NUM_COMM];
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
-                        while( minThreshold[i]< Commodity.getCommNum(i).getAmtCons()) {
+                        minThreshold[i]=Commodity.getCommNum(i).getAmtCons();//Model.instance().generateNeedCommodityThreshold();	
+                       /* while( minThreshold[i]< Commodity.getCommNum(i).getAmtCons()) {
                                 minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
-                        }
+                        }*/
                         Commodity.getCommNum(i).incNeed(minThreshold[i]);
                         expPrice[i]=Model.instance().generateExpPrice();
                         commoditiesHeld[i]=0;
@@ -263,14 +255,12 @@ public class Human implements Steppable {
                 parent=progenitor;
                 myId = nextAgentNum++; 
                 producedCommodity=Model.instance().generateMake();
-                mps=Model.instance().generateMps();
-                numTraders=Model.instance().generateNumTraders();
                 residentCommunity=parent.residentCommunity;
                 age=0;
                 money=100;
                 children = new ArrayList<Human>();
-                minThreshold = new int [Commodity.NUM_COMM];//Between 0 and 5
-                commoditiesHeld = new int [Commodity.NUM_COMM];
+                minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
+                commoditiesHeld = new double [Commodity.NUM_COMM];
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
@@ -461,7 +451,6 @@ public class Human implements Steppable {
         //Human data
         //--------------------------------------------------------------------------
         //Human data unchanging
-        private double mps;//Float less than one (which seems never to be used)
         private double salary;//Between 3 and 7
         private int producedCommodity;//Between 0 and 10
         private int numTraders;//Between 5 and 100
