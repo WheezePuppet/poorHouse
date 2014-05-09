@@ -58,10 +58,19 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
+                int com = 0;
+                double max = 0;
+                for(int i=0; i<Commodity.COMM_NUM; i++){
+                    if(expPrice[i] > max){
+                        com = i;
+                        max = expPrice[i];
+                    }
+                }
+                producedCommodity = com;
                 //if(age > 3 && producedCommodity == 1){
 
                 //}else{
-                    commoditiesHeld[producedCommodity]+=salary;
+                    commoditiesHeld[producedCommodity]+=salary;//Units?
                     Commodity.getCommNum(producedCommodity).produce(salary);
                 //}
         }
