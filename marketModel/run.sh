@@ -7,4 +7,4 @@ cp splitNew.sh $1
 cd $1
 sh splitNew.sh
 Rscript deviationPlot.r
-mv Rplot.pdf $1.pdf
+mv Rplots.pdf $1.pdf
