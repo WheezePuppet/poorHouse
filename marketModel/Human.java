@@ -82,7 +82,7 @@ public class Human implements Steppable {
                    Generate a number every time, if you are below, trade in community.
                    If you're above, you may trade with the world at large.
                  */
-                for(int i=0; i<10/*numTraders*/; i++) {
+                for(int i=0; i<20/*numTraders*/; i++) {
                         int roll=(Model.instance().generateOutsideTrade());
                         //if(roll>Model.INTROVERT_DIAL) {
                                 buyFrom(Model.instance().getRandomGlobalMember());

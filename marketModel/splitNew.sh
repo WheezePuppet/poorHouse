@@ -1,23 +1,23 @@
 touch a.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > a.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > a.txt
 touch b.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > b.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > b.txt
 touch c.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > c.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > c.txt
 touch d.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > d.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > d.txt
 touch e.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > e.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > e.txt
 touch f.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > f.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > f.txt
 touch g.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > g.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > g.txt
 touch h.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > h.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > h.txt
 touch i.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > i.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > i.txt
 touch j.txt
-echo amtProduced_need, avg_price, sd, consumption_rate, avg_def, char > j.txt
+echo amtProduced_need, avg_price, sd, consumption_rate, consumed, char > j.txt
 grep A results.txt >> a.txt
 grep B results.txt >> b.txt
 grep C results.txt >> c.txt

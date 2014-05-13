@@ -10,7 +10,7 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static final int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 150;
+        public static final int NUM_YEARS = 100;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
@@ -218,7 +218,7 @@ public class Model extends SimState implements Steppable
                 super(seed);
                 randomGenerator = new MersenneTwisterFast(50);
                 commodityNeedThresholdDistro = new Uniform(1.0,5.0,randomGenerator);
-                salaryDistro = new Normal(30,15,randomGenerator);
+                salaryDistro = new Normal(25,15,randomGenerator);
                 makeDistro = new Uniform(0,9,randomGenerator);
                 deathDistro = new Uniform(0,100,randomGenerator);
                 consumeDistro = new Uniform(1,5,randomGenerator);
@@ -261,9 +261,12 @@ public class Model extends SimState implements Steppable
                 double foodAmt = Commodity.getCommNum(1).getTotalAmt();
                 double foodAvgPrice = avgPrice(1);
                 double foodPriceSd = sdPrice(1);
-                System.out.printf("amount produced/need, avg price, sd, consumption_rate, avg def comm, char\n year: %d\n", years);
+                System.out.printf("amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char\n year: %d\n", years);
                 for(int i=0; i<Commodity.NUM_COMM; i++){
-                    System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), getAvgDeficientCommComm(0),i+65);
+                    System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons(), i+65);
+                }
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                    Commodity.getCommNum(i).resetCons();
                 }
                 if(years > NUM_YEARS){
                     System.exit(0);

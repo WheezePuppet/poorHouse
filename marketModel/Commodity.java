@@ -20,11 +20,13 @@ public class Commodity{
     //For actor use
         public void consume() {
                 totalAmountInSystem-=amtCons;
+                totalCons += totalCons;
         }
 
         //Consumer does not have enough to consume, so doesn't quite
         public void consFail(double x) {
                 totalAmountInSystem-=x;
+                totalCons += x;
         }
 
         public void produce(double quantity) {
@@ -49,6 +51,10 @@ public class Commodity{
             amtNeeded -= need;
         }
 
+        public void resetCons () {
+            totalCons = 0;
+        }
+
     //Returning things
         public static Commodity getCommNum(int num) { return theCommodities[num]; }
 
@@ -62,6 +68,8 @@ public class Commodity{
 
         public double getAmtNeeded() { return amtNeeded; }
 
+        public double getTotalCons() { return totalCons; }
+
     //Data
         public static final int NUM_COMM=10;
         private static Commodity [] theCommodities = new Commodity [NUM_COMM];
@@ -70,4 +78,5 @@ public class Commodity{
         private int makerNum;
         private double producedQuantity;
         private double amtNeeded;
+        private double totalCons;
 }
