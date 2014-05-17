@@ -20,7 +20,7 @@ public class Commodity{
     //For actor use
         public void consume() {
                 totalAmountInSystem-=amtCons;
-                totalCons += totalCons;
+                totalCons += amtCons;
         }
 
         //Consumer does not have enough to consume, so doesn't quite
