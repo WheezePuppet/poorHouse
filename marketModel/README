@@ -1,7 +1,13 @@
-To run the model,
+Ignore the old instructions.
+
+To use the sh file, type "sh run.sh <NAME>".
+This will compile and run the simulation and put the results in a directory of the name given in the resulst folder.
+It will also put an output pdf of form NAME.pdf into the results folder.
+
+/*To run the model,
     javac *.java
     java Model /d /d /d > results.txt
     mv results.txt /directory
     sh splitNew.sh
     R
-        source deviation
+        source deviation*/
