@@ -58,6 +58,8 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
+                int mutable = 95;
+                if(Model.instance().generateSwitch() > mutable){
                 int com = 0;
                 double max = 0;
                 for(int i=0; i<Commodity.NUM_COMM; i++){
@@ -67,6 +69,7 @@ public class Human implements Steppable {
                     }
                 }
                 producedCommodity = com;
+                }
                 //if(age > 3 && producedCommodity == 1){
 
                 //}else{

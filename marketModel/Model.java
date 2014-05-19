@@ -28,27 +28,28 @@ public class Model extends SimState implements Steppable
         public int generateMake() { return makeDistro.nextInt(); }
         public double generateMps() { return mpsDistro.nextDouble(); }
         public int generateLifeProb() { 
-            return (years < NUM_YEARS) ? deathDistro.nextInt() : 101;
+            return (years < NUM_YEARS) ? probDistro.nextInt() : 101;
              }//Make this a double?
         public double generateConsume() { return consumeDistro.nextDouble(); }
         public double generateExpPrice() { return priceDistro.nextDouble(); }
-        public int generateNumTraders() { return tradeDistro.nextInt(); }
-        public int generateOutsideTrade() { return outsideTrade.nextInt(); }//Change to double TODO On second thought, it's the introvert dial
+        public int generateNumTraders() { return probDistro.nextInt(); }
+        public int generateOutsideTrade() { return probDistro.nextInt(); }//Change to double TODO On second thought, it's the introvert dial
         public int generateCommunity(Human toAdd) {
                 int randomCommunity = 0;//communityDistro.nextInt();
                 randomCommunity = randomCommunity%COMMUNITIES;
                 communities.get(randomCommunity).add(toAdd);
                 return randomCommunity;
         }
-        public int generateChild() { return childDistro.nextInt(); }//Changed to double
+        public int generateChild() { return probDistro.nextInt(); }//Changed to double
         public int generateAge() { return ageDistro.nextInt(); }
+        public int generateSwitch() { return probDistro.nextInt(); }
 
         //Trade facilitation functions
 //--------------------------------------------------------------------------
         /* Give the trading agent a random member of their own community to
         trade with */
         public Human getRandomCommunityMember(int communityNum) {
-                int indexOfRandomMember = tradeDistro.nextInt();
+                int indexOfRandomMember = probDistro.nextInt();
                 indexOfRandomMember = indexOfRandomMember%(communities.get(communityNum).size());
                 return communities.get(communityNum).get(indexOfRandomMember);
         }
@@ -57,7 +58,7 @@ public class Model extends SimState implements Steppable
         public Human getRandomGlobalMember() {
                 int big = actors.size();
                 Enumeration<Integer> allKeys = actors.keys();
-                int randomHash = tradeDistro.nextInt()%big;
+                int randomHash = probDistro.nextInt()%big;
                 int toTake = 0;
                 for(int i=0; i<randomHash; i++) {
                     toTake = allKeys.nextElement();
@@ -220,14 +221,15 @@ public class Model extends SimState implements Steppable
                 commodityNeedThresholdDistro = new Uniform(1.0,5.0,randomGenerator);
                 salaryDistro = new Normal(25,15,randomGenerator);
                 makeDistro = new Uniform(0,9,randomGenerator);
-                deathDistro = new Uniform(0,100,randomGenerator);
                 consumeDistro = new Uniform(1,5,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
+                ageDistro = new Uniform(0,29,randomGenerator);
+                communityDistro = new Uniform(1,100,randomGenerator);
+                probDistro = new Uniform(0,100,randomGenerator);
+                /*deathDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
                 tradeDistro = new Uniform(0,100, randomGenerator);
-                communityDistro = new Uniform(1,100,randomGenerator);
-                childDistro = new Uniform(0,100,randomGenerator);
-                ageDistro = new Uniform(0,29,randomGenerator);
+                childDistro = new Uniform(0,100,randomGenerator);*/
 
                 communities = new ArrayList<ArrayList<Human>>();
                 fillCommunities();
@@ -261,9 +263,9 @@ public class Model extends SimState implements Steppable
                 double foodAmt = Commodity.getCommNum(1).getTotalAmt();
                 double foodAvgPrice = avgPrice(1);
                 double foodPriceSd = sdPrice(1);
-                System.out.printf("amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char\n year: %d\n", years);
+                //System.out.printf("amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char\n year: %d\n", years);
                 for(int i=0; i<Commodity.NUM_COMM; i++){
-                    System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons(), i+65);
+                    System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100, i+65);
                 }
                 for(int i=0; i<Commodity.NUM_COMM; i++){
                     Commodity.getCommNum(i).resetCons();
@@ -286,15 +288,16 @@ public class Model extends SimState implements Steppable
         private Uniform commodityNeedThresholdDistro;
         private Normal salaryDistro;
         private Uniform makeDistro;
-        private Uniform deathDistro;
         private Uniform mpsDistro;
         private Uniform consumeDistro;
         private Uniform priceDistro;
-        private Uniform tradeDistro;
-        private Uniform outsideTrade;
         private Uniform communityDistro;
-        private Uniform childDistro;
         private Uniform ageDistro;
+        private Uniform probDistro;
+        //private Uniform deathDistro;
+        //private Uniform tradeDistro;
+        //private Uniform outsideTrade;
+        //private Uniform childDistro;
 
         public static void main(String args[]) {
                 if(args.length<3){
