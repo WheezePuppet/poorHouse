@@ -6,7 +6,7 @@ lapply(filenames, function(filename) {
 		ylim=c(0, max(c(omni$consumed,omni$avg_price))),
         xlab="time periods",
 		main=paste(toupper(substr(filename,1,1)), "-- Consumption rate:",
-            round(omni$consumption_rate[1]),2)
+            round(omni$consumption_rate[1],2))
     )
     lines(omni$sd,col="blue")
     lines(omni$consumed,col="green")
