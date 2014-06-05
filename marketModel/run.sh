@@ -1,5 +1,5 @@
 javac *.java
-java Model 0 50 0 > results.txt
+java Model 50 > results.txt
 mkdir results/$1
 cp results.txt results/$1
 cp deviationPlot.r results/$1

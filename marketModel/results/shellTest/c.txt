@@ -1,0 +1,201 @@
+amtProduced_need, avg_price, sd, consumption_rate, consumed, char
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 2.829192, 0.695866, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 2.635474, 0.473791, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 2.677546, 0.348724, 2.021896, 9137416313961.742000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 3.422335, 0.459445, 2.021896, 7666194.462869, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 4.806415, 0.711544, 2.021896, 1250.801299, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 3.372935, 0.419244, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 2.400368, 0.292203, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.718203, 0.235056, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.244446, 0.210618, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.916273, 0.172984, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.688703, 0.145657, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.530116, 0.126417, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.416931, 0.105019, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.346421, 0.082801, 2.021896, 783067974990843.800000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.330589, 0.066137, 2.021896, 30563901153400896000000000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.426504, 0.081129, 2.021896, 228448878.178508, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.634840, 0.119258, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.945576, 0.180734, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.410678, 0.285092, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.600122, 0.252610, 2.021896, 102686660864844912.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.771656, 0.280358, 2.021896, 100292294312247.720000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.391022, 0.199252, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 1.068901, 0.153132, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.828813, 0.129826, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.675084, 0.114326, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.550829, 0.098287, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.468252, 0.085335, 2.021896, 1.287864, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.485420, 0.087568, 2.021896, 35565103001369520.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.514705, 0.074327, 2.021896, 4585.614487, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.420753, 0.050369, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.337307, 0.036905, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.284272, 0.037527, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.234629, 0.034554, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.210777, 0.029434, 2.021896, 2011075027521432300000000000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.225866, 0.031995, 2.021896, 119363468508.800720, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.207811, 0.027805, 2.021896, 2059977842470550800000000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.162725, 0.017862, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.131973, 0.016978, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.104391, 0.015070, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.084811, 0.013037, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.074711, 0.011326, 2.021896, 119809795656497920.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.070571, 0.011542, 2.021896, 45368664304982610000000000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.063908, 0.008246, 2.021896, 8459295873117192200.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.052215, 0.006724, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.043725, 0.005719, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.034349, 0.005052, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.027286, 0.004390, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.021645, 0.003868, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.017195, 0.003386, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.013672, 0.002695, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.011226, 0.002118, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.009217, 0.001607, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.007918, 0.001373, 2.021896, 2803415762039.722700, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.006798, 0.001158, 2.021896, 6902416.724348, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.007307, 0.001206, 2.021896, 1171136603730854800000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.008941, 0.001471, 2.021896, 65352505626.575320, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.007747, 0.000988, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.007153, 0.000923, 2.021896, 105912505166447440000000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.006108, 0.000712, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.005742, 0.000695, 2.021896, 1056696529779530100000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.006335, 0.000803, 2.021896, 4916376532512.675000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.005483, 0.000618, 2.021896, 49449309228.975430, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.004618, 0.000501, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.003730, 0.000421, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.003032, 0.000369, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.002549, 0.000325, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.002244, 0.000302, 2.021896, 3568762300232560600.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.001886, 0.000255, 2.021896, 266110421300917830000.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.001470, 0.000195, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.001144, 0.000171, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000917, 0.000162, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000753, 0.000140, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000652, 0.000117, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000717, 0.000129, 2.021896, 46305351999701120.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000661, 0.000076, 2.021896, 332593711292466.300000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000565, 0.000071, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000486, 0.000062, 2.021896, 1819.178662, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000504, 0.000074, 2.021896, 2731912649317.844700, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000492, 0.000076, 2.021896, 787528956.696061, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000404, 0.000053, 2.021896, 20644.874850, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000299, 0.000043, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000220, 0.000036, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000162, 0.000030, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000121, 0.000026, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000094, 0.000022, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000074, 0.000019, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000061, 0.000016, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000051, 0.000012, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000047, 0.000009, 2.021896, 12810981749.756195, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000050, 0.000009, 2.021896, 116.523007, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000063, 0.000012, 2.021896, 0.842454, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000063, 0.000009, 2.021896, 125070514493039888.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000050, 0.000006, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000040, 0.000005, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000033, 0.000005, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000030, 0.000004, 2.021896, 55486.442803, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000028, 0.000004, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000032, 0.000005, 2.021896, 16012753498.604946, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000027, 0.000004, 2.021896, 0.000000, C
+amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char
+0.793129, 0.000024, 0.000003, 2.021896, 0.000000, C

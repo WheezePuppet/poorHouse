@@ -21,12 +21,14 @@ public class Commodity{
         public void consume() {
                 totalAmountInSystem-=amtCons;
                 totalCons += amtCons;
+                allModelCons += amtCons;
         }
 
         //Consumer does not have enough to consume, so doesn't quite
         public void consFail(double x) {
                 totalAmountInSystem-=x;
                 totalCons += x;
+                allModelCons += x;
         }
 
         public void produce(double quantity) {
@@ -70,6 +72,8 @@ public class Commodity{
 
         public double getTotalCons() { return totalCons; }
 
+        static public double getAllModelCons() { return allModelCons; }
+
     //Data
         public static final int NUM_COMM=10;
         private static Commodity [] theCommodities = new Commodity [NUM_COMM];
@@ -79,4 +83,5 @@ public class Commodity{
         private double producedQuantity;
         private double amtNeeded;
         private double totalCons;
+        static private double allModelCons=0;
 }

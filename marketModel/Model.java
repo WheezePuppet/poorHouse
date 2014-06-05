@@ -14,6 +14,8 @@ public class Model extends SimState implements Steppable
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
+        public static int SWITCH_PROZ;
+        public static int NUM_TRADERS;
 
         //Random number generator next functions
         public double generateNeedCommodityThreshold() {
@@ -265,7 +267,10 @@ public class Model extends SimState implements Steppable
                 double foodPriceSd = sdPrice(1);
                 //System.out.printf("amount produced/need, avg price, sd, consumption_rate, avg def comm, totalCons, char\n year: %d\n", years);
                 for(int i=0; i<Commodity.NUM_COMM; i++){
-                    System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100, i+65);
+                    //System.out.printf("%f, %f, %f, %f, %f, %c\n",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100, i+65);
+                }
+                if(years==NUM_YEARS){
+                System.out.printf("%f\n",Commodity.getAllModelCons());
                 }
                 for(int i=0; i<Commodity.NUM_COMM; i++){
                     Commodity.getCommNum(i).resetCons();
@@ -300,12 +305,14 @@ public class Model extends SimState implements Steppable
         //private Uniform childDistro;
 
         public static void main(String args[]) {
-                if(args.length<3){
+                /*if(args.length<3){
                     System.out.println("You need DAL, SEED, and BEQ");
                     System.exit(1);
-                }
+                }*/
                 doLoop(new MakesSimState() {
                                 public SimState newInstance(long seed, String[] args) {
+                                Model.SWITCH_PROZ=Integer.parseInt(args[0]);
+                                Model.NUM_TRADERS=Integer.parseInt(args[1]);
                                 return instance();
                                 }
                                 public Class simulationClass() {

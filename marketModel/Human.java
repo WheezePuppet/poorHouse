@@ -58,8 +58,7 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
-                int mutable = 95;
-                if(Model.instance().generateSwitch() > mutable){
+                if(Model.instance().generateSwitch() > Model.SWITCH_PROZ){
                 int com = 0;
                 double max = 0;
                 for(int i=0; i<Commodity.NUM_COMM; i++){
@@ -85,7 +84,7 @@ public class Human implements Steppable {
                    Generate a number every time, if you are below, trade in community.
                    If you're above, you may trade with the world at large.
                  */
-                for(int i=0; i<20/*numTraders*/; i++) {
+                for(int i=0; i<Model.NUM_TRADERS;i++) {
                         int roll=(Model.instance().generateOutsideTrade());
                         //if(roll>Model.INTROVERT_DIAL) {
                                 buyFrom(Model.instance().getRandomGlobalMember());
