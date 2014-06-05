@@ -14,7 +14,7 @@
 require(doParallel)
 require(lattice)
 
-registerDoParallel(8)
+registerDoParallel(24)
 
 # Run a full-factorial parameter sweep of simulations, with the "percent
 # likelihoods that an agent will switch to producing a different good" (each
@@ -69,18 +69,20 @@ track.commodities <- function(switch.percentage, num.trading.partners) {
     )
     df <- as.data.frame(t(weird.pseudo.matrix))
     names(df) <- header
-    df
+    list(df=df,sp=switch.percentage,nt=num.trading.partners)
 }
 
 # Show a plot of commodity prices over time.
 display.commodity.prices <- function(single.run.results) {
-    plot(single.run.results$year,single.run.results[[4]],type="n",
-        main="Commodity prices",xlab="time",ylab="Price")
-    commodities <- unique(single.run.results$commodity)
+    df <- single.run.results$df
+    plot(df$year,df[[4]],type="n",
+        main=paste("Commodity prices (",single.run.results$sp,"%, ",
+            single.run.results$nt,")",sep=""),xlab="time",ylab="Price")
+    commodities <- unique(df$commodity)
     for (commodity.num in 1:length(commodities)) {
         commodity <- commodities[[commodity.num]]
         comm.results <- 
-            single.run.results[single.run.results$commodity == commodity,]
+            df[df$commodity == commodity,]
         lines(comm.results$year,comm.results[[4]],
             col=palette()[commodity.num %% length(palette())])
     }
