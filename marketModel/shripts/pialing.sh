@@ -8,7 +8,7 @@ do
 	do
 		k=$(($i*$j))
 		p=$(($l/417))
-		echo 'java Model ' $i $k ' >> /home/rruud/work/poorHouse/marketModel/output/datas'$p'.csv' >> /home/rruud/work/poorHouse/marketModel/shripts/batch$p.sh
+		echo 'java Model ' $i $j ' >> /home/rruud/work/poorHouse/marketModel/output/datas'$p'.csv' >> /home/rruud/work/poorHouse/marketModel/shripts/batch$p.sh
 		#echo $i $j 
 		l=$(($l+1))
 	done
