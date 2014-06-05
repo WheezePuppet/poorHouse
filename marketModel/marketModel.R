@@ -35,7 +35,7 @@ param.sweep <- function(switch.percentages=seq(0,100,10),
             switch=numeric(length(nums.trading.partners)),
             partners=numeric(length(nums.trading.partners)),
             total.cons=numeric(length(nums.trading.partners)))
-        for (i in seq(nums.trading.partners)) {
+        for (i in 1:length(nums.trading.partners)) {
             res[i,] <- 
                 as.numeric(strsplit(
                 system(paste("java Model",
