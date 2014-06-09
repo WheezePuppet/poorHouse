@@ -49,45 +49,137 @@ param.sweep <- function(switch.percentages=seq(0,100,10),
     results
 }
 
-# Run a single simulation with the two parameters passed (scalars, not
-# vectors) and return a data frame giving the
-track.commodities <- function(switch.percentage, num.trading.partners) {
+# Run a single simulation with the parameters passed (scalars, not vectors)
+#   and return a list containing:
+# sp - the switch.percentage parameter (passed)
+# nt - the num.trading.partners parameter (passed)
+# comm.df - a data frame with one row per commodity per year, giving various
+#   parameters for that commodity in that time period
+# cons.df - a data frame with one row per year, giving the total actual, and
+#   theoretical, consumption rates for that year.
+# total.cons - the total consumption rate of the entire model, in $/year
+# total.sal - the total salary of the entire model in $/year
+track.commodities <- function(switch.percentage, num.trading.partners,
+    mean.cons.rate, mean.salary) {
+
     numeric.col.nums <- c(1,3:7)
-    rows <- strsplit(
+
+    all.rows <- 
         system(paste("java Model",
                 switch.percentage,
                 num.trading.partners,
+                mean.cons.rate,
+                mean.salary,
             "true 2> /dev/null"),
-            intern=TRUE),",")
-    header <- gsub("\"","",strsplit(rows[[1]],","))
-    rows <- rows[-1]    # Discard header row.
-    weird.pseudo.matrix <- sapply(rows, function(row) {
+            intern=TRUE)
+
+    total.cons <- as.numeric(strsplit(
+        grep("^Total consumption:",all.rows,value=TRUE),
+        ": ")[[1]][2])
+    total.sal <- as.numeric(strsplit(
+        grep("^Total salary:",all.rows,value=TRUE),
+        ": ")[[1]][2])
+
+    header <- gsub("\"","",strsplit(all.rows[[1]],",")[[1]])
+    comm.rows <- strsplit(grep("^[0-9]",all.rows,value=TRUE),",")
+    weird.pseudo.matrix <- sapply(comm.rows, function(row) {
         row <- as.list(row)
         row[numeric.col.nums] <- as.numeric(row[numeric.col.nums])
         row
         }
     )
-    df <- as.data.frame(t(weird.pseudo.matrix))
-    names(df) <- header
-    list(df=df,sp=switch.percentage,nt=num.trading.partners)
+    comm.df <- as.data.frame(t(weird.pseudo.matrix))
+    names(comm.df) <- header
+
+    cons.rows <- strsplit(grep("^TOTAL",all.rows,value=TRUE),": ")
+    cons.df <- data.frame(
+        year=1:length(cons.rows),
+        actual=rep(NA,length(cons.rows)),
+        theoretical=rep(NA,length(cons.rows)),
+        row.names=NULL)
+    lapply(1:length(cons.rows), function(row.num) {
+            vals <- as.numeric(strsplit(cons.rows[[row.num]][2]," of ")[[1]])
+            cons.df[row.num,2:3] <<-
+                list(actual=vals[1],theoretical=vals[2])
+        }
+    )
+
+    list(sp=switch.percentage,
+        nt=num.trading.partners,
+        comm.df=comm.df,
+        cons.df=cons.df,
+        total.cons=total.cons,
+        total.sal=total.sal)
+}
+
+
+display.single.run <- function(single.run.results) {
+    display.commodity.prices(single.run.results)
+    readline()
+    display.total.consumption(single.run.results)
 }
 
 # Show a plot of commodity prices over time.
-display.commodity.prices <- function(single.run.results) {
-    df <- single.run.results$df
-    plot(df$year,df[[4]],type="n",
-        main=paste("Commodity prices (",single.run.results$sp,"%, ",
-            single.run.results$nt,")",sep=""),xlab="time",ylab="Price")
-    commodities <- unique(df$commodity)
+display.commodity.prices <- function(single.run.results,file=NULL) {
+    if(!is.null(file)) {
+        png(paste(file,".png",sep=""))
+    }
+    comm.df <- single.run.results$comm.df
+    plot(comm.df$year,comm.df[[4]],type="n",
+        main=paste("Commodity prices\n",
+            "switch rate = ",single.run.results$sp,"%\n",
+            "number of trading partners = ",single.run.results$nt,"\n",
+            "Consumption/salary ratio = ",
+                round(single.run.results$total.cons /
+                    single.run.results$total.sal,2),
+                sep=""),
+        xlab="time",ylab="Price",
+        font.main=1,
+        cex.main=.8)
+    commodities <- unique(comm.df$commodity)
     for (commodity.num in 1:length(commodities)) {
         commodity <- commodities[[commodity.num]]
         comm.results <- 
-            df[df$commodity == commodity,]
+            comm.df[comm.df$commodity == commodity,]
         lines(comm.results$year,comm.results[[4]],
             col=palette()[commodity.num %% length(palette())])
     }
     legend("bottomleft",title="Commodity",fill=palette(),legend=commodities)
+    if(!is.null(file)) {
+        dev.off()
+    }
 }
+
+# Show a plot of total consumption over time.
+display.total.consumption <- function(single.run.results,file=NULL) {
+    if(!is.null(file)) {
+        png(paste(file,".png",sep=""))
+    }
+    cons.df <- single.run.results$cons.df
+    plot(cons.df$year,cons.df[[2]],type="n",
+        main=paste("Total consumption\n",
+            "switch rate = ",single.run.results$sp,"%\n",
+            "number of trading partners = ",single.run.results$nt,"\n",
+            "Consumption/salary ratio = ",
+                round(single.run.results$total.cons /
+                    single.run.results$total.sal,2),
+                sep=""),
+        xlab="time",ylab="Units",
+        ylim=c(0,max(cons.df[2:3])+1),
+        font.main=1,
+        cex.main=.8)
+    lines(cons.df$year,cons.df[[2]],col="blue")
+    lines(cons.df$year,cons.df[[3]],col="green")
+    best.fit.line <- lm(cons.df[[2]]~cons.df$year)
+    abline(best.fit.line,col="red",lty="dashed")
+    legend("bottomleft",fill=c("blue","green","red"),
+        legend=c("total consumption", "theoretical possible consumption",
+            "consumption trend"))
+    if(!is.null(file)) {
+        dev.off()
+    }
+}
+
 
 # Create a file containing a heatmap of the results passed, with the filename
 # passed.

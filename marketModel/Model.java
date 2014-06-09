@@ -6,7 +6,7 @@ import ec.util.MersenneTwisterFast;
 public class Model extends SimState implements Steppable
 {
         //Create singleton model
-        private static Model theInstance = instance();
+        private static Model theInstance;
 
         //Global constants
         public static final int NUM_INITIAL_AGENTS = 100;
@@ -16,6 +16,8 @@ public class Model extends SimState implements Steppable
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS;
+        public static int COMM_CONSUME_MEAN;
+        public static int SALARY_MEAN;
 
         //Output control
 
@@ -226,10 +228,12 @@ public class Model extends SimState implements Steppable
                 // Initialize random number distributions.
                 super(seed);
                 randomGenerator = new MersenneTwisterFast(50);
-                commodityNeedThresholdDistro = new Uniform(1.0,5.0,randomGenerator);
-                salaryDistro = new Normal(25,15,randomGenerator);
-                makeDistro = new Uniform(0,9,randomGenerator);
-                consumeDistro = new Uniform(1,5,randomGenerator);
+                commodityNeedThresholdDistro = 
+                    new Uniform(1.0,5.0,randomGenerator);
+                salaryDistro = new Normal(SALARY_MEAN,15,randomGenerator);
+                makeDistro = new Uniform(2,9,randomGenerator);
+                consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
+                    COMM_CONSUME_MEAN+2,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
@@ -258,6 +262,7 @@ public class Model extends SimState implements Steppable
                         Human newHuman = new Human();
                         schedule.scheduleOnce(.1,newHuman);
                 }
+                System.out.println("Total salary: " + Human.totalSalary);
         }
 
         public void step(SimState model) {
@@ -272,9 +277,14 @@ public class Model extends SimState implements Steppable
                 double foodAvgPrice = avgPrice(1);
                 double foodPriceSd = sdPrice(1);
                 if(Model.PRINT_COMM) {
+                    double totalConsForAllCommoditiesThisRound = 0;
                     for(int i=0; i<Commodity.NUM_COMM; i++){
                         System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
+totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                     }
+                    System.out.println("TOTAL consumed: " + 
+                        totalConsForAllCommoditiesThisRound + " of " + 
+                        Commodity.theoreticalTotalOfAllConsumption*100);
                 }
                 if(years==NUM_YEARS){
                     if(!Model.PRINT_COMM) {
@@ -314,15 +324,26 @@ public class Model extends SimState implements Steppable
         //private Uniform outsideTrade;
         //private Uniform childDistro;
 
-        // Usage: java Model switchPercentage numTradePartners [printComm]
+        // Usage: java Model switchPercentage numTradePartners 
+        //      commodityConsumeMean salaryMean [printComm]
         // switchPercentage: integer (0-100) indicating percent likelihood
         //    each time period that an agent will change what commodity they 
         //    produce.
         // numTradePartners: non-negative integer for the number of trading
         //    partners each agent entertains per time period.
+        // commodityConsumeMean: the mean number of units per time period
+        //    each agent will consume of a given commodity. (A uniform distro
+        //    with width 5 units/year will be applied to this mean.)
+        // salaryMean: the mean agent salary, in number of units per time 
+        //    period. (A normal distro with stdev 15 will be applied to this
+        //    mean.)
         // printComm: if false, print only summary information about total
         //    consumption. If true, instead print information about each
         //    commodity's statistics each time period.
+        // 
+        // Examples:
+        //   java Model 25 100 3 25
+        //   java Model 15 10 5 20 true 
         public static void main(String args[]) {
             /*if(args.length<3){
               System.out.println("You need DAL, SEED, and BEQ");
@@ -332,9 +353,12 @@ public class Model extends SimState implements Steppable
                 public SimState newInstance(long seed, String[] args) {
                     Model.SWITCH_PROZ=Integer.parseInt(args[0]);
                     Model.NUM_TRADERS=Integer.parseInt(args[1]);
-                    if(args.length>2) {
+                    Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
+                    Model.SALARY_MEAN=Integer.parseInt(args[3]);
+
+                    if(args.length>4) {
                         Model.PRINT_COMM=
-                            Boolean.parseBoolean(args[2]);
+                            Boolean.parseBoolean(args[4]);
                     }
                     if(Model.PRINT_COMM) {
                         System.out.println("\"year\",\"commodity\",\"amount produced/need\",\"avg price\",\"sd\",\"consumption_rate\",\"totalCons\"");

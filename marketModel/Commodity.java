@@ -4,17 +4,22 @@ public class Commodity{
     //Functions
         public static void initCommodities() {
                 for (int i=0; i<NUM_COMM; i++) {
-                        theCommodities[i] = new Commodity();
+                        theCommodities[i] = new Commodity(i);
                 }
+                System.out.println("Total consumption: " + 
+                    theoreticalTotalOfAllConsumption * 
+                        Model.NUM_INITIAL_AGENTS);
         }
 
-        private Commodity()//Determine consumption rate, set 
+        private Commodity(int commodityNum)//Determine consumption rate, set 
         {
+                this.commodityNum = commodityNum;
                 totalAmountInSystem = 0;
                 makerNum = 0;
                 producedQuantity = 0;
                 amtNeeded = 0;
                 amtCons=Model.instance().generateConsume();
+                theoreticalTotalOfAllConsumption += amtCons;
         }
 
     //For actor use
@@ -80,8 +85,10 @@ public class Commodity{
         private double totalAmountInSystem;
         private double amtCons;
         private int makerNum;
+        private int commodityNum;
         private double producedQuantity;
         private double amtNeeded;
         private double totalCons;
         static private double allModelCons=0;
+        public static double theoreticalTotalOfAllConsumption;
 }

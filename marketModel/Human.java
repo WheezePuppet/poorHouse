@@ -58,7 +58,7 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
-                if(Model.instance().generateSwitch() > Model.SWITCH_PROZ){
+                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
                 int com = 0;
                 double max = 0;
                 for(int i=0; i<Commodity.NUM_COMM; i++){
@@ -230,7 +230,11 @@ public class Human implements Steppable {
         public Human() {
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
+if (myId == 0 || myId == 1) {
+producedCommodity = myId;
+} else {
                 producedCommodity=Model.instance().generateMake();
+}
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
                 money=100;
@@ -253,6 +257,7 @@ public class Human implements Steppable {
                         allNeeds+=minThreshold[i];
                 }
                 salary=Model.instance().generateSalary();
+                totalSalary += salary;
                 Commodity.getCommNum(producedCommodity).incMakerNum(salary);
                 Model.instance().addToActors(this);
         }
@@ -479,4 +484,6 @@ public class Human implements Steppable {
 
         //Static agent id creator reference
         private static int nextAgentNum = 0;
+
+        public static double totalSalary = 0;
 };
