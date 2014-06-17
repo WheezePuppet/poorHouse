@@ -53,19 +53,21 @@ param.sweep <- function(switch.percentages=seq(0,100,10),
 #   and return a list containing:
 # sp - the switch.percentage parameter (passed)
 # nt - the num.trading.partners parameter (passed)
+# na - total number of agents
 # comm.df - a data frame with one row per commodity per year, giving various
 #   parameters for that commodity in that time period
 # cons.df - a data frame with one row per year, giving the total actual, and
 #   theoretical, consumption rates for that year.
 # total.cons - the total consumption rate of the entire model, in $/year
 # total.sal - the total salary of the entire model in $/year
-track.commodities <- function(switch.percentage, num.trading.partners,
-    mean.cons.rate, mean.salary) {
+track.commodities <- function(num.agents, switch.percentage, 
+    num.trading.partners, mean.cons.rate, mean.salary) {
 
     numeric.col.nums <- c(1,3:7)
 
     all.rows <- 
         system(paste("java Model",
+                num.agents,
                 switch.percentage,
                 num.trading.partners,
                 mean.cons.rate,
@@ -105,6 +107,7 @@ track.commodities <- function(switch.percentage, num.trading.partners,
     )
 
     list(sp=switch.percentage,
+        na=num.agents,
         nt=num.trading.partners,
         comm.df=comm.df,
         cons.df=cons.df,

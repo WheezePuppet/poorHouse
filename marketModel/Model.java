@@ -9,7 +9,7 @@ public class Model extends SimState implements Steppable
         private static Model theInstance;
 
         //Global constants
-        public static final int NUM_INITIAL_AGENTS = 100;
+        public static int NUM_INITIAL_AGENTS = 0;
         public static final int NUM_YEARS = 100;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
@@ -337,13 +337,14 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         // salaryMean: the mean agent salary, in number of units per time 
         //    period. (A normal distro with stdev 15 will be applied to this
         //    mean.)
+        // numAgents: the number of agents in the simulation.
         // printComm: if false, print only summary information about total
         //    consumption. If true, instead print information about each
         //    commodity's statistics each time period.
         // 
         // Examples:
-        //   java Model 25 100 3 25
-        //   java Model 15 10 5 20 true 
+        //   java Model 25 100 3 25 100
+        //   java Model 15 10 5 20 100 true 
         public static void main(String args[]) {
             /*if(args.length<3){
               System.out.println("You need DAL, SEED, and BEQ");
@@ -355,10 +356,11 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                     Model.NUM_TRADERS=Integer.parseInt(args[1]);
                     Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
                     Model.SALARY_MEAN=Integer.parseInt(args[3]);
+                    Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
 
-                    if(args.length>4) {
+                    if(args.length>5) {
                         Model.PRINT_COMM=
-                            Boolean.parseBoolean(args[4]);
+                            Boolean.parseBoolean(args[5]);
                     }
                     if(Model.PRINT_COMM) {
                         System.out.println("\"year\",\"commodity\",\"amount produced/need\",\"avg price\",\"sd\",\"consumption_rate\",\"totalCons\"");
