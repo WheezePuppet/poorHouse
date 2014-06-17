@@ -68,11 +68,11 @@ track.commodities <- function(num.agents, switch.percentage,
 
     all.rows <- 
         system(paste("java Model",
-                num.agents,
                 switch.percentage,
                 num.trading.partners,
                 mean.cons.rate,
                 mean.salary,
+                num.agents,
             "true 2> /dev/null"),
             intern=TRUE)
 
