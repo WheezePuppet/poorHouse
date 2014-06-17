@@ -8,7 +8,8 @@
 #   pngify.heatmap(results,filename)
 # For single runs (looking at price performance over time for single choice of
 #     param values):
-#   results <- track.commodities(switch.percentage,num.trading.partners)
+#   results <- track.commodities(num.agents,switch.percentage,
+#     num.trading.partners, mean.cons.rate, mean.salary)
 #   display.commodity.prices(single.run.results)
 
 require(doParallel)
