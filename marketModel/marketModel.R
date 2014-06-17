@@ -131,6 +131,7 @@ display.commodity.prices <- function(single.run.results,file=NULL) {
     comm.df <- single.run.results$comm.df
     plot(comm.df$year,comm.df[[4]],type="n",
         main=paste("Commodity prices\n",
+            "number of agents = ",single.run.results$na,"\n",
             "switch rate = ",single.run.results$sp,"%\n",
             "number of trading partners = ",single.run.results$nt,"\n",
             "Consumption/salary ratio = ",
@@ -162,6 +163,7 @@ display.total.consumption <- function(single.run.results,file=NULL) {
     cons.df <- single.run.results$cons.df
     plot(cons.df$year,cons.df[[2]],type="n",
         main=paste("Total consumption\n",
+            "number of agents = ",single.run.results$na,"\n",
             "switch rate = ",single.run.results$sp,"%\n",
             "number of trading partners = ",single.run.results$nt,"\n",
             "Consumption/salary ratio = ",
