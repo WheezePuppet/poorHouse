@@ -102,6 +102,10 @@ public class Model extends SimState implements Steppable
                     man.getId(),man);
                  }
         public void addToCommunity(int i, Human man) { communities.get(i).add(man); }
+        public void addToProducers(int good, Human man) { producers.get(good).add(man); }
+        public void removeFromProducers(int good, Human man) { producers.get(good).remove(man); }
+        public boolean findProducer(int good, Human man) { producers.get(good).contains(man); }
+        //TODO add to producers
 
         //Keep track of Model variables
         public void incrementTrades() { yearlyTrades++; }

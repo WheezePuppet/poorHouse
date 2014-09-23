@@ -69,6 +69,9 @@ public class Human implements Steppable {
                     }
                 }
                 producedCommodity = com;
+                if(model.getInstance().findProducer(producedCommodity, this)){
+                    model.getInstance().addToProducers(producedCommodity, this);
+                }
                 //Add to new production arrayList
                 }
                 //if(age > 3 && producedCommodity == 1){
@@ -351,10 +354,10 @@ producedCommodity = myId;
                 }
         }
 
-        private void selectProducer(Human other, int good){
-                double price = other.expPrice[good];
+        private void selectProducer(Human seller, int good){
+                double price = seller.expPrice[good];
                 double quantity = chokeQuant[good];
-                double otherQuantity = other.chokeQuant[good];
+                double otherQuantity = seller.chokeQuant[good];
                 //How much is the buyer willing to buy at the price
                 for(int i=0; i<Commodity.NUM_COMM; i++){
                         if(i!=good){
@@ -364,11 +367,12 @@ producedCommodity = myId;
                         }
                 }
                 for(int k=0; k<Commodity.NUM_COMM; k++){
-                        otherQuantity -= other.demandSlope[k]*other.expPrice[k];
+                        otherQuantity -= seller.demandSlope[k]*seller.expPrice[k];
                 }
-                if(otherQuantity>quantity){//TODO
-                        quantity=otherQuantity;
+                if(otherQuantity>(seller.commoditiesHeld[good]-quantity)){//TODO
+                        quantity=(seller.commoditiesHeld[good]-quantity);
                         //Remove seller from producer arrayList
+                        model.getInstance().removeFromProducers(seller.producedCommodity, seller);
                 }
                 double diff = price - expPrice[good];
                 diff/=10;
@@ -376,7 +380,7 @@ producedCommodity = myId;
                 //If they bought, raise seller's price
                 if(quantity > 0){
                         //Trade the good
-                        other.expPrice[i]*=1.01;
+                        seller.expPrice[i]*=1.01;
                 }
         }
 
