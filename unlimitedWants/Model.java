@@ -9,21 +9,21 @@ public class Model extends SimState implements Steppable
         private static Model theInstance;
 
         //Global constants
-        public static int NUM_INITIAL_AGENTS = 0;
+        public static int NUM_INITIAL_AGENTS = 100;
         public static final int NUM_YEARS = 100;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
-        public static int NUM_TRADERS;
-        public static int COMM_CONSUME_MEAN;
-        public static int SALARY_MEAN;
+        public static int NUM_TRADERS = 0;
+        public static int COMM_CONSUME_MEAN = 3;
+        public static int SALARY_MEAN = 30;
 
         //Output control
 
         // If false, print only summary info. If true, print only
         //   per-commodity-per-time-period statistics.
-        public static boolean PRINT_COMM = false;
+        public static boolean PRINT_COMM = true;
 
         //Random number generator next functions
         public double generateNeedCommodityThreshold() {
@@ -35,13 +35,23 @@ public class Model extends SimState implements Steppable
                 }
                 return thing;
         }
-        public int generateMake() { return makeDistro.nextInt(); }
+        //public int generateMake() { return makeDistro.nextInt(); }
+        public int generateMake(Human toAdd) {
+                int make = makeDistro.nextInt();
+                //make = make%Commodity.;//TODO
+                producers.get(make).add(toAdd);
+                return make;
+        }
         public double generateMps() { return mpsDistro.nextDouble(); }
         public int generateLifeProb() { 
             return (years < NUM_YEARS) ? probDistro.nextInt() : 101;
              }//Make this a double?
         public double generateConsume() { return consumeDistro.nextDouble(); }
         public double generateExpPrice() { return priceDistro.nextDouble(); }
+
+        public double generateChokeQuant() { return chokeQuantDistro.nextDouble(); }
+        public double generateDemandSlope() { return demandSlopeDistro.nextDouble(); }
+
         public int generateNumTraders() { return probDistro.nextInt(); }
         public int generateOutsideTrade() { return probDistro.nextInt(); }//Change to double TODO On second thought, it's the introvert dial
         public int generateCommunity(Human toAdd) {
@@ -104,7 +114,8 @@ public class Model extends SimState implements Steppable
         public void addToCommunity(int i, Human man) { communities.get(i).add(man); }
         public void addToProducers(int good, Human man) { producers.get(good).add(man); }
         public void removeFromProducers(int good, Human man) { producers.get(good).remove(man); }
-        public boolean findProducer(int good, Human man) { producers.get(good).contains(man); }
+        public boolean findProducer(int good, Human man) { return producers.get(good).contains(man); }
+        public Human getProducerOfGood(int good){ return producers.get(good).get(probDistro.nextInt()%(producers.get(good).size())); }
         //TODO add to producers
 
         //Keep track of Model variables
@@ -176,6 +187,12 @@ public class Model extends SimState implements Steppable
                 }
         } 
 
+        public void fillProducers() {
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        producers.add(new ArrayList<Human>());
+                }
+        } 
+
         //Return model things
 
         public ArrayList<Human> getCommunityMembers(int communityNum) {
@@ -235,20 +252,24 @@ public class Model extends SimState implements Steppable
                 commodityNeedThresholdDistro = 
                     new Uniform(1.0,5.0,randomGenerator);
                 salaryDistro = new Normal(SALARY_MEAN,15,randomGenerator);
-                makeDistro = new Uniform(2,9,randomGenerator);
+                makeDistro = new Uniform(0,9,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
                     COMM_CONSUME_MEAN+2,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 probDistro = new Uniform(0,100,randomGenerator);
+                chokeQuantDistro = new Uniform(1,5,randomGenerator);
+                demandSlopeDistro = new Uniform(1,5,randomGenerator);
                 /*deathDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
                 tradeDistro = new Uniform(0,100, randomGenerator);
                 childDistro = new Uniform(0,100,randomGenerator);*/
 
                 communities = new ArrayList<ArrayList<Human>>();
+                producers = new ArrayList<ArrayList<Human>>();
                 fillCommunities();
+                fillProducers();
                 actors = new Hashtable<Integer,Human>();
                 graveyard = new ArrayList<Human>();
                 yearlyTrades=0;
@@ -324,6 +345,8 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         private Uniform communityDistro;
         private Uniform ageDistro;
         private Uniform probDistro;
+        private Uniform chokeQuantDistro;
+        private Uniform demandSlopeDistro;
         //private Uniform deathDistro;
         //private Uniform tradeDistro;
         //private Uniform outsideTrade;
@@ -358,10 +381,10 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
             doLoop(new MakesSimState() {
                 public SimState newInstance(long seed, String[] args) {
                     Model.SWITCH_PROZ=Integer.parseInt(args[0]);
-                    Model.NUM_TRADERS=Integer.parseInt(args[1]);
-                    Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
-                    Model.SALARY_MEAN=Integer.parseInt(args[3]);
-                    Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
+                    //Model.NUM_TRADERS=Integer.parseInt(args[1]);
+                    //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
+                    //Model.SALARY_MEAN=Integer.parseInt(args[3]);
+                    //Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
 
                     if(args.length>5) {
                         Model.PRINT_COMM=

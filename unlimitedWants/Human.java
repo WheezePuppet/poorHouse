@@ -69,8 +69,8 @@ public class Human implements Steppable {
                     }
                 }
                 producedCommodity = com;
-                if(model.getInstance().findProducer(producedCommodity, this)){
-                    model.getInstance().addToProducers(producedCommodity, this);
+                if(Model.instance().findProducer(producedCommodity, this)){
+                    Model.instance().addToProducers(producedCommodity, this);
                 }
                 //Add to new production arrayList
                 }
@@ -111,24 +111,25 @@ public class Human implements Steppable {
         //Talk to three producers for each good and select one to buy from
         //Lower the prices of the other two
         public void checkThreeProducers(){
-                for(int i=0; i<NUM_COMM; i++){
+                tradingPartners = new ArrayList<Human>();
+                for(int i=0; i<Commodity.NUM_COMM; i++){
                         int cheapestProducer = 0;
-                        int lowestPrice = 0;
+                        double lowestPrice = 0;
                         for(int k=0; k<3; k++){
                                 tradingPartners.add(Model.instance().getProducerOfGood(i));
                         }
-                        lowestPrice = tradingPartners[0].expPrice[i];
-                        for(k=0; k<3; k++){
-                                if(tradingPartners[k].expPrice[i]<lowestPrice){
+                        lowestPrice = tradingPartners.get(0).expPrice[i];
+                        for(int k=0; k<3; k++){
+                                if(tradingPartners.get(k).expPrice[i]<lowestPrice){
                                         cheapestProducer = k;
-                                        lowestPrice = tradingPartners[k].expPrice[i];
+                                        lowestPrice = tradingPartners.get(k).expPrice[i];
                                 }
                         }
-                        for(k=0; k<3; k++){
+                        for(int k=0; k<3; k++){
                                 if(k!=cheapestProducer){
-                                        tradingPartners[k].expPrice[i]*=.99;
+                                        tradingPartners.get(k).expPrice[i]*=.99;
                                 }else{
-                                        selectProducer(tradingPartners[k]);
+                                        selectProducer(tradingPartners.get(k),i);
                                 }
                         }
                 }
@@ -136,16 +137,21 @@ public class Human implements Steppable {
 
         //Reduce each of the agent's commodities by the amount dictated
         //by the commodity class in question
+
+        //Remove half of every commodity and send that info to the commodity
         public void consume() {
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
+                        double prop = commoditiesHeld[i]/2;
+                        Commodity.getCommNum(i).consumeProp(prop);
+                        commoditiesHeld[i]/=2;
+                        /*if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
                                 commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
                                 Commodity.getCommNum(i).consume();
                         } else {
                                 Commodity.getCommNum(i).consFail(commoditiesHeld[i]);
                                 commoditiesHeld[i]=0;
                                 //considerDeath();
-                        }
+                        }*/
                 }
         }
 
@@ -232,7 +238,8 @@ public class Human implements Steppable {
                         Model.instance().schedule.scheduleOnceIn(.1,this);
                 //trade
                 }else if(mode == LifeStage.TRADING){
-                        this.tradeWithRandomAgents();
+                        //this.tradeWithRandomAgents();
+                        this.checkThreeProducers();
                         mode = LifeStage.CONSUMING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
                 //consume
@@ -264,7 +271,7 @@ public class Human implements Steppable {
 if (myId == 0 || myId == 1) {
 producedCommodity = myId;
 } else {
-                producedCommodity=Model.instance().generateMake();
+                producedCommodity=Model.instance().generateMake(this);
 }
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
@@ -273,6 +280,8 @@ producedCommodity = myId;
                 minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
                 commoditiesHeld = new double [Commodity.NUM_COMM];
                 expPrice = new double [Commodity.NUM_COMM];
+                chokeQuant = new double [Commodity.NUM_COMM];
+                demandSlope = new double [Commodity.NUM_COMM];
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         minThreshold[i]=Commodity.getCommNum(i).getAmtCons();//Model.instance().generateNeedCommodityThreshold();	
@@ -281,6 +290,8 @@ producedCommodity = myId;
                         }*/
                         Commodity.getCommNum(i).incNeed(minThreshold[i]);
                         expPrice[i]=Model.instance().generateExpPrice();
+                        chokeQuant[i]=Model.instance().generateChokeQuant();
+                        demandSlope[i]=Model.instance().generateDemandSlope();
                         commoditiesHeld[i]=0;
                 }
                 allNeeds=0;
@@ -291,6 +302,7 @@ producedCommodity = myId;
                 totalSalary += salary;
                 Commodity.getCommNum(producedCommodity).incMakerNum(salary);
                 Model.instance().addToActors(this);
+                Model.instance().addToProducers(producedCommodity, this);
         }
 
         //This constructor is called for new children
@@ -298,7 +310,7 @@ producedCommodity = myId;
                 mode = LifeStage.EARNING;
                 parent=progenitor;
                 myId = nextAgentNum++; 
-                producedCommodity=Model.instance().generateMake();
+                producedCommodity=Model.instance().generateMake(this);
                 residentCommunity=parent.residentCommunity;
                 age=0;
                 money=100;
@@ -356,7 +368,7 @@ producedCommodity = myId;
 
         private void selectProducer(Human seller, int good){
                 double price = seller.expPrice[good];
-                double quantity = chokeQuant[good];
+                double quantity = chokeQuant[good];//TODO set choke quants
                 double otherQuantity = seller.chokeQuant[good];
                 //How much is the buyer willing to buy at the price
                 for(int i=0; i<Commodity.NUM_COMM; i++){
@@ -372,15 +384,19 @@ producedCommodity = myId;
                 if(otherQuantity>(seller.commoditiesHeld[good]-quantity)){//TODO
                         quantity=(seller.commoditiesHeld[good]-quantity);
                         //Remove seller from producer arrayList
-                        model.getInstance().removeFromProducers(seller.producedCommodity, seller);
+                        Model.instance().removeFromProducers(seller.producedCommodity, seller);
                 }
                 double diff = price - expPrice[good];
                 diff/=10;
                 expPrice[good]+=diff;
                 //If they bought, raise seller's price
                 if(quantity > 0){
-                        //Trade the good
-                        seller.expPrice[i]*=1.01;
+                        //Trade the good TODO
+                        seller.commoditiesHeld[good]-=quantity;
+                        commoditiesHeld[good]+=quantity;
+                        seller.money += quantity*price;
+                        money -= quantity*price;
+                        seller.expPrice[good]*=1.01;
                 }
         }
 

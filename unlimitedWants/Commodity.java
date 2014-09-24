@@ -36,6 +36,12 @@ public class Commodity{
                 allModelCons += x;
         }
 
+        public void consumeProp(double prop){
+                totalAmountInSystem-=prop;
+                totalCons += prop;
+                allModelCons += prop;
+        }
+
         public void produce(double quantity) {
                 totalAmountInSystem+=quantity;
         }
