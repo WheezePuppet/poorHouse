@@ -114,9 +114,16 @@ public class Model extends SimState implements Steppable
         public void addToCommunity(int i, Human man) { communities.get(i).add(man); }
         public void addToProducers(int good, Human man) { producers.get(good).add(man); }
         public void removeFromProducers(int good, Human man) { producers.get(good).remove(man); }
+        public void showNumOfProducers(){
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                        System.out.printf("%d,", producers.get(i).size());
+                }
+                System.out.println(" ");
+        }
+
         public boolean findProducer(int good, Human man) { return producers.get(good).contains(man); }
-        public Human getProducerOfGood(int good){ return producers.get(good).get(probDistro.nextInt()%(producers.get(good).size())); }
-        //TODO add to producers
+        public boolean noProducers(int good) { return producers.get(good).isEmpty(); }
+        public Human getProducerOfGood(int good){ return producers.get(good).get(probDistro.nextInt()%(producers.get(good).size())); }//TODO if none, raise price
 
         //Keep track of Model variables
         public void incrementTrades() { yearlyTrades++; }
@@ -259,7 +266,7 @@ public class Model extends SimState implements Steppable
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 probDistro = new Uniform(0,100,randomGenerator);
-                chokeQuantDistro = new Uniform(1,5,randomGenerator);
+                chokeQuantDistro = new Uniform(30,70,randomGenerator);
                 demandSlopeDistro = new Uniform(1,5,randomGenerator);
                 /*deathDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
@@ -304,7 +311,14 @@ public class Model extends SimState implements Steppable
                 if(Model.PRINT_COMM) {
                     double totalConsForAllCommoditiesThisRound = 0;
                     for(int i=0; i<Commodity.NUM_COMM; i++){
-                        System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
+                        //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
+                        System.out.printf("%d, ",years);
+                        //System.out.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
+                        System.out.printf("%f, ", avgPrice(i));
+                        System.out.printf("%f, ", sdPrice(i));
+                        System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
+                        System.out.printf("%c\n",i+65);
+                        //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
 totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                     }
                     System.out.println("TOTAL consumed: " + 
@@ -391,7 +405,9 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                             Boolean.parseBoolean(args[5]);
                     }
                     if(Model.PRINT_COMM) {
-                        System.out.println("\"year\",\"commodity\",\"amount produced/need\",\"avg price\",\"sd\",\"consumption_rate\",\"totalCons\"");
+                        //System.out.println("\"year\",\"commodity\",\"amount produced/need\",\"avg price\",\"sd\",\"consumption_rate\",\"totalCons\"");
+                        System.out.println("\"year\",\"avg price\",\"sd\",\"totalCons\",\"commodity\"");
+                        //System.out.println("\"year\",\"avg price\",\"sd\",\"totalCons\"");
                     }
                     return instance();
                 }

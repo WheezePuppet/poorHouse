@@ -59,27 +59,32 @@ public class Human implements Steppable {
         //Increase the agent's salary commodity by his salary and inform commodities
         public void earnIncome() {
                 if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
-                //Remove from current production arrayList
-                int com = 0;
-                double max = 0;
-                for(int i=0; i<Commodity.NUM_COMM; i++){
-                    if(expPrice[i] > max){
-                        com = i;
-                        max = expPrice[i];
+                    //Remove from current production arrayList
+                    int com = 0;
+                    double max = 0;
+                    for(int i=0; i<Commodity.NUM_COMM; i++){
+                        if(expPrice[i] > max){
+                            com = i;
+                            max = expPrice[i];
+                        }
                     }
+                    producedCommodity = com;
                 }
-                producedCommodity = com;
-                if(Model.instance().findProducer(producedCommodity, this)){
-                    Model.instance().addToProducers(producedCommodity, this);
-                }
-                //Add to new production arrayList
-                }
+                    if(Model.instance().findProducer(producedCommodity, this)){
+                        //Model.instance().addToProducers(producedCommodity, this);
+                    }else{
+                        //Add to new production arrayList
+                        Model.instance().addToProducers(producedCommodity, this);
+                    }
+                
                 //if(age > 3 && producedCommodity == 1){
 
                 //}else{
                     commoditiesHeld[producedCommodity]+=salary;//Units?
                     Commodity.getCommNum(producedCommodity).produce(salary);
                 //}
+                //TODO calculate how much of each good first
+                
         }
 
         //Initiate random trades with other agents
@@ -116,16 +121,22 @@ public class Human implements Steppable {
                         int cheapestProducer = 0;
                         double lowestPrice = 0;
                         for(int k=0; k<3; k++){
-                                tradingPartners.add(Model.instance().getProducerOfGood(i));
+                                if(!Model.instance().noProducers(i)){
+                                        tradingPartners.add(Model.instance().getProducerOfGood(i));
+                                }else{
+                                        expPrice[i]*=1.01;
+                                }
                         }
-                        lowestPrice = tradingPartners.get(0).expPrice[i];
-                        for(int k=0; k<3; k++){
+                        if(!Model.instance().noProducers(i)){
+                                lowestPrice = tradingPartners.get(0).expPrice[i];
+                        }
+                        for(int k=0; k<tradingPartners.size(); k++){
                                 if(tradingPartners.get(k).expPrice[i]<lowestPrice){
                                         cheapestProducer = k;
                                         lowestPrice = tradingPartners.get(k).expPrice[i];
                                 }
                         }
-                        for(int k=0; k<3; k++){
+                        for(int k=0; k<tradingPartners.size(); k++){
                                 if(k!=cheapestProducer){
                                         tradingPartners.get(k).expPrice[i]*=.99;
                                 }else{
@@ -282,6 +293,7 @@ producedCommodity = myId;
                 expPrice = new double [Commodity.NUM_COMM];
                 chokeQuant = new double [Commodity.NUM_COMM];
                 demandSlope = new double [Commodity.NUM_COMM];
+                budget = new double [Commodity.NUM_COMM];
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         minThreshold[i]=Commodity.getCommNum(i).getAmtCons();//Model.instance().generateNeedCommodityThreshold();	
@@ -368,7 +380,7 @@ producedCommodity = myId;
 
         private void selectProducer(Human seller, int good){
                 double price = seller.expPrice[good];
-                double quantity = chokeQuant[good];//TODO set choke quants
+                double quantity = chokeQuant[good];
                 double otherQuantity = seller.chokeQuant[good];
                 //How much is the buyer willing to buy at the price
                 for(int i=0; i<Commodity.NUM_COMM; i++){
@@ -381,7 +393,7 @@ producedCommodity = myId;
                 for(int k=0; k<Commodity.NUM_COMM; k++){
                         otherQuantity -= seller.demandSlope[k]*seller.expPrice[k];
                 }
-                if(otherQuantity>(seller.commoditiesHeld[good]-quantity)){//TODO
+                if(otherQuantity>(seller.commoditiesHeld[good]-quantity)){
                         quantity=(seller.commoditiesHeld[good]-quantity);
                         //Remove seller from producer arrayList
                         Model.instance().removeFromProducers(seller.producedCommodity, seller);
@@ -391,12 +403,14 @@ producedCommodity = myId;
                 expPrice[good]+=diff;
                 //If they bought, raise seller's price
                 if(quantity > 0){
-                        //Trade the good TODO
+                        //System.out.printf("We bought %f at %f!\n",quantity, price);
                         seller.commoditiesHeld[good]-=quantity;
                         commoditiesHeld[good]+=quantity;
                         seller.money += quantity*price;
                         money -= quantity*price;
                         seller.expPrice[good]*=1.01;
+                }else{
+                        //System.out.printf("We didn't buy at %f!\n", price);
                 }
         }
 
@@ -551,6 +565,7 @@ producedCommodity = myId;
         private double [] minThreshold;
         private double [] demandSlope;
         private double [] chokeQuant;
+        private double [] budget;
 
         //Human data changing
         private int age;
