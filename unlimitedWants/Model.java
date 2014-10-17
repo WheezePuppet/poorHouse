@@ -10,7 +10,7 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 100;
+        public static final int NUM_YEARS = 10;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
@@ -51,6 +51,9 @@ public class Model extends SimState implements Steppable
 
         public double generateChokeQuant() { return chokeQuantDistro.nextDouble(); }
         public double generateDemandSlope() { return demandSlopeDistro.nextDouble(); }
+
+        public double generateAlpha() { return alphaDistro.nextDouble(); }
+        public double generateBeta() { return betaDistro.nextDouble(); }
 
         public int generateNumTraders() { return probDistro.nextInt(); }
         public int generateOutsideTrade() { return probDistro.nextInt(); }//Change to double TODO On second thought, it's the introvert dial
@@ -259,15 +262,18 @@ public class Model extends SimState implements Steppable
                 commodityNeedThresholdDistro = 
                     new Uniform(1.0,5.0,randomGenerator);
                 salaryDistro = new Normal(SALARY_MEAN,15,randomGenerator);
-                makeDistro = new Uniform(0,9,randomGenerator);//TODO
+                makeDistro = new Uniform(0,Commodity.NUM_COMM-1,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
                     COMM_CONSUME_MEAN+2,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 probDistro = new Uniform(0,100,randomGenerator);
-                chokeQuantDistro = new Uniform(30,70,randomGenerator);
+                chokeQuantDistro = new Uniform(50,100,randomGenerator);
                 demandSlopeDistro = new Uniform(1,5,randomGenerator);
+
+                alphaDistro = new Uniform(1,5,randomGenerator);
+                betaDistro = new Uniform(1,5,randomGenerator);
                 /*deathDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
                 tradeDistro = new Uniform(0,100, randomGenerator);
@@ -361,6 +367,8 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         private Uniform probDistro;
         private Uniform chokeQuantDistro;
         private Uniform demandSlopeDistro;
+        private Uniform alphaDistro;
+        private Uniform betaDistro;
         //private Uniform deathDistro;
         //private Uniform tradeDistro;
         //private Uniform outsideTrade;
