@@ -11,6 +11,14 @@ public class Human implements Steppable {
         public enum CommodityStatus { DEFICIENT, SATISFIED };
         //What stage of the year an agent is in
         public enum LifeStage { EARNING, TRADING, CONSUMING, BIRTHING, DYING }; 
+        private boolean ALL = false;
+        private boolean TRADE = false;
+
+        private void debug(String message, boolean cond){
+                if(cond || ALL){
+                        System.out.println(message);
+                }
+        }
 
         public String commodityStatusString(CommodityStatus cs) {
                 switch (cs) {
@@ -191,8 +199,12 @@ public class Human implements Steppable {
                                 if(!Model.instance().noProducers(i)){
                                         tradingPartners.add(Model.instance().getProducerOfGood(i));
                                 }else{
-                                        //System.out.println("no producers");
                                         expPrice[i]*=1.01;
+                                        if(i==2){
+                                                String message = "no producers, price rises to " + Double.toString(expPrice[i]);
+                                                debug(message, TRADE);
+                                                //System.out.printf("no producers, price rises to %f\n", expPrice[i]);
+                                        }
                                 }
                         }
                         if(!Model.instance().noProducers(i)){
@@ -207,6 +219,11 @@ public class Human implements Steppable {
                         for(int k=0; k<tradingPartners.size(); k++){
                                 if(k!=cheapestProducer){
                                         tradingPartners.get(k).expPrice[i]*=.99;
+                                        if(i==2){
+                                                String message = "no deal, price falls to " + Double.toString(expPrice[i]);
+                                                debug(message, TRADE);
+                                                //System.out.printf("no deal, price falls to %f\n", expPrice[i]);
+                                        }
                                 }else{
                                         selectProducer(tradingPartners.get(k),i);
                                 }
@@ -220,10 +237,11 @@ public class Human implements Steppable {
         //Remove half of every commodity and send that info to the commodity
         public void consume() {
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        double prop = commoditiesHeld[i]/2;
+                        //double prop = commoditiesHeld[i]/2;
+                        double prop = commoditiesHeld[i];
                         //double prop = 10;
                         Commodity.getCommNum(i).consumeProp(prop);
-                        commoditiesHeld[i]/=2;
+                        commoditiesHeld[i]-=prop;
                         //commoditiesHeld[i]-=10;
                         /*if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
                                 commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
@@ -482,7 +500,16 @@ producedCommodity = myId;
                 }
                 double diff = price - expPrice[good];
                 diff/=10;
+                double tempUnDiff = expPrice[good];
                 expPrice[good]+=diff;
+                if(good==2){
+                        String message = "2 price changed from " + Double.toString(tempUnDiff) + " to " + Double.toString(expPrice[good]);
+                        debug(message, TRADE);
+                        message = "2 price changed by " + Double.toString(diff);
+                        debug(message, TRADE);
+                        //System.out.printf("2 price changed from %f to %f\n", tempUnDiff, expPrice[good]);
+                        //System.out.printf("2 price changed by %f\n", diff);
+                }
                 //If they bought, raise seller's price
                 if(quantity > .1 && money >= price*quantity){
                         //System.out.printf("We bought %f at %f!\n",quantity, price);

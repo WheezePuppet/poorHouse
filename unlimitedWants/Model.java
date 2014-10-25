@@ -10,7 +10,7 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 10;
+        public static final int NUM_YEARS = 100;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
@@ -272,7 +272,7 @@ public class Model extends SimState implements Steppable
                 chokeQuantDistro = new Uniform(50,100,randomGenerator);
                 demandSlopeDistro = new Uniform(1,5,randomGenerator);
 
-                alphaDistro = new Uniform(1,5,randomGenerator);
+                alphaDistro = new Uniform(5,10,randomGenerator);
                 betaDistro = new Uniform(1,5,randomGenerator);
                 /*deathDistro = new Uniform(0,100,randomGenerator);
                 outsideTrade = new Uniform(0,100,randomGenerator);
