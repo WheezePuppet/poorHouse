@@ -30,36 +30,6 @@ public class Human implements Steppable {
                 return "SOMETHING IS DREADFULLY WRONG!!!!!";
         }
 
-        //Print the status of each of the agent's commodities
-        /*public void print() {
-                double totalNeeds = 0;
-                for (int i=0; i<Commodity.NUM_COMM; i++) {
-                        totalNeeds += this.minThreshold[i];
-                }
-                //System.out.print(h.myId << " Salary " << h.salary << " Make " << h.producedCommodity << " mps "
-                //        << h.mps << " total needs " << totalNeeds << " Trades with " 
-                //        << h.numTraders << " Traded " << h.timesTraded << " times " << std::endl << "[";
-                System.out.printf("Salary %d Make %d mps %d total needs %d Trades with %d Traded %d times \n["
-                                ,this.salary,this.producedCommodity,this.mps,totalNeeds,this.numTraders,this.timesTraded);
-                for(int i=0; i<Commodity.NUM_COMM; i++)
-                {
-                        CommodityStatus cs = this.checkStatus(i);
-                        switch (cs) {
-                                case DEFICIENT:
-                                        System.out.printf("?");
-                                        break;
-                                case SATISFIED:
-                                        System.out.printf("=");
-                                        break;
-                        }
-                        System.out.printf("%d",this.commoditiesHeld[i]);
-                        if (i<Commodity.NUM_COMM-1) {
-                                System.out.printf(", ");
-                        }
-                }
-                System.out.printf("]\n");
-        }*/
-
         //Global static values
         public static int BEQ;
 
@@ -68,25 +38,29 @@ public class Human implements Steppable {
         //Increase the agent's salary commodity by his salary and inform commodities
 
         public void earnIncome() {
-                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
-                    //Remove from current production arrayList
-                    int com = 0;
-                    double max = 0;
-                    for(int i=0; i<Commodity.NUM_COMM; i++){
-                        if(expPrice[i] > max){
-                            com = i;
-                            max = expPrice[i];
-                        }
-                    }
-                    producedCommodity = com;
+                //If they didn't empty their inventory, lower price
+                if(Model.instance().findProducer(producedCommodity, this)){
+                        expPrice[producedCommodity]/=1.01;
                 }
-                    if(Model.instance().findProducer(producedCommodity, this)){
-                        //Model.instance().addToProducers(producedCommodity, this);
-                    }else{
+                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
+                        //Remove from current production arrayList
+                        int com = 0;
+                        double max = 0;
+                        for(int i=0; i<Commodity.NUM_COMM; i++){
+                                if(expPrice[i] > max){
+                                        com = i;
+                                        max = expPrice[i];
+                                }
+                        }
+                        producedCommodity = com;
+                }
+                if(Model.instance().findProducer(producedCommodity, this)){
+                        
+                }else{
                         //Add to new production arrayList
                         Model.instance().addToProducers(producedCommodity, this);
-                    }
-                
+                }
+
                 if(producedCommodity == 0){
                         //System.out.println("I produce A!");
                 }else{
@@ -95,68 +69,10 @@ public class Human implements Steppable {
                 //if(age > 3 && producedCommodity == 1){
 
                 //}else{
-                    commoditiesHeld[producedCommodity]+=salary;//Units?
-                    Commodity.getCommNum(producedCommodity).produce(salary);
+                commoditiesHeld[producedCommodity]+=salary;//Units?
+                Commodity.getCommNum(producedCommodity).produce(salary);
+                makeBudget();
                 //}
-                //TODO calculate how much of each good first
-                double [] tempQuants = new double [Commodity.NUM_COMM];
-                for(int i=0; i<Commodity.NUM_COMM; i++){
-                        double quantity = chokeQuant[i];
-                        for(int k=0; k<Commodity.NUM_COMM; k++){
-                                quantity -= demandSlope[k]*expPrice[k];
-                                //System.out.printf("%f, ", quantity);
-                        }
-                        //System.out.printf(" End good\n");
-                        if(quantity >= 0){
-                                tempQuants[i] = quantity;
-                        }else{
-                                tempQuants[i] = 0;
-                        }
-                }
-                double totalBudget = 0;
-                double adjBudget = 0;
-                for(int i=0; i<Commodity.NUM_COMM; i++){
-                        budget[i] = tempQuants[i]*expPrice[i];
-                        totalBudget += tempQuants[i]*expPrice[i];
-                }
-                double budgetAdjustor = 0;
-                if(totalBudget == 0){
-
-                }else{
-                        budgetAdjustor = money/totalBudget;
-                }
-                for(int i=0; i<Commodity.NUM_COMM; i++){
-                        budget[i] = budget[i]*budgetAdjustor;
-                        adjBudget += budget[i];
-                }
-                //System.out.printf("My total budget is %f and I have %f money.\n", totalBudget, money);
-                //System.out.printf("My adjusted budget is %f and I have %f money.\n", adjBudget, money);
-        }
-
-        //Initiate random trades with other agents
-        public void tradeWithRandomAgents() {
-                /*
-                   Ok, new plan. Trading with communities in play.
-                   Generate a number every time, if you are below, trade in community.
-                   If you're above, you may trade with the world at large.
-                 */
-                for(int i=0; i<Model.NUM_TRADERS;i++) {
-                        int roll=(Model.instance().generateOutsideTrade());
-                        //if(roll>Model.INTROVERT_DIAL) {
-                                buyFrom(Model.instance().getRandomGlobalMember());
-                        /*} else {
-                                buyFrom(Model.instance().getRandomCommunityMember(residentCommunity));
-                        }*/
-                        /*int k=0;
-                        for(int j=0; j<Commodity.NUM_COMM; j++){
-                            if(checkStatus(j)==CommodityStatus.DEFICIENT){
-                                k=1;
-                            }
-                        }
-                        if(k==0){
-                            break;
-                        }*/
-                }
         }
 
         //Form a budget
@@ -183,8 +99,8 @@ public class Human implements Steppable {
 
         //Talk to three producers for each good and select one to buy from
         //Lower the prices of the other two
-        public void checkThreeProducers(){
-                makeBudget();
+        public void checkThreeProducers(){ //TODO lots of things REALLY
+                //makeBudget();
                 tradingPartners = new ArrayList<Human>();
                 ArrayList<Integer> random = new ArrayList<Integer>();
                 for(int l=0; l<Commodity.NUM_COMM; l++){
@@ -192,40 +108,59 @@ public class Human implements Steppable {
                 }
                 Collections.shuffle(random);
                 for(int p=0; p<Commodity.NUM_COMM; p++){
-                        int i=random.get(p);
+                        tradingPartners.clear();
+                        //int i=random.get(p);
+                        int i = p;
+                        int numt = 3;
+                        int psize = Model.instance().getNumProducers(i);
+                        if(psize<3){
+                                numt = psize;
+                        }
                         int cheapestProducer = 0;
                         double lowestPrice = 0;
-                        for(int k=0; k<2; k++){
-                                if(!Model.instance().noProducers(i)){
-                                        tradingPartners.add(Model.instance().getProducerOfGood(i));
-                                }else{
-                                        expPrice[i]*=1.01;
-                                        if(i==2){
-                                                String message = "no producers, price rises to " + Double.toString(expPrice[i]);
-                                                debug(message, TRADE);
-                                                //System.out.printf("no producers, price rises to %f\n", expPrice[i]);
-                                        }
-                                }
-                        }
+                        double avgPrice = 0;
+                        double sumPrice = 0;
                         if(!Model.instance().noProducers(i)){
-                                lowestPrice = tradingPartners.get(0).expPrice[i];
-                        }
-                        for(int k=0; k<tradingPartners.size(); k++){
-                                if(tradingPartners.get(k).expPrice[i]<lowestPrice){
-                                        cheapestProducer = k;
-                                        lowestPrice = tradingPartners.get(k).expPrice[i];
-                                }
-                        }
-                        for(int k=0; k<tradingPartners.size(); k++){
-                                if(k!=cheapestProducer){
-                                        tradingPartners.get(k).expPrice[i]*=.99;
-                                        if(i==2){
-                                                String message = "no deal, price falls to " + Double.toString(expPrice[i]);
-                                                debug(message, TRADE);
-                                                //System.out.printf("no deal, price falls to %f\n", expPrice[i]);
+                                //System.out.printf("psize is %d\n", psize);
+                                for(int k=0; k<numt; k++){
+                                        Human toAdd = Model.instance().getProducerOfGood(i);
+                                        if(tradingPartners.contains(toAdd)){
+                                                //k--;
+                                        }else{
+                                                tradingPartners.add(toAdd);
                                         }
-                                }else{
-                                        selectProducer(tradingPartners.get(k),i);
+                                }
+                                //System.out.printf("tp size is %d\n",tradingPartners.size());
+                                lowestPrice = tradingPartners.get(0).expPrice[i];
+                                for(int k=0; k<tradingPartners.size(); k++){
+                                        sumPrice += tradingPartners.get(k).expPrice[i];
+                                        if(tradingPartners.get(k).expPrice[i]<lowestPrice){
+                                                cheapestProducer = k;
+                                                lowestPrice = tradingPartners.get(k).expPrice[i];
+                                        }
+                                }
+
+                                avgPrice = sumPrice/tradingPartners.size();
+                                double diff = avgPrice - expPrice[i];
+                                diff/=10;
+                                expPrice[i]+=diff;
+
+                                for(int k=0; k<tradingPartners.size(); k++){
+                                        if(k!=cheapestProducer){
+                                                //tradingPartners.get(k).expPrice[i]*=.99;
+                                                if(i==2){
+                                                        String message = "no deal, price falls to " + Double.toString(expPrice[i]);
+                                                        debug(message, TRADE);
+                                                }
+                                        }else{
+                                                selectProducer(tradingPartners.get(k),i);
+                                        }
+                                }
+                        }else{
+                                expPrice[i]*=1.01;
+                                if(i==2){
+                                        String message = "no producers, price rises to " + Double.toString(expPrice[i]);
+                                        debug(message, TRADE);
                                 }
                         }
                 }
@@ -244,26 +179,13 @@ public class Human implements Steppable {
                         commoditiesHeld[i]-=prop;
                         //commoditiesHeld[i]-=10;
                         /*if(commoditiesHeld[i]-Commodity.getCommNum(i).getAmtCons()>=0) {	
-                                commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
-                                Commodity.getCommNum(i).consume();
-                        } else {
-                                Commodity.getCommNum(i).consFail(commoditiesHeld[i]);
-                                commoditiesHeld[i]=0;
-                                //considerDeath();
+                          commoditiesHeld[i]-=Commodity.getCommNum(i).getAmtCons();	
+                          Commodity.getCommNum(i).consume();
+                          } else {
+                          Commodity.getCommNum(i).consFail(commoditiesHeld[i]);
+                          commoditiesHeld[i]=0;
+                        //considerDeath();
                         }*/
-                }
-        }
-
-        /*Probabilistically determine whether an agent will have a child
-          and add a new agent to the schedule if so*/
-        public void considerHavingAChild() {
-                int prob=Model.instance().generateChild();
-                if(age>=20 && age<35) {
-                        if(prob>90) {
-                                Human newchild = new Human(this);
-                                Model.instance().schedule.scheduleOnceIn(.6,newchild);
-                                Model.instance().incrementPopulation();
-                        }
                 }
         }
 
@@ -335,13 +257,13 @@ public class Human implements Steppable {
                         this.earnIncome();
                         mode = LifeStage.TRADING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
-                //trade
+                        //trade
                 }else if(mode == LifeStage.TRADING){
                         //this.tradeWithRandomAgents();
                         this.checkThreeProducers();
                         mode = LifeStage.CONSUMING;
                         Model.instance().schedule.scheduleOnceIn(.1,this);
-                //consume
+                        //consume
                 }else if(mode == LifeStage.CONSUMING){
                         this.consume();
                         //System.out.printf("food price: %f, id: %d, Make: %d\n",expPrice[1],myId,producedCommodity);
@@ -349,11 +271,11 @@ public class Human implements Steppable {
                         mode = LifeStage.EARNING;
                         Model.instance().schedule.scheduleOnceIn(.8,this);
                         age++;
-                //child
+                        //child
                 }/*else if(mode == LifeStage.BIRTHING){
-                        this.considerHavingAChild();
-                        mode = LifeStage.DYING;
-                        Model.instance().schedule.scheduleOnceIn(.1,this);
+                   this.considerHavingAChild();
+                   mode = LifeStage.DYING;
+                   Model.instance().schedule.scheduleOnceIn(.1,this);
                 //death
                 }*/else if(mode == LifeStage.DYING){
                         this.considerDeath();
@@ -367,11 +289,11 @@ public class Human implements Steppable {
         public Human() {
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
-if (myId == 0 || myId == 1) {
-producedCommodity = myId;
-} else {
-                producedCommodity=Model.instance().generateMake(this);
-}
+                if (myId == 0 || myId == 1) {
+                        producedCommodity = myId;
+                } else {
+                        producedCommodity=Model.instance().generateMake(this);
+                }
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
                 money=100;
@@ -393,9 +315,9 @@ producedCommodity = myId;
                 timesTraded=0;
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         minThreshold[i]=Commodity.getCommNum(i).getAmtCons();//Model.instance().generateNeedCommodityThreshold();	
-                       /* while( minThreshold[i]< Commodity.getCommNum(i).getAmtCons()) {
-                                minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
-                        }*/
+                        /* while( minThreshold[i]< Commodity.getCommNum(i).getAmtCons()) {
+                           minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                           }*/
                         Commodity.getCommNum(i).incNeed(minThreshold[i]);
                         expPrice[i]=Model.instance().generateExpPrice();
                         chokeQuant[i]=Model.instance().generateChokeQuant();
@@ -415,93 +337,37 @@ producedCommodity = myId;
                 Model.instance().addToProducers(producedCommodity, this);
         }
 
-        //This constructor is called for new children
-        public Human(Human progenitor) {
-                mode = LifeStage.EARNING;
-                parent=progenitor;
-                myId = nextAgentNum++; 
-                producedCommodity=Model.instance().generateMake(this);
-                residentCommunity=parent.residentCommunity;
-                age=0;
-                money=100;
-                children = new ArrayList<Human>();
-                minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
-                commoditiesHeld = new double [Commodity.NUM_COMM];
-                timesTraded=0;
-                for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
-                        while(minThreshold[i]<Commodity.getCommNum(i).getAmtCons()) {
-                                minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
-                        }
-                        Commodity.getCommNum(i).incNeed(minThreshold[i]);
-                        expPrice[i]=Model.instance().generateExpPrice();
-                        commoditiesHeld[i]=0;
-                }
-                allNeeds=0;
-                for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        allNeeds+=minThreshold[i];
-                }
-                salary=Model.instance().generateSalary();
-                Commodity.getCommNum(producedCommodity).incMakerNum(salary);
-                parent.children.add(this);
-                Model.instance().addToActors(this);
-                Model.instance().addToCommunity(residentCommunity,this);
-        }
-
         //Private trade functions
         //--------------------------------------------------------------------------
-
-        private void buyFrom(Human other){
-                //Show that the agents have engaged in another trade
-                incrementTrades();
-                other.incrementTrades();
-                //Check each commodity for trading value
-                for(int i=0; i<Commodity.NUM_COMM; i++){
-                    //If the buyer is low in the commodity...
-                    if(checkStatus(i)==CommodityStatus.DEFICIENT){
-                        //And the seller is satisfied...
-                        if(other.checkStatus(i)==CommodityStatus.SATISFIED){
-                            //Let the trades begin!
-                            trade(i,other);
-                        }else{
-                            //If the seller is also low, the good is scarce and price expectations rise
-                            expPrice[i]*=1.01;
-                            other.expPrice[i]*=1.01;
-                        }
-                    //If both agents are satisfied, the good is not as scarce and price expectations fall
-                    }else if(other.checkStatus(i)==CommodityStatus.SATISFIED){
-                        expPrice[i] *= .99;
-                        other.expPrice[i] *= .99;
-                    }
-                }
-        }
 
         private void selectProducer(Human seller, int good){
                 double price = seller.expPrice[good];
                 double quantity = budgetExp[good]/price;
                 double otherQuantity = seller.budgetExp[good]/price;//seller.chokeQuant[good];
                 /*double quantity = chokeQuant[good];
-                double otherQuantity = seller.chokeQuant[good];
+                  double otherQuantity = seller.chokeQuant[good];
                 //How much is the buyer willing to buy at the price
                 for(int i=0; i<Commodity.NUM_COMM; i++){
-                        if(i!=good){
-                                quantity -= demandSlope[i]*expPrice[i];
-                        }else{
-                                quantity -= demandSlope[good]*price;
-                        }
+                if(i!=good){
+                quantity -= demandSlope[i]*expPrice[i];
+                }else{
+                quantity -= demandSlope[good]*price;
+                }
                 }*/
                 /*for(int k=0; k<Commodity.NUM_COMM; k++){
-                        otherQuantity -= seller.demandSlope[k]*seller.expPrice[k];
-                }*/
+                  otherQuantity -= seller.demandSlope[k]*seller.expPrice[k];
+                  }*/
                 if(otherQuantity>(seller.commoditiesHeld[good]-quantity)){
                         quantity=(seller.commoditiesHeld[good]-quantity);
                         //Remove seller from producer arrayList
+                        seller.expPrice[good]*=1.01;
                         Model.instance().removeFromProducers(seller.producedCommodity, seller);
+                        debug("removing", false);
                 }
                 double diff = price - expPrice[good];
                 diff/=10;
                 double tempUnDiff = expPrice[good];
-                expPrice[good]+=diff;
+                //expPrice[good]+=diff;
                 if(good==2){
                         String message = "2 price changed from " + Double.toString(tempUnDiff) + " to " + Double.toString(expPrice[good]);
                         debug(message, TRADE);
@@ -511,51 +377,17 @@ producedCommodity = myId;
                         //System.out.printf("2 price changed by %f\n", diff);
                 }
                 //If they bought, raise seller's price
-                if(quantity > .1 && money >= price*quantity){
+                if(quantity > 0 && money >= price*quantity){
                         //System.out.printf("We bought %f at %f!\n",quantity, price);
                         seller.commoditiesHeld[good]-=quantity;
                         commoditiesHeld[good]+=quantity;
                         seller.money += quantity*price;
                         money -= quantity*price;
-                        seller.expPrice[good]*=1.01;
+                        Commodity.getCommNum(good).reportSale(quantity);
+                        //seller.expPrice[good]*=1.01;
                 }else{
                         //System.out.printf("We didn't buy at %f!\n", price);
                 }
-        }
-
-        private void trade(int x, Human other){
-            //Determine how low and high the agents are in the given good (not Giffen good)
-            double deficit = minThreshold[x]-commoditiesHeld[x];
-            double surplus = other.commoditiesHeld[x]-other.minThreshold[x];
-            //Sell only if the buyer is willing to pay more than the seller wants???
-            //if(expPrice[x]>other.expPrice[x]){//SELLER HAS MONOPOLISTIC CONTROL!!! MAYDAY!
-                //Haggle to the price being the average of the two expecteds
-                double price = (expPrice[x]+other.expPrice[x])/2;
-                double diff = price - expPrice[x];
-                //Bring both agents' expectations a tenth of the way to the average
-                diff/=10;
-                expPrice[x]+=diff;
-                diff = price - other.expPrice[x];
-                diff/=10;
-                other.expPrice[x]+=diff;
-                //Decide the amount to buy so as not to bring buyer above or seller below need level
-                if(deficit>surplus){
-                    money -= surplus*price;
-                    other.money += surplus*price;
-                    other.commoditiesHeld[x]-=surplus;
-                    commoditiesHeld[x]+=surplus;
-                }else{
-                    money -= deficit*price;
-                    other.money += deficit*price;
-                    other.commoditiesHeld[x]-=deficit;
-                    commoditiesHeld[x]+=deficit;
-                }
-                //Increment model-wide trades
-                Model.instance().incrementTrades();
-            /*}else{
-                other.expPrice[x] = other.expPrice[x]-((other.expPrice[x]-expPrice[x])/10);
-                expPrice[x] = expPrice[x]+((other.expPrice[x]-expPrice[x])/10);
-            }*/
         }
 
         private void incrementTrades() { timesTraded++; }
@@ -697,4 +529,202 @@ producedCommodity = myId;
         private static int nextAgentNum = 0;
 
         public static double totalSalary = 0;
+
+        //Currently unused functions
+
+        //Print the status of each of the agent's commodities
+        /*public void print() {
+          double totalNeeds = 0;
+          for (int i=0; i<Commodity.NUM_COMM; i++) {
+          totalNeeds += this.minThreshold[i];
+          }
+        //System.out.print(h.myId << " Salary " << h.salary << " Make " << h.producedCommodity << " mps "
+        //        << h.mps << " total needs " << totalNeeds << " Trades with " 
+        //        << h.numTraders << " Traded " << h.timesTraded << " times " << std::endl << "[";
+        System.out.printf("Salary %d Make %d mps %d total needs %d Trades with %d Traded %d times \n["
+        ,this.salary,this.producedCommodity,this.mps,totalNeeds,this.numTraders,this.timesTraded);
+        for(int i=0; i<Commodity.NUM_COMM; i++)
+        {
+        CommodityStatus cs = this.checkStatus(i);
+        switch (cs) {
+        case DEFICIENT:
+        System.out.printf("?");
+        break;
+        case SATISFIED:
+        System.out.printf("=");
+        break;
+        }
+        System.out.printf("%d",this.commoditiesHeld[i]);
+        if (i<Commodity.NUM_COMM-1) {
+        System.out.printf(", ");
+        }
+        }
+        System.out.printf("]\n");
+        }*/
+
+        //Initiate random trades with other agents
+        public void tradeWithRandomAgents() {
+                /*
+                   Ok, new plan. Trading with communities in play.
+                   Generate a number every time, if you are below, trade in community.
+                   If you're above, you may trade with the world at large.
+                 */
+                for(int i=0; i<Model.NUM_TRADERS;i++) {
+                        int roll=(Model.instance().generateOutsideTrade());
+                        //if(roll>Model.INTROVERT_DIAL) {
+                        buyFrom(Model.instance().getRandomGlobalMember());
+                        /*} else {
+                          buyFrom(Model.instance().getRandomCommunityMember(residentCommunity));
+                          }*/
+                        /*int k=0;
+                          for(int j=0; j<Commodity.NUM_COMM; j++){
+                          if(checkStatus(j)==CommodityStatus.DEFICIENT){
+                          k=1;
+                          }
+                          }
+                          if(k==0){
+                          break;
+                          }*/
+                }
+        }
+
+        /*Probabilistically determine whether an agent will have a child
+          and add a new agent to the schedule if so*/
+        public void considerHavingAChild() {
+                int prob=Model.instance().generateChild();
+                if(age>=20 && age<35) {
+                        if(prob>90) {
+                                Human newchild = new Human(this);
+                                Model.instance().schedule.scheduleOnceIn(.6,newchild);
+                                Model.instance().incrementPopulation();
+                        }
+                }
+        }
+
+        //Ill advised budgeting done in earnIncome function
+        /*double [] tempQuants = new double [Commodity.NUM_COMM];
+          for(int i=0; i<Commodity.NUM_COMM; i++){
+          double quantity = chokeQuant[i];
+          for(int k=0; k<Commodity.NUM_COMM; k++){
+          quantity -= demandSlope[k]*expPrice[k];
+        //System.out.printf("%f, ", quantity);
+        }
+        //System.out.printf(" End good\n");
+        if(quantity >= 0){
+        tempQuants[i] = quantity;
+        }else{
+        tempQuants[i] = 0;
+        }
+        }
+        double totalBudget = 0;
+        double adjBudget = 0;
+        for(int i=0; i<Commodity.NUM_COMM; i++){
+        budget[i] = tempQuants[i]*expPrice[i];
+        totalBudget += tempQuants[i]*expPrice[i];
+        }
+        double budgetAdjustor = 0;
+        if(totalBudget == 0){
+
+        }else{
+        budgetAdjustor = money/totalBudget;
+        }
+        for(int i=0; i<Commodity.NUM_COMM; i++){
+        budget[i] = budget[i]*budgetAdjustor;
+        adjBudget += budget[i];
+        }
+        //System.out.printf("My total budget is %f and I have %f money.\n", totalBudget, money);
+        //System.out.printf("My adjusted budget is %f and I have %f money.\n", adjBudget, money);*/
+
+        //This constructor is called for new children
+        public Human(Human progenitor) {
+                mode = LifeStage.EARNING;
+                parent=progenitor;
+                myId = nextAgentNum++; 
+                producedCommodity=Model.instance().generateMake(this);
+                residentCommunity=parent.residentCommunity;
+                age=0;
+                money=100;
+                children = new ArrayList<Human>();
+                minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
+                commoditiesHeld = new double [Commodity.NUM_COMM];
+                timesTraded=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                        while(minThreshold[i]<Commodity.getCommNum(i).getAmtCons()) {
+                                minThreshold[i]=Model.instance().generateNeedCommodityThreshold();	
+                        }
+                        Commodity.getCommNum(i).incNeed(minThreshold[i]);
+                        expPrice[i]=Model.instance().generateExpPrice();
+                        commoditiesHeld[i]=0;
+                }
+                allNeeds=0;
+                for(int i=0; i<Commodity.NUM_COMM; i++) {
+                        allNeeds+=minThreshold[i];
+                }
+                salary=Model.instance().generateSalary();
+                Commodity.getCommNum(producedCommodity).incMakerNum(salary);
+                parent.children.add(this);
+                Model.instance().addToActors(this);
+                Model.instance().addToCommunity(residentCommunity,this);
+        }
+
+        private void buyFrom(Human other){
+                //Show that the agents have engaged in another trade
+                incrementTrades();
+                other.incrementTrades();
+                //Check each commodity for trading value
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                        //If the buyer is low in the commodity...
+                        if(checkStatus(i)==CommodityStatus.DEFICIENT){
+                                //And the seller is satisfied...
+                                if(other.checkStatus(i)==CommodityStatus.SATISFIED){
+                                        //Let the trades begin!
+                                        trade(i,other);
+                                }else{
+                                        //If the seller is also low, the good is scarce and price expectations rise
+                                        expPrice[i]*=1.01;
+                                        other.expPrice[i]*=1.01;
+                                }
+                                //If both agents are satisfied, the good is not as scarce and price expectations fall
+                        }else if(other.checkStatus(i)==CommodityStatus.SATISFIED){
+                                expPrice[i] *= .99;
+                                other.expPrice[i] *= .99;
+                        }
+                }
+        }
+
+        private void trade(int x, Human other){
+                //Determine how low and high the agents are in the given good (not Giffen good)
+                double deficit = minThreshold[x]-commoditiesHeld[x];
+                double surplus = other.commoditiesHeld[x]-other.minThreshold[x];
+                //Sell only if the buyer is willing to pay more than the seller wants???
+                //if(expPrice[x]>other.expPrice[x]){//SELLER HAS MONOPOLISTIC CONTROL!!! MAYDAY!
+                //Haggle to the price being the average of the two expecteds
+                double price = (expPrice[x]+other.expPrice[x])/2;
+                double diff = price - expPrice[x];
+                //Bring both agents' expectations a tenth of the way to the average
+                diff/=10;
+                expPrice[x]+=diff;
+                diff = price - other.expPrice[x];
+                diff/=10;
+                other.expPrice[x]+=diff;
+                //Decide the amount to buy so as not to bring buyer above or seller below need level
+                if(deficit>surplus){
+                        money -= surplus*price;
+                        other.money += surplus*price;
+                        other.commoditiesHeld[x]-=surplus;
+                        commoditiesHeld[x]+=surplus;
+                }else{
+                        money -= deficit*price;
+                        other.money += deficit*price;
+                        other.commoditiesHeld[x]-=deficit;
+                        commoditiesHeld[x]+=deficit;
+                }
+                //Increment model-wide trades
+                Model.instance().incrementTrades();
+                /*}else{
+                  other.expPrice[x] = other.expPrice[x]-((other.expPrice[x]-expPrice[x])/10);
+                  expPrice[x] = expPrice[x]+((other.expPrice[x]-expPrice[x])/10);
+                  }*/
+        }
 };

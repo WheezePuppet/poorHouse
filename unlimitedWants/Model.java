@@ -10,14 +10,14 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 100;
+        public static final int NUM_YEARS = 200;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-        public static int SALARY_MEAN = 30;
+        public static int SALARY_MEAN = 20;
 
         //Output control
 
@@ -117,6 +117,7 @@ public class Model extends SimState implements Steppable
         public void addToCommunity(int i, Human man) { communities.get(i).add(man); }
         public void addToProducers(int good, Human man) { producers.get(good).add(man); }
         public void removeFromProducers(int good, Human man) { producers.get(good).remove(man); }
+        public int getNumProducers(int good) {return producers.get(good).size(); }
         public void showNumOfProducers(){
                 for(int i=0; i<Commodity.NUM_COMM; i++){
                         System.out.printf("%d,", producers.get(i).size());

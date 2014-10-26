@@ -29,6 +29,10 @@ public class Commodity{
                 allModelCons += amtCons;
         }
 
+        public void reportSale(double amt){
+                amtSold+=amt;
+        }
+
         //Consumer does not have enough to consume, so doesn't quite
         public void consFail(double x) {
                 totalAmountInSystem-=x;
@@ -83,6 +87,8 @@ public class Commodity{
 
         public double getTotalCons() { return totalCons; }
 
+        public double getAmtSold() { return amtSold; }
+
         static public double getAllModelCons() { return allModelCons; }
 
     //Data
@@ -95,6 +101,7 @@ public class Commodity{
         private double producedQuantity;
         private double amtNeeded;
         private double totalCons;
+        private double amtSold;
         static private double allModelCons=0;
         public static double theoreticalTotalOfAllConsumption;
 }
