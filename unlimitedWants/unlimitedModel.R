@@ -63,21 +63,17 @@ param.sweep <- function(switch.percentages=seq(0,100,10),
 # total.sal - the total salary of the entire model in $/year
 
 #track.commodities <- function(num.agents, switch.percentage, 
-track.commodities <- function(switch.percentage, num.years) { 
+track.commodities <- function(switch.percentage,num.years) { 
     #num.trading.partners, mean.cons.rate, mean.salary) {
 
     #numeric.col.nums <- c(1,3:7)
-    numeric.col.nums <- c(1:5)
+    numeric.col.nums <- c(1:4)
     num.agents = 100;
 
     all.rows <- 
         system(paste("java Model",
                 switch.percentage,
                 num.years,
-                #num.trading.partners,
-                #mean.cons.rate,
-                #mean.salary,
-                #num.agents,
             "true 2> /dev/null"),
             intern=TRUE)
 
@@ -114,7 +110,6 @@ track.commodities <- function(switch.percentage, num.years) {
 
     list(sp=switch.percentage,
         na=num.agents,
-        #nt=num.trading.partners,
         comm.df=comm.df,
         cons.df=cons.df,
         total.cons=total.cons,
@@ -138,10 +133,6 @@ display.commodity.prices <- function(single.run.results,file=NULL) {
         main=paste("Commodity prices\n",
             "number of agents = ",single.run.results$na,"\n",
             "switch rate = ",single.run.results$sp,"%\n",
-            "number of trading partners = ",single.run.results$nt,"\n",
-            "Consumption/salary ratio = ",
-                round(single.run.results$total.cons /
-                    single.run.results$total.sal,2),
                 sep=""),
         xlab="time",ylab="Price",
         font.main=1,
@@ -170,10 +161,6 @@ display.total.consumption <- function(single.run.results,file=NULL) {
         main=paste("Total consumption\n",
             "number of agents = ",single.run.results$na,"\n",
             "switch rate = ",single.run.results$sp,"%\n",
-            "number of trading partners = ",single.run.results$nt,"\n",
-            "Consumption/salary ratio = ",
-                round(single.run.results$total.cons /
-                    single.run.results$total.sal,2),
                 sep=""),
         xlab="time",ylab="Units",
         ylim=c(0,max(cons.df[2:3])+1),

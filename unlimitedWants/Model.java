@@ -10,14 +10,14 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 200;
+        public static int NUM_YEARS = 200;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-        public static int SALARY_MEAN = 20;
+        public static int PRODUCTION_MEAN = 30;
 
         //Output control
 
@@ -28,10 +28,10 @@ public class Model extends SimState implements Steppable
         //Random number generator next functions
         public double generateNeedCommodityThreshold() {
             return commodityNeedThresholdDistro.nextDouble(); }
-        public double generateSalary() {
-                double thing=salaryDistro.nextDouble();
+        public double generateAmountProduced() {
+                double thing=amountProducedDistro.nextDouble();
                 while(thing<0) {
-                        thing=salaryDistro.nextDouble();
+                        thing=amountProducedDistro.nextDouble();
                 }
                 return thing;
         }
@@ -262,7 +262,7 @@ public class Model extends SimState implements Steppable
                 randomGenerator = new MersenneTwisterFast(50);
                 commodityNeedThresholdDistro = 
                     new Uniform(1.0,5.0,randomGenerator);
-                salaryDistro = new Normal(SALARY_MEAN,15,randomGenerator);
+                amountProducedDistro = new Normal(PRODUCTION_MEAN,15,randomGenerator);
                 makeDistro = new Uniform(0,Commodity.NUM_COMM-1,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
                     COMM_CONSUME_MEAN+2,randomGenerator);
@@ -301,7 +301,7 @@ public class Model extends SimState implements Steppable
                         Human newHuman = new Human();
                         schedule.scheduleOnce(.1,newHuman);
                 }
-                System.out.println("Total salary: " + Human.totalSalary);
+                System.out.println("Total amount produced: " + Human.totalAmountProduced);
         }
 
         public void step(SimState model) {
@@ -358,7 +358,7 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         //Random number generator declarations
         private MersenneTwisterFast randomGenerator;
         private Uniform commodityNeedThresholdDistro;
-        private Normal salaryDistro;
+        private Normal amountProducedDistro;
         private Uniform makeDistro;
         private Uniform mpsDistro;
         private Uniform consumeDistro;
@@ -404,6 +404,7 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
             doLoop(new MakesSimState() {
                 public SimState newInstance(long seed, String[] args) {
                     Model.SWITCH_PROZ=Integer.parseInt(args[0]);
+                    Model.NUM_YEARS=Integer.parseInt(args[1]);
                     //Model.NUM_TRADERS=Integer.parseInt(args[1]);
                     //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
                     //Model.SALARY_MEAN=Integer.parseInt(args[3]);

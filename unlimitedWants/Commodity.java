@@ -50,14 +50,14 @@ public class Commodity{
                 totalAmountInSystem+=quantity;
         }
 
-        public void incMakerNum(double salary) {
+        public void incMakerNum(double amountProduced) {
             makerNum++;
-            producedQuantity += salary;
+            producedQuantity += amountProduced;
         }
 
-        public void decMakerNum(double salary) {
+        public void decMakerNum(double amountProduced) {
             makerNum--;
-            producedQuantity -= salary;
+            producedQuantity -= amountProduced;
         }
 
         public void incNeed (double need) {

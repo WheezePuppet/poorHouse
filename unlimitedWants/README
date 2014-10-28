@@ -1,3 +1,5 @@
 Use the functions in marketModel.R to get output.
 There is a full parameter sweep and various smaller runs.
 showPrices is probably what you will be using.
+
+Update: Use functions in unlimitedModel.R to get output
