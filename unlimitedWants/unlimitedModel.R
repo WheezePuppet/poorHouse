@@ -63,7 +63,7 @@ param.sweep <- function(switch.percentages=seq(0,100,10),
 # total.sal - the total salary of the entire model in $/year
 
 #track.commodities <- function(num.agents, switch.percentage, 
-track.commodities <- function(switch.percentage,num.years) { 
+track.commodities <- function(switch.percentage,num.years,mean.amount.produced,money) { 
     #num.trading.partners, mean.cons.rate, mean.salary) {
 
     #numeric.col.nums <- c(1,3:7)
@@ -74,6 +74,8 @@ track.commodities <- function(switch.percentage,num.years) {
         system(paste("java Model",
                 switch.percentage,
                 num.years,
+                mean.amount.produced,
+                money,
             "true 2> /dev/null"),
             intern=TRUE)
 
@@ -110,6 +112,8 @@ track.commodities <- function(switch.percentage,num.years) {
 
     list(sp=switch.percentage,
         na=num.agents,
+        map=mean.amount.produced,
+        m=money,
         comm.df=comm.df,
         cons.df=cons.df,
         total.cons=total.cons,
@@ -132,9 +136,12 @@ display.commodity.prices <- function(single.run.results,file=NULL) {
     plot(comm.df$year,comm.df[[2]],type="n",
         main=paste("Commodity prices\n",
             "number of agents = ",single.run.results$na,"\n",
-            "switch rate = ",single.run.results$sp,"%\n",
+            #"switch rate = ",single.run.results$sp,"%\n",
+            "initial money = ",single.run.results$m,"\n",
+            "mean production = ",single.run.results$map,"\n",
                 sep=""),
         xlab="time",ylab="Price",
+        #ylim=c(0,10),
         font.main=1,
         cex.main=.8)
     commodities <- unique(comm.df$commodity)

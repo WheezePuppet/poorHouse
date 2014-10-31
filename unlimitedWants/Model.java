@@ -17,7 +17,8 @@ public class Model extends SimState implements Steppable
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-        public static int PRODUCTION_MEAN = 30;
+        public static double PRODUCTION_MEAN = 20;
+        public static double MONEY = 100;
 
         //Output control
 
@@ -306,6 +307,8 @@ public class Model extends SimState implements Steppable
 
         public void step(SimState model) {
                 //printGini();
+                //System.out.printf("The total money in the system is %f.\n",Human.totalMoney);
+                //Human.totalMoney = 0;
                 resetTrades();
                 resetTradedAmount();
                 resetOmniEvent();
@@ -396,6 +399,9 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         // Examples:
         //   java Model 25 100 3 25 100
         //   java Model 15 10 5 20 100 true 
+        //
+        // New Usage: java Model switchPercentage numYears
+        //      productionMean money
         public static void main(String args[]) {
             /*if(args.length<3){
               System.out.println("You need DAL, SEED, and BEQ");
@@ -405,6 +411,8 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                 public SimState newInstance(long seed, String[] args) {
                     Model.SWITCH_PROZ=Integer.parseInt(args[0]);
                     Model.NUM_YEARS=Integer.parseInt(args[1]);
+                    Model.PRODUCTION_MEAN=Double.parseDouble(args[2]);
+                    Model.MONEY = Double.parseDouble(args[3]);
                     //Model.NUM_TRADERS=Integer.parseInt(args[1]);
                     //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
                     //Model.SALARY_MEAN=Integer.parseInt(args[3]);

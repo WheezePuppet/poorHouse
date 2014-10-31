@@ -15,6 +15,7 @@ public class Human implements Steppable {
         private boolean TRADE = false;
         private boolean PRICE = true;
         private int GOOD = 3;
+        //public static double totalMoney = 0;
 
         private void debug(String message, boolean cond){
                 if(cond || ALL){
@@ -44,11 +45,14 @@ public class Human implements Steppable {
                 String message;
                 if(Model.instance().findProducer(producedCommodity, this) && Model.instance().getTick() > 1){
                         expPrice[producedCommodity]/=1.01;
-                if(producedCommodity == GOOD){
-                        message = "Due to surplus inventory, price of " + Integer.toString(GOOD) + " falls to " + Double.toString(expPrice[producedCommodity]);
-                        debug(message, PRICE);
+                        if(producedCommodity == GOOD){
+                                message = "Due to surplus inventory, price of " + Integer.toString(GOOD) + " falls to " + Double.toString(expPrice[producedCommodity]);
+                                debug(message, PRICE);
+                        }
                 }
-                }
+                /*if((producedCommodity != 5) && (Model.instance().getNumProducers(producedCommodity)>15)){
+                        producedCommodity = 5;
+                }*/
                 if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
                         //Remove from current production arrayList
                         int com = 0;
@@ -62,7 +66,7 @@ public class Human implements Steppable {
                         producedCommodity = com;
                 }
                 if(Model.instance().findProducer(producedCommodity, this)){
-                        
+
                 }else{
                         //Add to new production arrayList
                         Model.instance().addToProducers(producedCommodity, this);
@@ -77,12 +81,15 @@ public class Human implements Steppable {
 
                 //}else{
                 commoditiesHeld[producedCommodity]+=amountProduced;//Units?
+                //money *= 0.99;
+                //amountProduced *= 1.2;
                 if(producedCommodity == GOOD){
                         message = "Good " + Integer.toString(GOOD) + " produced " + Double.toString(amountProduced);
-                        debug(message, true);
+                        debug(message, false);
                 }
                 Commodity.getCommNum(producedCommodity).produce(amountProduced);
-                makeBudget();
+                //makeBudget();
+                //totalMoney += money;
                 //}
         }
 
@@ -116,7 +123,7 @@ public class Human implements Steppable {
         //Talk to three producers for each good and select one to buy from
         //Lower the prices of the other two
         public void checkThreeProducers(){ //TODO lots of things REALLY
-                //makeBudget();
+                makeBudget();
                 tradingPartners = new ArrayList<Human>();
                 ArrayList<Integer> random = new ArrayList<Integer>();
                 for(int l=0; l<Commodity.NUM_COMM; l++){
@@ -125,8 +132,10 @@ public class Human implements Steppable {
                 Collections.shuffle(random);
                 for(int p=0; p<Commodity.NUM_COMM; p++){
                         tradingPartners.clear();
-                        //int i=random.get(p);
-                        int i = p;
+                        int i=random.get(p);
+                        while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01){
+                        //System.out.printf("Budget for good %d is %f\n", i, budgetExp[i]);
+                        //int i = p;
                         int numt = 3;
                         int psize = Model.instance().getNumProducers(i);
                         if(psize<3){
@@ -171,9 +180,9 @@ public class Human implements Steppable {
                                         if(k!=cheapestProducer){
                                                 //tradingPartners.get(k).expPrice[i]*=.99;
                                                 /*if(i==2){
-                                                        message = "no deal, price falls to " + Double.toString(expPrice[i]);
-                                                        debug(message, TRADE);
-                                                }*/
+                                                  message = "no deal, price falls to " + Double.toString(expPrice[i]);
+                                                  debug(message, TRADE);
+                                                  }*/
                                         }else{
                                                 selectProducer(tradingPartners.get(k),i);
                                         }
@@ -185,6 +194,7 @@ public class Human implements Steppable {
                                         debug(message, PRICE);
                                 }
                         }
+                }
                 }
         }
 
@@ -318,7 +328,7 @@ public class Human implements Steppable {
                 }
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
-                money=100;
+                money=Model.MONEY;
                 children = new ArrayList<Human>();
                 minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
                 commoditiesHeld = new double [Commodity.NUM_COMM];
@@ -385,9 +395,9 @@ public class Human implements Steppable {
                         //Remove seller from producer arrayList
                         seller.expPrice[good]*=1.01;
                         if(good == GOOD){
-                                 message = "Producer of good " + Integer.toString(GOOD) + " ran out, price rises to " + Double.toString(seller.expPrice[good]);
-                                 debug(message, PRICE);
-                         }
+                                message = "Producer of good " + Integer.toString(GOOD) + " ran out, price rises to " + Double.toString(seller.expPrice[good]);
+                                debug(message, PRICE);
+                        }
                         Model.instance().removeFromProducers(seller.producedCommodity, seller);
                         debug("removing", false);
                 }
@@ -396,21 +406,24 @@ public class Human implements Steppable {
                 double tempUnDiff = expPrice[good];
                 //expPrice[good]+=diff;
                 /*if(good == GOOD){
-                        message = "price changed from " + Double.toString(tempUnDiff) + " to " + Double.toString(expPrice[good]);
-                        debug(message, TRADE);
-                        message = "price changed by " + Double.toString(diff);
-                        debug(message, TRADE);
-                }*/
+                  message = "price changed from " + Double.toString(tempUnDiff) + " to " + Double.toString(expPrice[good]);
+                  debug(message, TRADE);
+                  message = "price changed by " + Double.toString(diff);
+                  debug(message, TRADE);
+                  }*/
+
                 //If they bought, raise seller's price
-                if(quantity > 0 && money >= price*quantity){
+                if(quantity > 0 ){//&& money >= price*quantity){
                         //System.out.printf("We bought %f at %f!\n",quantity, price);
                         seller.commoditiesHeld[good]-=quantity;
                         commoditiesHeld[good]+=quantity;
                         seller.money += quantity*price;
                         money -= quantity*price;
+                        budgetExp[good] -= quantity*price;
                         Commodity.getCommNum(good).reportSale(quantity);
                         //seller.expPrice[good]*=1.01;
                 }else{
+                        //System.out.printf("I have %f money\n",money);
                         //System.out.printf("We didn't buy at %f!\n", price);
                 }
         }
@@ -752,4 +765,4 @@ public class Human implements Steppable {
                   expPrice[x] = expPrice[x]+((other.expPrice[x]-expPrice[x])/10);
                   }*/
         }
-};
+        };
