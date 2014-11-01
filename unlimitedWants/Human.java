@@ -15,7 +15,8 @@ public class Human implements Steppable {
         private boolean TRADE = false;
         private boolean PRICE = true;
         private int GOOD = 3;
-        //public static double totalMoney = 0;
+        public static double totalMoney = 0;
+        public static double totalSpent = 0;
 
         private void debug(String message, boolean cond){
                 if(cond || ALL){
@@ -88,8 +89,8 @@ public class Human implements Steppable {
                         debug(message, false);
                 }
                 Commodity.getCommNum(producedCommodity).produce(amountProduced);
-                //makeBudget();
-                //totalMoney += money;
+                makeBudget();
+                totalMoney += money;
                 //}
         }
 
@@ -123,7 +124,7 @@ public class Human implements Steppable {
         //Talk to three producers for each good and select one to buy from
         //Lower the prices of the other two
         public void checkThreeProducers(){ //TODO lots of things REALLY
-                makeBudget();
+                //makeBudget();
                 tradingPartners = new ArrayList<Human>();
                 ArrayList<Integer> random = new ArrayList<Integer>();
                 for(int l=0; l<Commodity.NUM_COMM; l++){
@@ -419,6 +420,7 @@ public class Human implements Steppable {
                         commoditiesHeld[good]+=quantity;
                         seller.money += quantity*price;
                         money -= quantity*price;
+                        totalSpent += quantity*price;
                         budgetExp[good] -= quantity*price;
                         Commodity.getCommNum(good).reportSale(quantity);
                         //seller.expPrice[good]*=1.01;
