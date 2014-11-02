@@ -1,1 +1,53 @@
-Currently:Theory: (relative) Scarcity should influence and be indicated by price. Price is held collectively by all agents in a market. If buyers can't find a good, they should believe it to be scarce and move their price up. Every time a seller makes a sale, he should move his price up because he believes the good is scarce enough people are still buying it. Every time a seller is visited, but not bought from, he should move his price down because he wants to be competitive with his fellow sellers for customers (FLAW in this idea).Model:Agents produce their salary of a good.Agents enter the market to buy goods they want and need.Agents determine how much of each good they want by equation:	utility of good = alpha * (2.718 ^ (beta * amountHeldOfGood))	utility per dollar of good = utility of good / expected price of good	total utility per dollars = sum of utilities per dollar	budget for good = money held * (utility per dollar / total utilities per dollar)	(alpha is 5-10, beta is 1-5)		Suppose agent has zero of good, alpha = 7, beta = -3, expected price = 3, money = 100	utility of good = 7 * (2.718 ^ (-3 * 0)) = 7	utility per dollar of good = 7 / 3 =  2.33	sum of utilities per dollar is 23.3	budget for good = 100 * (2.33 / 23.3) = 10	The most of a good a person could want to buy is $10 worthBuyers select a random good to go out and buy.Buyers check three sellers and select one to buy fromThe prices of the two upper agents are reduced to .99 of beforeThe buyer divides his budget by the price offered by the seller and tries to buy that muchIf the seller does not want to sell that much, he sells what he will and leaves the marketMoney and goods are transferredIf a successful trade is made, the seller raises his price to 1.01 times what it was beforeThe buyer moves his expected price 1/10 of the way towards the offered priceIf the buyer cannot find a producer of the good, he moves his expected price of the good upAll agents consume half of their goods each time, to indicate scaling of consumption to the amount of the good held.Results:If the switch rate is set to zero, prices fall towards zero in a stratified mannerIf switch rate is not set to zero, prices fall swiftly and exponentially to zeroHump occurs when switch is zero.Two downward pushes of the seller's price for every up push seems to be moving it mainly downThe majority of buyer changes (1/10) in response to seller price are downwardWhen buyers go through goods from 0-9 in order, price change of 0 has most upward slope and price change of 9 has most downward	Placement of budget making time has no effect on slope orderingAddendum Results:Price ordering effect was caused by not clearing the trading partners list after each goodWith clearing, results are differentWith or without random ordering, prices fall slowly to zeroStratified manner, but not in order of trading
+Currently:
+
+Theory: (relative) Scarcity should influence and be indicated by price.
+Price is held collectively by all agents in a market.
+ If buyers can't find a good, they should believe it to be scarce and move their price up.
+ Every time a seller makes a sale, he should move his price up because he believes the good is scarce enough people are still buying it.
+ Every time a seller is visited, but not bought from, he should move his price down because he wants to be competitive with his fellow sellers for customers (FLAW in this idea).
+
+Model:
+Agents produce their salary of a good.
+Agents enter the market to buy goods they want and need.
+Agents determine how much of each good they want by equation:
+    utility of good = alpha * (2.718 ^ (beta * amountHeldOfGood))
+	utility per dollar of good = utility of good / expected price of good
+	total utility per dollars = sum of utilities per dollar
+	budget for good = money held * (utility per dollar / total utilities per dollar)
+	(alpha is 5-10, beta is 1-5)
+	
+	Suppose agent has zero of good, alpha = 7, beta = -3, expected price = 3, money = 100
+	utility of good = 7 * (2.718 ^ (-3 * 0)) = 7
+	utility per dollar of good = 7 / 3 =  2.33
+	sum of utilities per dollar is 23.3
+	budget for good = 100 * (2.33 / 23.3) = 10
+	The most of a good a person could want to buy is $10 worth
+
+Buyers select a random good to go out and buy.
+Buyers check three sellers and select one to buy from
+The prices of the two upper agents are reduced to .99 of before
+The buyer divides his budget by the price offered by the seller and tries to buy that much
+If the seller does not want to sell that much, he sells what he will and leaves the market
+Money and goods are transferred
+If a successful trade is made, the seller raises his price to 1.01 times what it was before
+The buyer moves his expected price 1/10 of the way towards the offered price
+
+If the buyer cannot find a producer of the good, he moves his expected price of the good up
+
+All agents consume half of their goods each time, to indicate scaling of consumption to the amount of the good held.
+
+Results:
+If the switch rate is set to zero, prices fall towards zero in a stratified manner
+If switch rate is not set to zero, prices fall swiftly and exponentially to zero
+Hump occurs when switch is zero.
+Two downward pushes of the seller's price for every up push seems to be moving it mainly down
+The majority of buyer changes (1/10) in response to seller price are downward
+When buyers go through goods from 0-9 in order, price change of 0 has most upward slope and price change of 9 has most downward
+	Placement of budget making time has no effect on slope ordering
+
+Addendum Results:
+Price ordering effect was caused by not clearing the trading partners list after each good
+With clearing, results are different
+With or without random ordering, prices fall slowly to zero
+Stratified manner, but not in order of trading
+
