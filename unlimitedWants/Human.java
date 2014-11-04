@@ -14,7 +14,7 @@ public class Human implements Steppable {
         private boolean ALL = false;
         private boolean TRADE = false;
         private boolean PRICE = true;
-        private int GOOD = 3;
+        private int GOOD = 6;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
 
@@ -54,7 +54,7 @@ public class Human implements Steppable {
                 /*if((producedCommodity != 5) && (Model.instance().getNumProducers(producedCommodity)>15)){
                         producedCommodity = 5;
                 }*/
-                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
+                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ && Model.instance().getTick() > 1){
                         //Remove from current production arrayList
                         int com = 0;
                         double max = 0;
@@ -64,6 +64,7 @@ public class Human implements Steppable {
                                         max = expPrice[i];
                                 }
                         }
+                        Model.instance().removeFromProducers(producedCommodity, this);
                         producedCommodity = com;
                 }
                 if(Model.instance().findProducer(producedCommodity, this)){
@@ -135,6 +136,7 @@ public class Human implements Steppable {
                         tradingPartners.clear();
                         int i=random.get(p);
                         while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01){
+                        //System.out.println("Maybe stuck in a loop\n");
                         //System.out.printf("Budget for good %d is %f\n", i, budgetExp[i]);
                         //int i = p;
                         int numt = 3;
