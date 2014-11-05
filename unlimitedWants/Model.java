@@ -309,6 +309,7 @@ public class Model extends SimState implements Steppable
                 //printGini();
                 System.out.printf("The total money in the system is %f.\n",Human.totalMoney);
                 System.out.printf("The total money spent this round was %f.\n",Human.totalSpent);
+                //System.out.printf("%f\n",generateConsume());
                 Human.totalMoney = 0;
                 Human.totalSpent = 0;
                 resetTrades();
