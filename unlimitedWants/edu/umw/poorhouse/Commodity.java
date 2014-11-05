@@ -1,4 +1,5 @@
 //package jsim;
+package edu.umw.poorhouse;
 
 public class Commodity{
     //Functions
@@ -50,14 +51,14 @@ public class Commodity{
                 totalAmountInSystem+=quantity;
         }
 
-        public void incMakerNum(double amountProduced) {
+        public void incMakerNum(double salary) {
             makerNum++;
-            producedQuantity += amountProduced;
+            producedQuantity += salary;
         }
 
-        public void decMakerNum(double amountProduced) {
+        public void decMakerNum(double salary) {
             makerNum--;
-            producedQuantity -= amountProduced;
+            producedQuantity -= salary;
         }
 
         public void incNeed (double need) {
