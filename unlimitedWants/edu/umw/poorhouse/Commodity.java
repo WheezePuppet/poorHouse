@@ -1,4 +1,5 @@
 //package jsim;
+package edu.umw.poorhouse;
 
 public class Commodity{
     //Functions

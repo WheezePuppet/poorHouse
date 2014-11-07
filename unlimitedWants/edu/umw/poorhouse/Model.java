@@ -1,3 +1,5 @@
+package edu.umw.poorhouse;
+
 import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;

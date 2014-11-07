@@ -71,7 +71,7 @@ track.commodities <- function(switch.percentage,num.years,mean.amount.produced,m
     num.agents = 100;
 
     all.rows <- 
-        system(paste("java Model",
+        system(paste("java edu.umw.poorhouse.Model",
                 switch.percentage,
                 num.years,
                 mean.amount.produced,

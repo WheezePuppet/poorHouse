@@ -1,4 +1,5 @@
 //package jsim;
+package edu.umw.poorhouse;
 
 import java.util.*;
 import sim.util.*;
@@ -13,7 +14,7 @@ public class Human implements Steppable {
         public enum LifeStage { EARNING, TRADING, CONSUMING, BIRTHING, DYING }; 
         private boolean ALL = false;
         private boolean TRADE = false;
-        private boolean PRICE = true;
+        private boolean PRICE = false;
         private int GOOD = 6;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
