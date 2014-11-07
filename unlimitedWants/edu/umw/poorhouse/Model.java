@@ -2,6 +2,8 @@ package edu.umw.poorhouse;
 import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;
+import java.io.PrintWriter;
+import java.io.FileWriter;
 import ec.util.MersenneTwisterFast;
 
 public class Model extends SimState implements Steppable
@@ -11,7 +13,7 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static final int NUM_YEARS = 200;
+        public static int NUM_YEARS = 200;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
@@ -19,8 +21,14 @@ public class Model extends SimState implements Steppable
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
         public static int SALARY_MEAN = 20;
+        public static long SIM_TAG;
 
         //Output control
+        static PrintWriter commoditiesFile;
+        static final String COMM_FILE_NAME = "/tmp/comm_statsSIMTAG.csv";
+        static PrintWriter simStatsFile;
+        static final String SIM_STATS_FILE_NAME = "/tmp/sim_statsSIMTAG.csv";
+
 
         // If false, print only summary info. If true, print only
         //   per-commodity-per-time-period statistics.
@@ -306,52 +314,49 @@ public class Model extends SimState implements Steppable
         }
 
         public void step(SimState model) {
-                //printGini();
-                System.out.printf("The total money in the system is %f.\n",Human.totalMoney);
-                System.out.printf("The total money spent this round was %f.\n",Human.totalSpent);
-                Human.totalMoney = 0;
-                Human.totalSpent = 0;
-                resetTrades();
-                resetTradedAmount();
-                resetOmniEvent();
-                resetTotalWealth();
-                resetWealthRedistributed();
-                years++;
-                double foodAmt = Commodity.getCommNum(1).getTotalAmt();
-                double foodAvgPrice = avgPrice(1);
-                double foodPriceSd = sdPrice(1);
-                if(Model.PRINT_COMM) {
-                    double totalConsForAllCommoditiesThisRound = 0;
-                    for(int i=0; i<Commodity.NUM_COMM; i++){
-                        //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
-                        System.out.printf("%d, ",years);
-                        //System.out.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
-                        System.out.printf("%f, ", avgPrice(i));
-                        System.out.printf("%f, ", sdPrice(i));
-                        System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
-                        System.out.printf("%c\n",i+65);
-                        //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
+            //printGini();
+            resetTrades();
+            resetTradedAmount();
+            resetOmniEvent();
+            resetTotalWealth();
+            resetWealthRedistributed();
+            years++;
+            double foodAmt = Commodity.getCommNum(1).getTotalAmt();
+            double foodAvgPrice = avgPrice(1);
+            double foodPriceSd = sdPrice(1);
+            
+            double totalConsForAllCommoditiesThisRound = 0;
+            for(int i=0; i<Commodity.NUM_COMM; i++){
+                //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
+                commoditiesFile.printf("%d, ",years);
+                //commoditiesFile.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
+                commoditiesFile.printf("%f, ", avgPrice(i));
+                commoditiesFile.printf("%f, ", sdPrice(i));
+                commoditiesFile.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
+                commoditiesFile.printf("%c\n",i+65);
+                //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
 totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
-                    }
-                    System.out.println("TOTAL consumed: " + 
-                        totalConsForAllCommoditiesThisRound + " of " + 
-                        Commodity.theoreticalTotalOfAllConsumption*100);
+            }
+            commoditiesFile.flush();
+            simStatsFile.println("" + years + "," +
+                totalConsForAllCommoditiesThisRound + "," + 
+                Commodity.theoreticalTotalOfAllConsumption*100);
+            simStatsFile.flush();
+            if(years==NUM_YEARS){
+                if(!Model.PRINT_COMM) {
+                    System.out.printf("%d,%d,%f\n",Model.SWITCH_PROZ,
+                        Model.NUM_TRADERS,Commodity.getAllModelCons());
                 }
-                if(years==NUM_YEARS){
-                    if(!Model.PRINT_COMM) {
-                        System.out.printf("%d,%d,%f\n",Model.SWITCH_PROZ,
-                            Model.NUM_TRADERS,Commodity.getAllModelCons());
-                    }
-                }
-                for(int i=0; i<Commodity.NUM_COMM; i++){
-                    Commodity.getCommNum(i).resetCons();
-                }
-                if(years > NUM_YEARS){
-                    System.exit(0);
-                }
-                if(population >0 && years < NUM_YEARS){
-                    schedule.scheduleOnceIn(1,this);
-                }
+            }
+            for(int i=0; i<Commodity.NUM_COMM; i++){
+                Commodity.getCommNum(i).resetCons();
+            }
+            if(years > NUM_YEARS){
+                System.exit(0);
+            }
+            if(population >0 && years < NUM_YEARS){
+                schedule.scheduleOnceIn(1,this);
+            }
         }
 
         //Agent containers
@@ -380,54 +385,66 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         //private Uniform outsideTrade;
         //private Uniform childDistro;
 
-        // Usage: java Model switchPercentage numTradePartners 
-        //      commodityConsumeMean salaryMean [printComm]
-        // switchPercentage: integer (0-100) indicating percent likelihood
+        // Usage: java Model [-numYears numYears] [-simtag simtag] 
+        // [-switchPerc switchPerc] 
+        //
+        // numYears: the number of periods to run the simulation.
+        // simtag: an integer identifying a particular run of the simulation.
+        //    This is used to keep separate simultaneous simulations separate.
+        //    You may safely set it to 1 (or anything else). The number you
+        //    specify will be present in the filenames of the output files the
+        //    simulation produces in /tmp.
+        // switchPerc: integer (0-100) indicating percent likelihood
         //    each time period that an agent will change what commodity they 
         //    produce.
-        // numTradePartners: non-negative integer for the number of trading
-        //    partners each agent entertains per time period.
-        // commodityConsumeMean: the mean number of units per time period
-        //    each agent will consume of a given commodity. (A uniform distro
-        //    with width 5 units/year will be applied to this mean.)
-        // salaryMean: the mean agent salary, in number of units per time 
-        //    period. (A normal distro with stdev 15 will be applied to this
-        //    mean.)
-        // numAgents: the number of agents in the simulation.
-        // printComm: if false, print only summary information about total
-        //    consumption. If true, instead print information about each
-        //    commodity's statistics each time period.
         // 
         // Examples:
-        //   java Model 25 100 3 25 100
-        //   java Model 15 10 5 20 100 true 
+        //   java Model -numYears 200 -simtag 9999 -switchPerc 25
         public static void main(String args[]) {
-            /*if(args.length<3){
-              System.out.println("You need DAL, SEED, and BEQ");
-              System.exit(1);
-              }*/
             doLoop(new MakesSimState() {
                 public SimState newInstance(long seed, String[] args) {
-                    Model.SWITCH_PROZ=Integer.parseInt(args[0]);
-                    //Model.NUM_TRADERS=Integer.parseInt(args[1]);
-                    //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
-                    //Model.SALARY_MEAN=Integer.parseInt(args[3]);
-                    //Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
+                    try {
+                        for (int i=0; i<args.length; i++) {
+                            if (args[i].equals("-numYears")) {
+                                NUM_YEARS = Integer.valueOf(args[++i]);
+                            }
+                            if (args[i].equals("-simtag")) {
+                                SIM_TAG = Integer.valueOf(args[++i]);
+                            }
+                            if (args[i].equals("-switchPerc")) {
+                                SWITCH_PROZ = Integer.valueOf(args[++i]);
+                            }
+                        }
 
-                    if(args.length>5) {
-                        Model.PRINT_COMM=
-                            Boolean.parseBoolean(args[5]);
-                    }
-                    if(Model.PRINT_COMM) {
-                        //System.out.println("\"year\",\"commodity\",\"amount produced/need\",\"avg price\",\"sd\",\"consumption_rate\",\"totalCons\"");
-                        System.out.println("\"year\",\"avg price\",\"sd\",\"totalCons\",\"commodity\"");
-                        //System.out.println("\"year\",\"avg price\",\"sd\",\"totalCons\"");
+                        //Model.NUM_TRADERS=Integer.parseInt(args[1]);
+                        //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
+                        //Model.SALARY_MEAN=Integer.parseInt(args[3]);
+                        //Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
+
+                        commoditiesFile = new PrintWriter(new FileWriter(
+                            COMM_FILE_NAME.replace("SIMTAG","" + SIM_TAG)));
+                        commoditiesFile.println("\"year\",\"avg price\",\"sd\",\"totalCons\",\"commodity\"");
+                        simStatsFile = new PrintWriter(new FileWriter(
+                            SIM_STATS_FILE_NAME.replace("SIMTAG","" + 
+                                                                SIM_TAG)));
+                        simStatsFile.println(
+                            "\"year\",\"totalConsumed\",\"theoreticalMax\"");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        printUsage();
+                        System.exit(1);
                     }
                     return instance();
                 }
-                public Class simulationClass() {
-                    return Model.class;
-                }
+            public Class simulationClass() {
+                return Model.class;
+            }
             }, args);
         }
+
+    private static void printUsage() {
+        System.err.println("Usage: java Model [-numYears numYears]" +
+        "   [-simtag simtag]" +
+        "   [-switchPerc switchPerc].");
+    }
 }
