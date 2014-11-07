@@ -40,9 +40,10 @@ public class Human implements Steppable {
 
         //Scheduled events
         //--------------------------------------------------------------------------
-        //Increase the agent's salary commodity by his salary and inform commodities
+        //Increase the agent's salary commodity by his amountProduced and inform commodities
 
         public void earnIncome() {
+                String message;
                 //If they didn't empty their inventory, lower price
                 if(Model.instance().findProducer(producedCommodity, this)){
                         expPrice[producedCommodity]/=1.01;
@@ -183,6 +184,7 @@ public class Human implements Steppable {
                                 }
                         }
                 }
+            }
         }
 
         //Reduce each of the agent's commodities by the amount dictated
@@ -349,9 +351,9 @@ public class Human implements Steppable {
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         allNeeds+=minThreshold[i];
                 }
-                salary=Model.instance().generateSalary();
-                totalSalary += salary;
-                Commodity.getCommNum(producedCommodity).incMakerNum(salary);
+                amountProduced=Model.instance().generateAmountProduced();
+                totalAmountProduced += amountProduced;
+                Commodity.getCommNum(producedCommodity).incMakerNum(amountProduced);
                 Model.instance().addToActors(this);
                 Model.instance().addToProducers(producedCommodity, this);
         }
@@ -487,7 +489,7 @@ public class Human implements Steppable {
         public int getCommunity() { return residentCommunity; }
         public int getTimesTraded() { return timesTraded; }
         public int getMake() { return producedCommodity; }
-        public double getSalary() { return salary; }
+        public double getAmountProduced() { return amountProduced; }
         public int getNumTraders() { return numTraders; }
         public int getAge()  { return age; }
         public int getId()  { return myId; }
@@ -517,7 +519,7 @@ public class Human implements Steppable {
         //Human data
         //--------------------------------------------------------------------------
         //Human data unchanging
-        private double salary;//Between 3 and 7
+        private double amountProduced;//Between 3 and 7
         private int producedCommodity;//Between 0 and 10
         private int numTraders;//Between 5 and 100
         private Human parent;
@@ -549,7 +551,7 @@ public class Human implements Steppable {
         //Static agent id creator reference
         private static int nextAgentNum = 0;
 
-        public static double totalSalary = 0;
+        public static double totalAmountProduced = 0;
 
         //Currently unused functions
 
@@ -682,8 +684,8 @@ public class Human implements Steppable {
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
                         allNeeds+=minThreshold[i];
                 }
-                salary=Model.instance().generateSalary();
-                Commodity.getCommNum(producedCommodity).incMakerNum(salary);
+                amountProduced=Model.instance().generateAmountProduced();
+                Commodity.getCommNum(producedCommodity).incMakerNum(amountProduced);
                 parent.children.add(this);
                 Model.instance().addToActors(this);
                 Model.instance().addToCommunity(residentCommunity,this);
