@@ -12,15 +12,15 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static int NUM_YEARS = 200;
+        public static int NUM_YEARS;// = 200;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-        public static double PRODUCTION_MEAN = 20;
-        public static double MONEY = 100;
+        public static double PRODUCTION_MEAN;// = 20;
+        public static double MONEY;// = 100;
 
         //Output control
 
@@ -269,7 +269,7 @@ public class Model extends SimState implements Steppable
                 makeDistro = new Uniform(0,Commodity.NUM_COMM-1,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
                     COMM_CONSUME_MEAN+2,randomGenerator);
-                priceDistro = new Uniform(1,5,randomGenerator);
+                priceDistro = new Uniform(100,150,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 probDistro = new Uniform(0,100,randomGenerator);
@@ -407,16 +407,17 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         // New Usage: java Model switchPercentage numYears
         //      productionMean money
         public static void main(String args[]) {
-            /*if(args.length<3){
-              System.out.println("You need DAL, SEED, and BEQ");
+            if(args.length<4){
+              System.out.println("You need switch, years, production, and money");
               System.exit(1);
-              }*/
+              }
             doLoop(new MakesSimState() {
                 public SimState newInstance(long seed, String[] args) {
                     Model.SWITCH_PROZ=Integer.parseInt(args[0]);
                     Model.NUM_YEARS=Integer.parseInt(args[1]);
                     Model.PRODUCTION_MEAN=Double.parseDouble(args[2]);
                     Model.MONEY = Double.parseDouble(args[3]);
+                    //System.out.printf("Switch is %d, years is %d, production is %f, and money is %f\n",Model.SWITCH_PROZ, Model.NUM_YEARS, Model.PRODUCTION_MEAN, Model.MONEY);
                     //Model.NUM_TRADERS=Integer.parseInt(args[1]);
                     //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
                     //Model.SALARY_MEAN=Integer.parseInt(args[3]);

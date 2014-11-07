@@ -132,7 +132,7 @@ public class Human implements Steppable {
                 for(int l=0; l<Commodity.NUM_COMM; l++){
                         random.add(l);
                 }
-                Collections.shuffle(random);
+                //Collections.shuffle(random);
                 for(int p=0; p<Commodity.NUM_COMM; p++){
                         tradingPartners.clear();
                         int i=random.get(p);
