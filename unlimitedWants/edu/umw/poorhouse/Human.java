@@ -14,10 +14,13 @@ public class Human implements Steppable {
         public enum LifeStage { EARNING, TRADING, CONSUMING, BIRTHING, DYING }; 
         private boolean ALL = false;
         private boolean TRADE = false;
+<<<<<<< HEAD
         private boolean PRICE = false;
         private int GOOD = 6;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
+=======
+>>>>>>> 10a28ec467c7981d9a5f0b4808058f7ca15dc8f9
 
         private void debug(String message, boolean cond){
                 if(cond || ALL){
@@ -48,10 +51,7 @@ public class Human implements Steppable {
                 if(Model.instance().findProducer(producedCommodity, this)){
                         expPrice[producedCommodity]/=1.01;
                 }
-                /*if((producedCommodity != 5) && (Model.instance().getNumProducers(producedCommodity)>15)){
-                        producedCommodity = 5;
-                }*/
-                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ && Model.instance().getTick() > 1){
+                if(Model.instance().generateSwitch() < Model.SWITCH_PROZ){
                         //Remove from current production arrayList
                         int com = 0;
                         double max = 0;
@@ -61,7 +61,6 @@ public class Human implements Steppable {
                                         max = expPrice[i];
                                 }
                         }
-                        Model.instance().removeFromProducers(producedCommodity, this);
                         producedCommodity = com;
                 }
                 if(Model.instance().findProducer(producedCommodity, this)){
@@ -79,16 +78,9 @@ public class Human implements Steppable {
                 //if(age > 3 && producedCommodity == 1){
 
                 //}else{
-                commoditiesHeld[producedCommodity]+=amountProduced;//Units?
-                //money *= 0.99;
-                //amountProduced *= 1.2;
-                if(producedCommodity == GOOD){
-                        message = "Good " + Integer.toString(GOOD) + " produced " + Double.toString(amountProduced);
-                        debug(message, false);
-                }
-                Commodity.getCommNum(producedCommodity).produce(amountProduced);
+                commoditiesHeld[producedCommodity]+=salary;//Units?
+                Commodity.getCommNum(producedCommodity).produce(salary);
                 makeBudget();
-                totalMoney += money;
                 //}
         }
 
@@ -126,11 +118,8 @@ public class Human implements Steppable {
                 Collections.shuffle(random);
                 for(int p=0; p<Commodity.NUM_COMM; p++){
                         tradingPartners.clear();
-                        int i=random.get(p);
-                        while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01){
-                        //System.out.println("Maybe stuck in a loop\n");
-                        //System.out.printf("Budget for good %d is %f\n", i, budgetExp[i]);
-                        //int i = p;
+                        //int i=random.get(p);
+                        int i = p;
                         int numt = 3;
                         int psize = Model.instance().getNumProducers(i);
                         if(psize<3){
@@ -404,8 +393,6 @@ public class Human implements Steppable {
                         commoditiesHeld[good]+=quantity;
                         seller.money += quantity*price;
                         money -= quantity*price;
-                        totalSpent += quantity*price;
-                        budgetExp[good] -= quantity*price;
                         Commodity.getCommNum(good).reportSale(quantity);
                         //seller.expPrice[good]*=1.01;
                 }else{
