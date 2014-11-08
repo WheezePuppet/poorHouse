@@ -14,13 +14,10 @@ public class Human implements Steppable {
         public enum LifeStage { EARNING, TRADING, CONSUMING, BIRTHING, DYING }; 
         private boolean ALL = false;
         private boolean TRADE = false;
-<<<<<<< HEAD
         private boolean PRICE = false;
         private int GOOD = 6;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
-=======
->>>>>>> 10a28ec467c7981d9a5f0b4808058f7ca15dc8f9
 
         private void debug(String message, boolean cond){
                 if(cond || ALL){

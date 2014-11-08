@@ -20,12 +20,8 @@ public class Model extends SimState implements Steppable
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-<<<<<<< HEAD
         public static int AMOUNT_PRODUCED_MEAN = 20;
-=======
-        public static int SALARY_MEAN = 20;
         public static long SIM_TAG;
->>>>>>> 10a28ec467c7981d9a5f0b4808058f7ca15dc8f9
 
         //Output control
         static PrintWriter commoditiesFile;
@@ -318,7 +314,6 @@ public class Model extends SimState implements Steppable
         }
 
         public void step(SimState model) {
-<<<<<<< HEAD
                 //printGini();
                 System.out.printf("The total money in the system is %f.\n",Human.totalMoney);
                 System.out.printf("The total money spent this round was %f.\n",Human.totalSpent);
@@ -345,29 +340,6 @@ public class Model extends SimState implements Steppable
                         System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
                         System.out.printf("%c\n",i+65);
                         //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
-=======
-            //printGini();
-            resetTrades();
-            resetTradedAmount();
-            resetOmniEvent();
-            resetTotalWealth();
-            resetWealthRedistributed();
-            years++;
-            double foodAmt = Commodity.getCommNum(1).getTotalAmt();
-            double foodAvgPrice = avgPrice(1);
-            double foodPriceSd = sdPrice(1);
-            
-            double totalConsForAllCommoditiesThisRound = 0;
-            for(int i=0; i<Commodity.NUM_COMM; i++){
-                //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
-                commoditiesFile.printf("%d, ",years);
-                //commoditiesFile.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
-                commoditiesFile.printf("%f, ", avgPrice(i));
-                commoditiesFile.printf("%f, ", sdPrice(i));
-                commoditiesFile.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
-                commoditiesFile.printf("%c\n",i+65);
-                //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
->>>>>>> 10a28ec467c7981d9a5f0b4808058f7ca15dc8f9
 totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
             }
             commoditiesFile.flush();
