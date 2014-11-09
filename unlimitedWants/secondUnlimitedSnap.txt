@@ -37,6 +37,9 @@ When the total amount of money in the system is raised, prices reach a higher st
 Prices do stabilize regardless of the input money or production rate
 If budget is made in the buying function, more money is spent
 
+What if as the amount produced gets much smaller, the standard deviation gets higher than the mean and causes prices to end farther apart?
+Same amount of money trying to buy more goods in total... Prices are lower because the same amount of money must be spent on a larger amount of all goods.
+
 Trace Theory out:
 Agents buy goods
 If producers run out of good, raise price

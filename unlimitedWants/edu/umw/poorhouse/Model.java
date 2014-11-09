@@ -42,7 +42,7 @@ public class Model extends SimState implements Steppable
         public int generateMake(Human toAdd) {
                 int make = makeDistro.nextInt();
                 //make = make%Commodity.;//TODO
-                producers.get(make).add(toAdd);
+                //producers.get(make).add(toAdd);
                 return make;
         }
         public double generateMps() { return mpsDistro.nextDouble(); }
@@ -129,7 +129,9 @@ public class Model extends SimState implements Steppable
         }
 
         public boolean findProducer(int good, Human man) { return producers.get(good).contains(man); }
-        public boolean noProducers(int good) { return producers.get(good).isEmpty(); }
+        public boolean noProducers(int good) {
+                return !(producers.get(good).size()>0);
+        }
         public Human getProducerOfGood(int good){ return producers.get(good).get(probDistro.nextInt()%(producers.get(good).size())); }//TODO if none, raise price
 
         //Keep track of Model variables
@@ -269,7 +271,7 @@ public class Model extends SimState implements Steppable
                 makeDistro = new Uniform(0,Commodity.NUM_COMM-1,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
                     COMM_CONSUME_MEAN+2,randomGenerator);
-                priceDistro = new Uniform(100,150,randomGenerator);
+                priceDistro = new Uniform(1,5,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
                 probDistro = new Uniform(0,100,randomGenerator);
@@ -313,6 +315,7 @@ public class Model extends SimState implements Steppable
                 System.out.printf("The total money spent this round was %f.\n",Human.totalSpent);
                 Human.totalMoney = 0;
                 Human.totalSpent = 0;
+                Human.buyers = 0;
                 resetTrades();
                 resetTradedAmount();
                 resetOmniEvent();
