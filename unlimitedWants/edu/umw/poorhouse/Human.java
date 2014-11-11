@@ -15,7 +15,7 @@ public class Human implements Steppable {
         private boolean ALL = false;
         private boolean TRADE = false;
         private boolean PRICE = false;
-        private int GOOD = 6;
+        private int GOOD = 2;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
         private double changeProp = 1.01;
@@ -50,7 +50,7 @@ public class Human implements Steppable {
                 //Model.instance().showNumOfProducers();
                 String message;
                 if(Model.instance().findProducer(producedCommodity, this) && Model.instance().getTick() > 1){
-                        //cph Increase price by changeProp to represent unsold inventory
+                        //cph Decrease price by changeProp to represent unsold inventory
                         expPrice[producedCommodity]/=changeProp;
                         if(producedCommodity == GOOD){
                                 message = "Due to surplus inventory, price of " + Integer.toString(GOOD) + " falls to " + Double.toString(expPrice[producedCommodity]);
@@ -187,7 +187,7 @@ public class Human implements Steppable {
                                 double diff = avgPrice - expPrice[i];
                                 diff/=buyerChange;
                                 //cph change buyer's price to reflect prices they believe sellers are offering
-                                //expPrice[i]+=diff;
+                                expPrice[i]+=diff;
 
                                 if(i == GOOD){
                                         message = "Buyer diff, price of good " + Integer.toString(GOOD) + " changed by " + Double.toString(diff) + " to " + Double.toString(expPrice[i]); 
@@ -207,10 +207,10 @@ public class Human implements Steppable {
                                 }
                         }
                         //cph increase buyer's price by changeProp in the event of no producers to reflect scarcity of the good
-                        expPrice[i]*=changeProp;
+                        //expPrice[i]*=changeProp;
                         if(i == GOOD){
                                 message = "no producers, price of good " + Integer.toString(GOOD) + " rises to " + Double.toString(expPrice[i]);
-                                debug(message, PRICE);
+                                //debug(message, PRICE);
                         }
                 }
         }
@@ -221,7 +221,6 @@ public class Human implements Steppable {
         //Remove half of every commodity and send that info to the commodity
         public void consume() {
                 for(int i=0; i<Commodity.NUM_COMM; i++) {
-                        if(i!=producedCommodity){
                         //double prop = commoditiesHeld[i]/2;
                         double prop = commoditiesHeld[i];
                         //double prop = 10;
@@ -236,7 +235,6 @@ public class Human implements Steppable {
                           commoditiesHeld[i]=0;
                         //considerDeath();
                         }*/
-                        }
                 }
         }
 
@@ -340,11 +338,11 @@ public class Human implements Steppable {
         public Human() {
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
-                if (myId == 0 || myId == 1) {
+                /*if (myId == 0 || myId == 1) {
                         producedCommodity = myId;
-                } else {
+                } else {*/
                         producedCommodity=Model.instance().generateMake(this);
-                }
+                //}
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
                 money=Model.MONEY;
@@ -385,7 +383,7 @@ public class Human implements Steppable {
                 totalAmountProduced += amountProduced;
                 Commodity.getCommNum(producedCommodity).incMakerNum(amountProduced);
                 Model.instance().addToActors(this);
-                Model.instance().addToProducers(producedCommodity, this);
+                //Model.instance().addToProducers(producedCommodity, this);
         }
 
         //Private trade functions

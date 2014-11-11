@@ -176,7 +176,9 @@ public class Model extends SimState implements Steppable
             }
             sd /= actors.size();
             sd = Math.sqrt(sd);
-            return sd;
+            double normalized = sd/avgPrice(comm);
+            normalized*=20;
+            return normalized;
         }
 
         public void resetTotalWealth() { totalWealth=0; }
