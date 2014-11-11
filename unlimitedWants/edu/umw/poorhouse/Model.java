@@ -1,4 +1,5 @@
 package edu.umw.poorhouse;
+
 import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;
@@ -13,14 +14,15 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static int NUM_YEARS = 200;
+        public static int NUM_YEARS;// = 200;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-        public static int AMOUNT_PRODUCED_MEAN = 20;
+        public static double PRODUCTION_MEAN = 30;
+        public static double MONEY = 100;
         public static long SIM_TAG;
 
         //Output control
@@ -48,7 +50,7 @@ public class Model extends SimState implements Steppable
         public int generateMake(Human toAdd) {
                 int make = makeDistro.nextInt();
                 //make = make%Commodity.;//TODO
-                producers.get(make).add(toAdd);
+                //producers.get(make).add(toAdd);
                 return make;
         }
         public double generateMps() { return mpsDistro.nextDouble(); }
@@ -135,7 +137,9 @@ public class Model extends SimState implements Steppable
         }
 
         public boolean findProducer(int good, Human man) { return producers.get(good).contains(man); }
-        public boolean noProducers(int good) { return producers.get(good).isEmpty(); }
+        public boolean noProducers(int good) {
+                return !(producers.get(good).size()>0);
+        }
         public Human getProducerOfGood(int good){ return producers.get(good).get(probDistro.nextInt()%(producers.get(good).size())); }//TODO if none, raise price
 
         //Keep track of Model variables
@@ -180,7 +184,9 @@ public class Model extends SimState implements Steppable
             }
             sd /= actors.size();
             sd = Math.sqrt(sd);
-            return sd;
+            double normalized = sd/avgPrice(comm);
+            normalized*=20;
+            return normalized;
         }
 
         public void resetTotalWealth() { totalWealth=0; }
@@ -320,6 +326,7 @@ public class Model extends SimState implements Steppable
                 //System.out.printf("%f\n",generateConsume());
                 Human.totalMoney = 0;
                 Human.totalSpent = 0;
+                Human.buyers = 0;
                 resetTrades();
                 resetTradedAmount();
                 resetOmniEvent();
@@ -418,6 +425,12 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                             }
                             if (args[i].equals("-switchPerc")) {
                                 SWITCH_PROZ = Integer.valueOf(args[++i]);
+                            }
+                            if (args[i].equals("-avgProd")) {
+                                PRODUCTION_MEAN=Double.parseDouble(args[++i]);
+                            }
+                            if (args[i].equals("-money")) {
+                                MONEY=Double.parseDouble(args[++i]);
                             }
                         }
 

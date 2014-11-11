@@ -71,7 +71,7 @@ track.commodities <- function(switch.percentage,num.years,mean.amount.produced,m
     num.agents = 100;
 
     all.rows <- 
-        system(paste("java Model",
+        system(paste("java edu.umw.poorhouse.Model",
                 switch.percentage,
                 num.years,
                 mean.amount.produced,
@@ -141,7 +141,6 @@ display.commodity.prices <- function(single.run.results,file=NULL) {
             "mean production = ",single.run.results$map,"\n",
                 sep=""),
         xlab="time",ylab="Price",
-        #ylim=c(0,10),
         font.main=1,
         cex.main=.8)
     commodities <- unique(comm.df$commodity)
@@ -151,6 +150,40 @@ display.commodity.prices <- function(single.run.results,file=NULL) {
             comm.df[comm.df$commodity == commodity,]
         lines(comm.results$year,comm.results[[2]],
             col=palette()[commodity.num %% length(palette())])
+    }
+    legend("bottomleft",title="Commodity",fill=palette(),legend=commodities)
+    if(!is.null(file)) {
+        dev.off()
+    }
+}
+
+# Show a plot of a commodity, its price, and its standard deviation over time
+display.commodity.individual <- function(single.run.results,file=NULL) {
+    if(!is.null(file)) {
+        png(paste(file,".png",sep=""))
+    }
+    comm.df <- single.run.results$comm.df
+    plot(comm.df$year,comm.df[[2]],type="n",
+        main=paste("Commodity prices\n",
+            "number of agents = ",single.run.results$na,"\n",
+            "switch rate = ",single.run.results$sp,"%\n",
+            "initial money = ",single.run.results$m,"\n",
+            "mean production = ",single.run.results$map,"\n",
+                sep=""),
+        xlab="time",ylab="Price",
+        #ylim=c(0,12),
+        font.main=1,
+        cex.main=.8)
+    commodities <- unique(comm.df$commodity)
+    for (commodity.num in 1:length(commodities)) {
+        commodity <- commodities[[commodity.num]]
+        comm.results <- 
+            comm.df[comm.df$commodity == commodity,]
+        lines(comm.results$year,(comm.results[[3]]),
+            col=palette()[commodity.num %% length(palette())])
+        lines(comm.results$year,comm.results[[2]],
+            col=palette()[commodity.num %% length(palette())])
+    #    readline()
     }
     legend("bottomleft",title="Commodity",fill=palette(),legend=commodities)
     if(!is.null(file)) {
@@ -183,31 +216,4 @@ display.total.consumption <- function(single.run.results,file=NULL) {
     if(!is.null(file)) {
         dev.off()
     }
-}
-
-
-# Create a file containing a heatmap of the results passed, with the filename
-# passed.
-pngify.heatmap <- function(results,filename="/tmp/heatmap.png") {
-    png(filename)
-    display.heatmap(results)
-    dev.off()
-}
-
-# Display a heatmap of the results passed.
-display.heatmap <- function(results) {
-    row.vals <- unique(results[,1])
-    col.vals <- unique(results[,2])
-    mat <- matrix(nrow=length(row.vals),
-                  ncol=length(col.vals))
-    # This is the sexy way, and SHOULD work I swear:
-    #   mat[results[,1]+1,results[,2]+1] <- results[,3]
-    # Instead I'll do it the sucky old C++ way... :'(
-    for (row in 1:nrow(results)) {
-        results[row,1]
-        mat[which(results[row,1]==row.vals),
-            which(results[row,2]==col.vals)] <- results[row,3]
-    }
-    levelplot(mat,xlab="switch probability",ylab="num traders",
-        main="Total consumption")
 }
