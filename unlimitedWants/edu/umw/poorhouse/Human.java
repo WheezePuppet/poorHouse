@@ -18,7 +18,7 @@ public class Human implements Steppable {
         private int GOOD = 2;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
-        private double changeProp = 1.01;
+        private double changeProp = 1.03;
         private int buyerChange = 10;
         public static int buyers = 0;
 

@@ -171,7 +171,7 @@ display.commodity.individual <- function(single.run.results,file=NULL) {
             "mean production = ",single.run.results$map,"\n",
                 sep=""),
         xlab="time",ylab="Price",
-        ylim=c(0,12),
+        #ylim=c(0,12),
         font.main=1,
         cex.main=.8)
     commodities <- unique(comm.df$commodity)
