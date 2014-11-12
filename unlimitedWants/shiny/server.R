@@ -37,7 +37,7 @@ SIM.FILES.BASE.DIR <- "/tmp"
 
 # CHANGE: The full path of your project directory. Any .java file that appears
 # in this directory hierarchy will be compiled as part of the simulation.
-SOURCE.DIR <- "/home/stephen/Dropbox/research/poorhouse/poorHouse/unlimitedWants/"
+SOURCE.DIR <- "/home/stephen/poorHouse/unlimitedWants/"
 
 CLASSES.DIR <- "/tmp/classes"
 
@@ -223,8 +223,10 @@ shinyServer(function(input,output,session) {
                 labs(title="Total consumed",x="Year")
             print(the.plot)
         }
-        # Recreate this plot in a little bit.
-        invalidateLater(REFRESH.PERIOD.MILLIS,session)
+        if (sim.started) {
+            # Recreate this plot in a little bit.
+            invalidateLater(REFRESH.PERIOD.MILLIS,session)
+        }
     })
 
     output$commodityPricesPlot <- renderPlot({
@@ -241,8 +243,10 @@ shinyServer(function(input,output,session) {
                 scale_x_discrete(labels=NULL)
             print(the.plot)
         }
-        # Recreate this plot in a little bit.
-        invalidateLater(REFRESH.PERIOD.MILLIS,session)
+        if (sim.started) {
+            # Recreate this plot in a little bit.
+            invalidateLater(REFRESH.PERIOD.MILLIS,session)
+        }
     })
 
 
