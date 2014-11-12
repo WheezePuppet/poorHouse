@@ -1,4 +1,5 @@
 package edu.umw.poorhouse;
+
 import sim.util.distribution.*;
 import sim.engine.*;
 import java.util.*;
@@ -13,14 +14,15 @@ public class Model extends SimState implements Steppable
 
         //Global constants
         public static int NUM_INITIAL_AGENTS = 100;
-        public static int NUM_YEARS = 200;
+        public static int NUM_YEARS;// = 200;
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
         public static int SWITCH_PROZ;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
-        public static int SALARY_MEAN = 20;
+        public static double PRODUCTION_MEAN = 30;
+        public static double MONEY = 100;
         public static long SIM_TAG;
 
         //Output control
@@ -37,10 +39,10 @@ public class Model extends SimState implements Steppable
         //Random number generator next functions
         public double generateNeedCommodityThreshold() {
             return commodityNeedThresholdDistro.nextDouble(); }
-        public double generateSalary() {
-                double thing=salaryDistro.nextDouble();
+        public double generateAmountProduced() {
+                double thing=amountProducedDistro.nextDouble();
                 while(thing<0) {
-                        thing=salaryDistro.nextDouble();
+                        thing=amountProducedDistro.nextDouble();
                 }
                 return thing;
         }
@@ -48,7 +50,7 @@ public class Model extends SimState implements Steppable
         public int generateMake(Human toAdd) {
                 int make = makeDistro.nextInt();
                 //make = make%Commodity.;//TODO
-                producers.get(make).add(toAdd);
+                //producers.get(make).add(toAdd);
                 return make;
         }
         public double generateMps() { return mpsDistro.nextDouble(); }
@@ -135,7 +137,9 @@ public class Model extends SimState implements Steppable
         }
 
         public boolean findProducer(int good, Human man) { return producers.get(good).contains(man); }
-        public boolean noProducers(int good) { return producers.get(good).isEmpty(); }
+        public boolean noProducers(int good) {
+                return !(producers.get(good).size()>0);
+        }
         public Human getProducerOfGood(int good){ return producers.get(good).get(probDistro.nextInt()%(producers.get(good).size())); }//TODO if none, raise price
 
         //Keep track of Model variables
@@ -180,7 +184,9 @@ public class Model extends SimState implements Steppable
             }
             sd /= actors.size();
             sd = Math.sqrt(sd);
-            return sd;
+            double normalized = sd/avgPrice(comm);
+            normalized*=20;
+            return normalized;
         }
 
         public void resetTotalWealth() { totalWealth=0; }
@@ -271,7 +277,7 @@ public class Model extends SimState implements Steppable
                 randomGenerator = new MersenneTwisterFast(50);
                 commodityNeedThresholdDistro = 
                     new Uniform(1.0,5.0,randomGenerator);
-                salaryDistro = new Normal(SALARY_MEAN,15,randomGenerator);
+                amountProducedDistro = new Normal(AMOUNT_PRODUCED_MEAN,15,randomGenerator);
                 makeDistro = new Uniform(0,Commodity.NUM_COMM-1,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
                     COMM_CONSUME_MEAN+2,randomGenerator);
@@ -310,31 +316,37 @@ public class Model extends SimState implements Steppable
                         Human newHuman = new Human();
                         schedule.scheduleOnce(.1,newHuman);
                 }
-                System.out.println("Total salary: " + Human.totalSalary);
+                System.out.println("Total amount produced: " + Human.totalAmountProduced);
         }
 
         public void step(SimState model) {
-            //printGini();
-            resetTrades();
-            resetTradedAmount();
-            resetOmniEvent();
-            resetTotalWealth();
-            resetWealthRedistributed();
-            years++;
-            double foodAmt = Commodity.getCommNum(1).getTotalAmt();
-            double foodAvgPrice = avgPrice(1);
-            double foodPriceSd = sdPrice(1);
-            
-            double totalConsForAllCommoditiesThisRound = 0;
-            for(int i=0; i<Commodity.NUM_COMM; i++){
-                //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
-                commoditiesFile.printf("%d, ",years);
-                //commoditiesFile.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
-                commoditiesFile.printf("%f, ", avgPrice(i));
-                commoditiesFile.printf("%f, ", sdPrice(i));
-                commoditiesFile.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
-                commoditiesFile.printf("%c\n",i+65);
-                //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
+                //printGini();
+                System.out.printf("The total money in the system is %f.\n",Human.totalMoney);
+                System.out.printf("The total money spent this round was %f.\n",Human.totalSpent);
+                //System.out.printf("%f\n",generateConsume());
+                Human.totalMoney = 0;
+                Human.totalSpent = 0;
+                Human.buyers = 0;
+                resetTrades();
+                resetTradedAmount();
+                resetOmniEvent();
+                resetTotalWealth();
+                resetWealthRedistributed();
+                years++;
+                double foodAmt = Commodity.getCommNum(1).getTotalAmt();
+                double foodAvgPrice = avgPrice(1);
+                double foodPriceSd = sdPrice(1);
+                if(Model.PRINT_COMM) {
+                    double totalConsForAllCommoditiesThisRound = 0;
+                    for(int i=0; i<Commodity.NUM_COMM; i++){
+                        //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
+                        System.out.printf("%d, ",years);
+                        //System.out.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
+                        System.out.printf("%f, ", avgPrice(i));
+                        System.out.printf("%f, ", sdPrice(i));
+                        System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
+                        System.out.printf("%c\n",i+65);
+                        //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
 totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
             }
             commoditiesFile.flush();
@@ -368,7 +380,7 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         //Random number generator declarations
         private MersenneTwisterFast randomGenerator;
         private Uniform commodityNeedThresholdDistro;
-        private Normal salaryDistro;
+        private Normal amountProducedDistro;
         private Uniform makeDistro;
         private Uniform mpsDistro;
         private Uniform consumeDistro;
@@ -413,6 +425,12 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                             }
                             if (args[i].equals("-switchPerc")) {
                                 SWITCH_PROZ = Integer.valueOf(args[++i]);
+                            }
+                            if (args[i].equals("-avgProd")) {
+                                PRODUCTION_MEAN=Double.parseDouble(args[++i]);
+                            }
+                            if (args[i].equals("-money")) {
+                                MONEY=Double.parseDouble(args[++i]);
                             }
                         }
 

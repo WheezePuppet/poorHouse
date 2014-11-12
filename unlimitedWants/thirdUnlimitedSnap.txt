@@ -1,0 +1,53 @@
+How much money did they buy it for?
+How much did they budget for that good?
+
+What EXACTLY is going on right now?
+
+Steps:
+Switch rate is at 5%
+Prices start between 1 and 5
+
+All goods are consumed (including produced commodity)
+Trading partners is cleared between checks for good
+Buying order is not shuffled
+
+Price changes:
+Buyers do NOT increase their expected prices in the event of scarcity
+    (had been outside parentheses)
+Sellers decrease their price by a 1.01 when they have surplus inventory
+Sellers raise their price by 1.01 when they sell out
+Buyers move towards the price of average sellers polled by 1 tenth
+
+=================
+When does that stupid spike occur?
+    When I've increased the money supply relative to the production level
+    When the initial price level is too low
+    when the change rate is low
+    Changing any of these things fixes the "problem"
+Note that one good drops as the others spike
+    What is happening with that good?
+    Price dropping means that its utility per unit is rising
+    I can see that the droppy one spiked first
+    Everyone rushes to spend money on that one and not on the others, they fall back to normal range
+How did they rise in the first place, but only when things started far away?
+Implementing one of the fixes for the rise causes the average price of the switching goods to be higher
+Beware of tipping point somewhere that causes spike
+
+What have I learned?
+    One good starts out high, then falls after a point
+    It starts going back up before the others start falling
+    It has a lower standard deviation and a higher price for awhile
+        It is natural to have a lower SD and a lower price
+    
+A shifts at 255
+B shifts at 253
+C shifts at earlier
+D shifts at 256
+E shifts at 253
+F shifts at 252
+G shifts at 
+
+Measure in standard deviation units
+Price of good versus standard deviation
+    Individual price plots
+
