@@ -18,7 +18,7 @@ public class Model extends SimState implements Steppable
         public static int INTROVERT_DIAL;
         public static long SEED = 0;
         public static final int COMMUNITIES = 10;
-        public static int SWITCH_PROZ;
+        public static int SWITCH_PROZ=0;
         public static int NUM_TRADERS = 0;
         public static int COMM_CONSUME_MEAN = 3;
         public static double PRODUCTION_MEAN = 30;
@@ -38,7 +38,7 @@ public class Model extends SimState implements Steppable
 
         //Random number generator next functions
         public double generateNeedCommodityThreshold() {
-            return commodityNeedThresholdDistro.nextDouble(); }
+                return commodityNeedThresholdDistro.nextDouble(); }
         public double generateAmountProduced() {
                 double thing=amountProducedDistro.nextDouble();
                 while(thing<0) {
@@ -55,8 +55,8 @@ public class Model extends SimState implements Steppable
         }
         public double generateMps() { return mpsDistro.nextDouble(); }
         public int generateLifeProb() { 
-            return (years < NUM_YEARS) ? probDistro.nextInt() : 101;
-             }//Make this a double?
+                return (years < NUM_YEARS) ? probDistro.nextInt() : 101;
+        }//Make this a double?
         public double generateConsume() { return consumeDistro.nextDouble(); }
         public double generateExpPrice() { return priceDistro.nextDouble(); }
 
@@ -79,9 +79,9 @@ public class Model extends SimState implements Steppable
         public int generateSwitch() { return probDistro.nextInt(); }
 
         //Trade facilitation functions
-//--------------------------------------------------------------------------
+        //--------------------------------------------------------------------------
         /* Give the trading agent a random member of their own community to
-        trade with */
+           trade with */
         public Human getRandomCommunityMember(int communityNum) {
                 int indexOfRandomMember = probDistro.nextInt();
                 indexOfRandomMember = indexOfRandomMember%(communities.get(communityNum).size());
@@ -95,7 +95,7 @@ public class Model extends SimState implements Steppable
                 int randomHash = probDistro.nextInt()%big;
                 int toTake = 0;
                 for(int i=0; i<randomHash; i++) {
-                    toTake = allKeys.nextElement();
+                        toTake = allKeys.nextElement();
                 }
                 Human oneAgent = actors.get(toTake);
                 return oneAgent;
@@ -122,9 +122,9 @@ public class Model extends SimState implements Steppable
                 }
         }
         public void addToActors(Human man) {
-                 actors.put(
-                    man.getId(),man);
-                 }
+                actors.put(
+                                man.getId(),man);
+        }
         public void addToCommunity(int i, Human man) { communities.get(i).add(man); }
         public void addToProducers(int good, Human man) { producers.get(good).add(man); }
         public void removeFromProducers(int good, Human man) { producers.get(good).remove(man); }
@@ -161,32 +161,32 @@ public class Model extends SimState implements Steppable
 
         //Returns the average price of a commodity
         public double avgPrice(int comm){
-            int sizeOfMap = actors.size();
-            double avg = 0;
-            for(Map.Entry<Integer, Human> entry : actors.entrySet()){
-                Integer key = entry.getKey();
-                Human value = entry.getValue();
-                avg += value.getPrice(comm);
-            }
-            avg /= sizeOfMap;
-            return avg;
+                int sizeOfMap = actors.size();
+                double avg = 0;
+                for(Map.Entry<Integer, Human> entry : actors.entrySet()){
+                        Integer key = entry.getKey();
+                        Human value = entry.getValue();
+                        avg += value.getPrice(comm);
+                }
+                avg /= sizeOfMap;
+                return avg;
         }
 
         //Returns the standard deviation of the price of a commodity
         public double sdPrice(int comm){
-            double avg = avgPrice(comm);
-            double sd=0;
-            for(Map.Entry<Integer, Human> entry : actors.entrySet()){
-                Integer key = entry.getKey();
-                Human value = entry.getValue();
-                double diff = (value.getPrice(comm) - avg);
-                sd += (diff * diff);
-            }
-            sd /= actors.size();
-            sd = Math.sqrt(sd);
-            double normalized = sd/avgPrice(comm);
-            normalized*=20;
-            return normalized;
+                double avg = avgPrice(comm);
+                double sd=0;
+                for(Map.Entry<Integer, Human> entry : actors.entrySet()){
+                        Integer key = entry.getKey();
+                        Human value = entry.getValue();
+                        double diff = (value.getPrice(comm) - avg);
+                        sd += (diff * diff);
+                }
+                sd /= actors.size();
+                sd = Math.sqrt(sd);
+                double normalized = sd/avgPrice(comm);
+                normalized*=20;
+                return normalized;
         }
 
         public void resetTotalWealth() { totalWealth=0; }
@@ -196,7 +196,7 @@ public class Model extends SimState implements Steppable
         //Modeling software things
         public static Model instance(){
                 if(theInstance == null){
-                    theInstance = new Model(SEED);
+                        theInstance = new Model(SEED);
                 }
                 return theInstance;
         }
@@ -205,6 +205,7 @@ public class Model extends SimState implements Steppable
                 Commodity.initCommodities();
                 createInitialAgents();
                 schedule.scheduleOnce(1,this);
+                System.out.printf("End of start\n");
         }
 
         public void fillCommunities() {
@@ -276,11 +277,11 @@ public class Model extends SimState implements Steppable
                 super(seed);
                 randomGenerator = new MersenneTwisterFast(50);
                 commodityNeedThresholdDistro = 
-                    new Uniform(1.0,5.0,randomGenerator);
-                amountProducedDistro = new Normal(AMOUNT_PRODUCED_MEAN,15,randomGenerator);
+                        new Uniform(1.0,5.0,randomGenerator);
+                amountProducedDistro = new Normal(PRODUCTION_MEAN,15,randomGenerator);
                 makeDistro = new Uniform(0,Commodity.NUM_COMM-1,randomGenerator);//TODO
                 consumeDistro = new Uniform(COMM_CONSUME_MEAN-2,
-                    COMM_CONSUME_MEAN+2,randomGenerator);
+                                COMM_CONSUME_MEAN+2,randomGenerator);
                 priceDistro = new Uniform(1,5,randomGenerator);
                 ageDistro = new Uniform(0,29,randomGenerator);
                 communityDistro = new Uniform(1,100,randomGenerator);
@@ -291,9 +292,9 @@ public class Model extends SimState implements Steppable
                 alphaDistro = new Uniform(5,10,randomGenerator);
                 betaDistro = new Uniform(1,5,randomGenerator);
                 /*deathDistro = new Uniform(0,100,randomGenerator);
-                outsideTrade = new Uniform(0,100,randomGenerator);
-                tradeDistro = new Uniform(0,100, randomGenerator);
-                childDistro = new Uniform(0,100,randomGenerator);*/
+                  outsideTrade = new Uniform(0,100,randomGenerator);
+                  tradeDistro = new Uniform(0,100, randomGenerator);
+                  childDistro = new Uniform(0,100,randomGenerator);*/
 
                 communities = new ArrayList<ArrayList<Human>>();
                 producers = new ArrayList<ArrayList<Human>>();
@@ -337,38 +338,39 @@ public class Model extends SimState implements Steppable
                 double foodAvgPrice = avgPrice(1);
                 double foodPriceSd = sdPrice(1);
                 if(Model.PRINT_COMM) {
-                    double totalConsForAllCommoditiesThisRound = 0;
-                    for(int i=0; i<Commodity.NUM_COMM; i++){
-                        //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
-                        System.out.printf("%d, ",years);
-                        //System.out.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
-                        System.out.printf("%f, ", avgPrice(i));
-                        System.out.printf("%f, ", sdPrice(i));
-                        System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
-                        System.out.printf("%c\n",i+65);
-                        //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
-totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
-            }
-            commoditiesFile.flush();
-            simStatsFile.println("" + years + "," +
-                totalConsForAllCommoditiesThisRound + "," + 
-                Commodity.theoreticalTotalOfAllConsumption*100);
-            simStatsFile.flush();
-            if(years==NUM_YEARS){
-                if(!Model.PRINT_COMM) {
-                    System.out.printf("%d,%d,%f\n",Model.SWITCH_PROZ,
-                        Model.NUM_TRADERS,Commodity.getAllModelCons());
+                        double totalConsForAllCommoditiesThisRound = 0;
+                        for(int i=0; i<Commodity.NUM_COMM; i++){
+                                //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
+                                System.out.printf("%d, ",years);
+                                //System.out.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
+                                System.out.printf("%f, ", avgPrice(i));
+                                System.out.printf("%f, ", sdPrice(i));
+                                System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
+                                System.out.printf("%c\n",i+65);
+                                //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
+                                totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
+                        }
+                        commoditiesFile.flush();
+                        simStatsFile.println("" + years + "," +
+                                        totalConsForAllCommoditiesThisRound + "," + 
+                                        Commodity.theoreticalTotalOfAllConsumption*100);
+                        simStatsFile.flush();
+                        if(years==NUM_YEARS){
+                                if(!Model.PRINT_COMM) {
+                                        System.out.printf("%d,%d,%f\n",Model.SWITCH_PROZ,
+                                                        Model.NUM_TRADERS,Commodity.getAllModelCons());
+                                }
+                        }
+                        for(int i=0; i<Commodity.NUM_COMM; i++){
+                                Commodity.getCommNum(i).resetCons();
+                        }
+                        if(years > NUM_YEARS){
+                                System.exit(0);
+                        }
+                        if(population >0 && years < NUM_YEARS){
+                                schedule.scheduleOnceIn(1,this);
+                        }
                 }
-            }
-            for(int i=0; i<Commodity.NUM_COMM; i++){
-                Commodity.getCommNum(i).resetCons();
-            }
-            if(years > NUM_YEARS){
-                System.exit(0);
-            }
-            if(population >0 && years < NUM_YEARS){
-                schedule.scheduleOnceIn(1,this);
-            }
         }
 
         //Agent containers
@@ -413,56 +415,56 @@ totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
         // Examples:
         //   java Model -numYears 200 -simtag 9999 -switchPerc 25
         public static void main(String args[]) {
-            doLoop(new MakesSimState() {
-                public SimState newInstance(long seed, String[] args) {
-                    try {
-                        for (int i=0; i<args.length; i++) {
-                            if (args[i].equals("-numYears")) {
+                doLoop(new MakesSimState() {
+                                public SimState newInstance(long seed, String[] args) {
+                                try {
+                                for (int i=0; i<args.length; i++) {
+                                if (args[i].equals("-numYears")) {
                                 NUM_YEARS = Integer.valueOf(args[++i]);
-                            }
-                            if (args[i].equals("-simtag")) {
+                                }
+                                if (args[i].equals("-simtag")) {
                                 SIM_TAG = Integer.valueOf(args[++i]);
-                            }
-                            if (args[i].equals("-switchPerc")) {
+                                }
+                                if (args[i].equals("-switchPerc")) {
                                 SWITCH_PROZ = Integer.valueOf(args[++i]);
-                            }
-                            if (args[i].equals("-avgProd")) {
+                                }
+                                if (args[i].equals("-avgProd")) {
                                 PRODUCTION_MEAN=Double.parseDouble(args[++i]);
-                            }
-                            if (args[i].equals("-money")) {
+                                }
+                                if (args[i].equals("-money")) {
                                 MONEY=Double.parseDouble(args[++i]);
-                            }
-                        }
+                                }
+                                }
 
-                        //Model.NUM_TRADERS=Integer.parseInt(args[1]);
-                        //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
-                        //Model.SALARY_MEAN=Integer.parseInt(args[3]);
-                        //Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
+                                //Model.NUM_TRADERS=Integer.parseInt(args[1]);
+                                //Model.COMM_CONSUME_MEAN=Integer.parseInt(args[2]);
+                                //Model.SALARY_MEAN=Integer.parseInt(args[3]);
+                                //Model.NUM_INITIAL_AGENTS=Integer.parseInt(args[4]);
 
-                        commoditiesFile = new PrintWriter(new FileWriter(
-                            COMM_FILE_NAME.replace("SIMTAG","" + SIM_TAG)));
-                        commoditiesFile.println("\"year\",\"avg price\",\"sd\",\"totalCons\",\"commodity\"");
-                        simStatsFile = new PrintWriter(new FileWriter(
-                            SIM_STATS_FILE_NAME.replace("SIMTAG","" + 
+                                commoditiesFile = new PrintWriter(new FileWriter(
+                                                        COMM_FILE_NAME.replace("SIMTAG","" + SIM_TAG)));
+                                commoditiesFile.println("\"year\",\"avg price\",\"sd\",\"totalCons\",\"commodity\"");
+                                simStatsFile = new PrintWriter(new FileWriter(
+                                                        SIM_STATS_FILE_NAME.replace("SIMTAG","" + 
                                                                 SIM_TAG)));
-                        simStatsFile.println(
-                            "\"year\",\"totalConsumed\",\"theoreticalMax\"");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        printUsage();
-                        System.exit(1);
-                    }
-                    return instance();
-                }
-            public Class simulationClass() {
-                return Model.class;
-            }
-            }, args);
+                                simStatsFile.println(
+                                                "\"year\",\"totalConsumed\",\"theoreticalMax\"");
+                                } catch (Exception e) {
+                                        e.printStackTrace();
+                                        printUsage();
+                                        System.exit(1);
+                                }
+                                return instance();
+                                }
+                                public Class simulationClass() {
+                                        return Model.class;
+                                }
+                }, args);
         }
 
-    private static void printUsage() {
-        System.err.println("Usage: java Model [-numYears numYears]" +
-        "   [-simtag simtag]" +
-        "   [-switchPerc switchPerc].");
-    }
+        private static void printUsage() {
+                System.err.println("Usage: java Model [-numYears numYears]" +
+                                "   [-simtag simtag]" +
+                                "   [-switchPerc switchPerc].");
+        }
 }

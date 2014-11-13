@@ -63,7 +63,7 @@ param.sweep <- function(switch.percentages=seq(0,100,10),
 # total.sal - the total salary of the entire model in $/year
 
 #track.commodities <- function(num.agents, switch.percentage, 
-track.commodities <- function(switch.percentage,num.years,mean.amount.produced,money) { 
+track.commodities <- function(switch.percentage,num.years,mean.amount.produced,money,simTag) { 
     #num.trading.partners, mean.cons.rate, mean.salary) {
 
     #numeric.col.nums <- c(1,3:7)
@@ -72,10 +72,16 @@ track.commodities <- function(switch.percentage,num.years,mean.amount.produced,m
 
     all.rows <- 
         system(paste("java edu.umw.poorhouse.Model",
+                "-switchPerc",
                 switch.percentage,
+                "-numYears",
                 num.years,
+                "-avgProd",
                 mean.amount.produced,
+                "-money",
                 money,
+                "-simtag",
+                simTag,
             "true 2> /dev/null"),
             intern=TRUE)
 

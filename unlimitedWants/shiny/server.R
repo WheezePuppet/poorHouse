@@ -37,7 +37,7 @@ SIM.FILES.BASE.DIR <- "/tmp"
 
 # CHANGE: The full path of your project directory. Any .java file that appears
 # in this directory hierarchy will be compiled as part of the simulation.
-SOURCE.DIR <- "/home/stephen/Dropbox/research/poorhouse/poorHouse/unlimitedWants/"
+SOURCE.DIR <- "/home/rruud/work/poorHouse/unlimitedWants/edu/umw/poorhouse/"
 
 CLASSES.DIR <- "/tmp/classes"
 

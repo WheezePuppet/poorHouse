@@ -87,8 +87,8 @@ public class Human implements Steppable {
                 //if(age > 3 && producedCommodity == 1){
 
                 //}else{
-                commoditiesHeld[producedCommodity]+=salary;//Units?
-                Commodity.getCommNum(producedCommodity).produce(salary);
+                commoditiesHeld[producedCommodity]+=amountProduced;//Units?
+                Commodity.getCommNum(producedCommodity).produce(amountProduced);
                 makeBudget();
                 //}
         }
@@ -133,7 +133,11 @@ public class Human implements Steppable {
                                 buyers++;
                                 //System.out.printf("%d agents have tried to buy the good\n", buyers);
                         }
-                        while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01){
+                        int numTrades = 0;
+                                //System.out.printf("Human trade budget %f num prod %d numTrades %d\n", budgetExp[i], Model.instance().getNumProducers(i),numTrades);
+                        while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01 && numTrades < 3){
+                                System.out.printf("Human trade budget is %f and num prod is %d\n", budgetExp[i], Model.instance().getNumProducers(i));
+                                numTrades++;
                                 tradingPartners.clear();
                                 //System.out.println("Maybe stuck in a loop\n");
                                 //System.out.printf("Budget for good %d is %f\n", i, budgetExp[i]);
@@ -179,7 +183,7 @@ public class Human implements Steppable {
                                         if(k!=cheapestProducer){
                                                 //tradingPartners.get(k).expPrice[i]*=.99;
                                                 if(i==2){
-                                                        String message = "no deal, price falls to " + Double.toString(expPrice[i]);
+                                                        message = "no deal, price falls to " + Double.toString(expPrice[i]);
                                                         debug(message, TRADE);
                                                 }
                                         }else{
@@ -317,6 +321,7 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //This constructor is called for initial agents
         public Human() {
+                System.out.printf("Mode MONEY is %f\n",Model.MONEY);
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
                 /*if (myId == 0 || myId == 1) {
@@ -374,6 +379,7 @@ public class Human implements Steppable {
                 double price = seller.expPrice[good];
                 double quantity = budgetExp[good]/price;
                 double otherQuantity = seller.budgetExp[good]/price;//seller.chokeQuant[good];
+                String message;
                 /*double quantity = chokeQuant[good];
                   double otherQuantity = seller.chokeQuant[good];
                 //How much is the buyer willing to buy at the price
@@ -405,7 +411,7 @@ public class Human implements Steppable {
                 double tempUnDiff = expPrice[good];
                 //expPrice[good]+=diff;
                 if(good==2){
-                        String message = "2 price changed from " + Double.toString(tempUnDiff) + " to " + Double.toString(expPrice[good]);
+                        message = "2 price changed from " + Double.toString(tempUnDiff) + " to " + Double.toString(expPrice[good]);
                         debug(message, TRADE);
                         message = "2 price changed by " + Double.toString(diff);
                         debug(message, TRADE);
