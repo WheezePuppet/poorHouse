@@ -89,6 +89,7 @@ public class Human implements Steppable {
                 //}else{
                 commoditiesHeld[producedCommodity]+=amountProduced;//Units?
                 Commodity.getCommNum(producedCommodity).produce(amountProduced);
+                totalMoney += money;
                 makeBudget();
                 //}
         }
@@ -136,7 +137,7 @@ public class Human implements Steppable {
                         int numTrades = 0;
                                 //System.out.printf("Human trade budget %f num prod %d numTrades %d\n", budgetExp[i], Model.instance().getNumProducers(i),numTrades);
                         while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01 && numTrades < 3){
-                                System.out.printf("Human trade budget is %f and num prod is %d\n", budgetExp[i], Model.instance().getNumProducers(i));
+                                //System.out.printf("Human trade budget is %f and num prod is %d\n", budgetExp[i], Model.instance().getNumProducers(i));
                                 numTrades++;
                                 tradingPartners.clear();
                                 //System.out.println("Maybe stuck in a loop\n");
@@ -321,7 +322,6 @@ public class Human implements Steppable {
         //--------------------------------------------------------------------------
         //This constructor is called for initial agents
         public Human() {
-                System.out.printf("Mode MONEY is %f\n",Model.MONEY);
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
                 /*if (myId == 0 || myId == 1) {
@@ -424,6 +424,7 @@ public class Human implements Steppable {
                         seller.commoditiesHeld[good]-=quantity;
                         commoditiesHeld[good]+=quantity;
                         seller.money += quantity*price;
+                        totalSpent+=quantity*price;
                         money -= quantity*price;
                         Commodity.getCommNum(good).reportSale(quantity);
                         //seller.expPrice[good]*=1.01;

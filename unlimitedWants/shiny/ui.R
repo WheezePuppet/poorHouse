@@ -3,7 +3,7 @@ library(shiny)
 library(shinyIncubator)
 
 # CHANGE: The title of your simulation webapp.
-APP.TITLE <- "Shiny Sim"
+APP.TITLE <- "Russell's World"
 
 
 shinyUI(fluidPage(

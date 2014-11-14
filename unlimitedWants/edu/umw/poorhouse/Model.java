@@ -205,7 +205,6 @@ public class Model extends SimState implements Steppable
                 Commodity.initCommodities();
                 createInitialAgents();
                 schedule.scheduleOnce(1,this);
-                System.out.printf("End of start\n");
         }
 
         public void fillCommunities() {
@@ -350,6 +349,9 @@ public class Model extends SimState implements Steppable
                                 //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
                                 totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
                         }
+                        System.out.println("TOTAL consumed: " + 
+                            totalConsForAllCommoditiesThisRound + " of " + 
+                            Commodity.theoreticalTotalOfAllConsumption*100);
                         commoditiesFile.flush();
                         simStatsFile.println("" + years + "," +
                                         totalConsForAllCommoditiesThisRound + "," + 
