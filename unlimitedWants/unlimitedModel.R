@@ -17,38 +17,10 @@ require(lattice)
 
 registerDoParallel(24)
 
-# Run a full-factorial parameter sweep of simulations, with the "percent
-# likelihoods that an agent will switch to producing a different good" (each
-# value in the range 0-100) and the number of trading partners per agent per
-# time period (each value a non-negative integer) given as arguments, each as
-# vectors of values.
-# Returns a data frame with the total consumption for each param combo.
-# (Don't forget to save the return value!)
-param.sweep <- function(switch.percentages=seq(0,100,10), 
-    nums.trading.partners=seq(0,100,10)) {
+SIM.FILES.BASE.DIR <- "/tmp"
+SIM.STATS.FILE <- paste0(SIM.FILES.BASE.DIR,"/","sim_statsSIMTAG.csv")
+COMM.STATS.FILE <- paste0(SIM.FILES.BASE.DIR,"/","comm_statsSIMTAG.csv")
 
-    results <- foreach (switch.percentage=switch.percentages,
-        .combine=rbind) %dopar% {
-        msg <- paste("Running switch percentage ",switch.percentage,
-            "%...\n",sep="")
-        cat(msg)
-        res <- data.frame(
-            switch=numeric(length(nums.trading.partners)),
-            partners=numeric(length(nums.trading.partners)),
-            total.cons=numeric(length(nums.trading.partners)))
-        for (i in 1:length(nums.trading.partners)) {
-            res[i,] <- 
-                as.numeric(strsplit(
-                system(paste("java Model",
-                        switch.percentage,
-                        nums.trading.partners[i],
-                    "2> /dev/null"),
-                    intern=TRUE),",")[[1]])
-        }
-        res
-    }
-    results
-}
 
 # Run a single simulation with the parameters passed (scalars, not vectors)
 #   and return a list containing:
@@ -70,7 +42,7 @@ track.commodities <- function(switch.percentage,num.years,mean.amount.produced,m
     numeric.col.nums <- c(1:4)
     num.agents = 100;
 
-    all.rows <- 
+    stdout <- 
         system(paste("java edu.umw.poorhouse.Model",
                 "-switchPerc",
                 switch.percentage,
@@ -86,24 +58,15 @@ track.commodities <- function(switch.percentage,num.years,mean.amount.produced,m
             intern=TRUE)
 
     total.cons <- as.numeric(strsplit(
-        grep("^Total consumption:",all.rows,value=TRUE),
+        grep("^Total consumption:",stdout,value=TRUE),
         ": ")[[1]][2])
     total.sal <- as.numeric(strsplit(
-        grep("^Total amount produced:",all.rows,value=TRUE),
+        grep("^Total amount produced:",stdout,value=TRUE),
         ": ")[[1]][2])
 
-    header <- gsub("\"","",strsplit(all.rows[[1]],",")[[1]])
-    comm.rows <- strsplit(grep("^[0-9]",all.rows,value=TRUE),",")
-    weird.pseudo.matrix <- sapply(comm.rows, function(row) {
-        row <- as.list(row)
-        row[numeric.col.nums] <- as.numeric(row[numeric.col.nums])
-        row
-        }
-    )
-    comm.df <- as.data.frame(t(weird.pseudo.matrix))
-    names(comm.df) <- header
+    comm.df <- read.csv(sub("SIMTAG",simTag,COMM.STATS.FILE))
 
-    cons.rows <- strsplit(grep("^TOTAL",all.rows,value=TRUE),": ")
+    cons.rows <- strsplit(grep("^TOTAL",stdout,value=TRUE),": ")
     cons.df <- data.frame(
         year=1:length(cons.rows),
         actual=rep(NA,length(cons.rows)),

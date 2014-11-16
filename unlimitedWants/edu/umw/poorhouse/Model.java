@@ -32,10 +32,6 @@ public class Model extends SimState implements Steppable
         static final String SIM_STATS_FILE_NAME = "/tmp/sim_statsSIMTAG.csv";
 
 
-        // If false, print only summary info. If true, print only
-        //   per-commodity-per-time-period statistics.
-        public static boolean PRINT_COMM = true;
-
         //Random number generator next functions
         public double generateNeedCommodityThreshold() {
                 return commodityNeedThresholdDistro.nextDouble(); }
@@ -336,42 +332,31 @@ public class Model extends SimState implements Steppable
                 double foodAmt = Commodity.getCommNum(1).getTotalAmt();
                 double foodAvgPrice = avgPrice(1);
                 double foodPriceSd = sdPrice(1);
-                if(Model.PRINT_COMM) {
-                        double totalConsForAllCommoditiesThisRound = 0;
-                        for(int i=0; i<Commodity.NUM_COMM; i++){
-                                //System.out.printf("%d, %c, %f, %f, %f, %f, %f\n",years,i+65,(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmtNeeded()), avgPrice(i), sdPrice(i), Commodity.getCommNum(i).getAmtCons(), Commodity.getCommNum(i).getTotalCons()/100);
-                                System.out.printf("%d, ",years);
-                                //System.out.printf("%f, ",(Commodity.getCommNum(i).getProducedQuantity()/Commodity.getCommNum(i).getAmt.Needed);
-                                System.out.printf("%f, ", avgPrice(i));
-                                System.out.printf("%f, ", sdPrice(i));
-                                System.out.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
-                                System.out.printf("%c\n",i+65);
-                                //System.out.printf("%f\n", Commodity.getCommNum(i).getTotalCons()/100);
-                                totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
-                        }
-                        System.out.println("TOTAL consumed: " + 
-                            totalConsForAllCommoditiesThisRound + " of " + 
-                            Commodity.theoreticalTotalOfAllConsumption*100);
-                        commoditiesFile.flush();
-                        simStatsFile.println("" + years + "," +
-                                        totalConsForAllCommoditiesThisRound + "," + 
-                                        Commodity.theoreticalTotalOfAllConsumption*100);
-                        simStatsFile.flush();
-                        if(years==NUM_YEARS){
-                                if(!Model.PRINT_COMM) {
-                                        System.out.printf("%d,%d,%f\n",Model.SWITCH_PROZ,
-                                                        Model.NUM_TRADERS,Commodity.getAllModelCons());
-                                }
-                        }
-                        for(int i=0; i<Commodity.NUM_COMM; i++){
-                                Commodity.getCommNum(i).resetCons();
-                        }
-                        if(years > NUM_YEARS){
-                                System.exit(0);
-                        }
-                        if(population >0 && years < NUM_YEARS){
-                                schedule.scheduleOnceIn(1,this);
-                        }
+                double totalConsForAllCommoditiesThisRound = 0;
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                    commoditiesFile.printf("%d, ",years);
+                    commoditiesFile.printf("%f, ", avgPrice(i));
+                    commoditiesFile.printf("%f, ", sdPrice(i));
+                    commoditiesFile.printf("%f, ", Commodity.getCommNum(i).getAmtCons());
+                    commoditiesFile.printf("%c\n",i+65);
+                    totalConsForAllCommoditiesThisRound += Commodity.getCommNum(i).getTotalCons();
+                }
+                System.out.println("TOTAL consumed: " + 
+                    totalConsForAllCommoditiesThisRound + " of " + 
+                    Commodity.theoreticalTotalOfAllConsumption*100);
+                commoditiesFile.flush();
+                simStatsFile.println("" + years + "," +
+                                totalConsForAllCommoditiesThisRound + "," + 
+                                Commodity.theoreticalTotalOfAllConsumption*100);
+                simStatsFile.flush();
+                for(int i=0; i<Commodity.NUM_COMM; i++){
+                        Commodity.getCommNum(i).resetCons();
+                }
+                if(years > NUM_YEARS){
+                        System.exit(0);
+                }
+                if(population >0 && years < NUM_YEARS){
+                        schedule.scheduleOnceIn(1,this);
                 }
         }
 
