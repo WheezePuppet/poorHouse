@@ -30,6 +30,7 @@
 
 library(shiny)
 library(shinyIncubator)
+library(ggplot2)
 
 
 # -------------------------------- Constants ---------------------------------
