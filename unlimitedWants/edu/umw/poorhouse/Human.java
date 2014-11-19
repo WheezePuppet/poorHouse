@@ -18,7 +18,7 @@ public class Human implements Steppable {
         private int GOOD = 2;
         public static double totalMoney = 0;
         public static double totalSpent = 0;
-        private double changeProp = 1.03;
+        private double changeProp = 1.01;
         private int buyerChange = 10;
         public static int buyers = 0;
 
@@ -135,7 +135,7 @@ public class Human implements Steppable {
                                 //System.out.printf("%d agents have tried to buy the good\n", buyers);
                         }
                         int numTrades = 0;
-                                //System.out.printf("Human trade budget %f num prod %d numTrades %d\n", budgetExp[i], Model.instance().getNumProducers(i),numTrades);
+                        //System.out.printf("Human trade budget %f num prod %d numTrades %d\n", budgetExp[i], Model.instance().getNumProducers(i),numTrades);
                         while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01 && numTrades < 3){
                                 //System.out.printf("Human trade budget is %f and num prod is %d\n", budgetExp[i], Model.instance().getNumProducers(i));
                                 numTrades++;
@@ -325,13 +325,13 @@ public class Human implements Steppable {
                 myId = nextAgentNum++; 
                 mode = LifeStage.EARNING;
                 /*if (myId == 0 || myId == 1) {
-                        producedCommodity = myId;
-                } else {*/
-                        producedCommodity=Model.instance().generateMake(this);
+                  producedCommodity = myId;
+                  } else {*/
+                producedCommodity=Model.instance().generateMake(this);
                 //}
                 residentCommunity=Model.instance().generateCommunity(this);
                 age=0;//Model.instance().generateAge();
-                money=100;
+                money=Model.MONEY;
                 children = new ArrayList<Human>();
                 minThreshold = new double [Commodity.NUM_COMM];//Between 0 and 5
                 commoditiesHeld = new double [Commodity.NUM_COMM];
@@ -419,14 +419,17 @@ public class Human implements Steppable {
                         //System.out.printf("2 price changed by %f\n", diff);
                 }
                 //If they bought, raise seller's price
-                if(quantity > 0 && money >= price*quantity){
+                if(quantity > 0){// && money >= price*quantity){
                         //System.out.printf("We bought %f at %f!\n",quantity, price);
                         seller.commoditiesHeld[good]-=quantity;
                         commoditiesHeld[good]+=quantity;
+
+                        budgetExp[good]-= quantity*price;
                         seller.money += quantity*price;
-                        totalSpent+=quantity*price;
                         money -= quantity*price;
+
                         Commodity.getCommNum(good).reportSale(quantity);
+                        totalSpent+=quantity*price;
                         //seller.expPrice[good]*=1.01;
                 }else{
                         //System.out.printf("We didn't buy at %f!\n", price);
