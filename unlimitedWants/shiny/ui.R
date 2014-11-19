@@ -2,8 +2,7 @@
 library(shiny)
 library(shinyIncubator)
 
-# CHANGE: The title of your simulation webapp.
-APP.TITLE <- "Russell's World"
+APP.TITLE <- "Matrix Market"
 
 
 shinyUI(fluidPage(
@@ -31,6 +30,10 @@ shinyUI(fluidPage(
             # able to tweak the length of the simulation.
             numericInput("maxTime","Number of years",
                 value=200,min=1,step=1),
+            numericInput("money","Initial Money",
+                value=100,min=1,step=1),
+            numericInput("amountProduced","Mean Production",
+                value=30,min=1,step=1),
             actionButton("runsim",label="Run sim"),
             htmlOutput("log"),
             sliderInput("switchPerc",

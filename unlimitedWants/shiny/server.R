@@ -202,6 +202,8 @@ shinyServer(function(input,output,session) {
                 # CHANGE: Add any other simulation parameters required on the
                 # Java command-line here.
                 input$simParam1,
+                "-money",input$money,
+                "-avgProd",input$amountProduced,
                 "-numYears",input$maxTime,
                 "-simtag",simtag,
                 "-switchPerc",input$switchPerc,
