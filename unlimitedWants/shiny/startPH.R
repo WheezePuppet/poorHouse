@@ -1,3 +1,3 @@
 
 require(shiny)
-runApp(appDir="/home/stephen/poorHouse/unlimitedWants/shiny",port=22227,launch.browser=FALSE,host="199.111.89.20")
+runApp(appDir="/home/rruud/work/poorHouse/unlimitedWants/shiny",port=44410,launch.browser=FALSE,host="192.65.245.11")
