@@ -70,6 +70,7 @@ public class Human implements Steppable {
                                         max = expPrice[i];
                                 }
                         }
+                        Model.instance().removeFromProducers(producedCommodity, this);
                         producedCommodity = com;
                 }
                 if(Model.instance().findProducer(producedCommodity, this)){
@@ -136,7 +137,7 @@ public class Human implements Steppable {
                         }
                         int numTrades = 0;
                         //System.out.printf("Human trade budget %f num prod %d numTrades %d\n", budgetExp[i], Model.instance().getNumProducers(i),numTrades);
-                        while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01 && numTrades < 3){
+                        while(Model.instance().getNumProducers(i)>0 && budgetExp[i] > 0.01){// && numTrades < 3){
                                 //System.out.printf("Human trade budget is %f and num prod is %d\n", budgetExp[i], Model.instance().getNumProducers(i));
                                 numTrades++;
                                 tradingPartners.clear();
